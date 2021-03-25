@@ -1,31 +1,20 @@
 class Node {
-  constructor(
-    globalID = 0,
-    id = 0,
-    parentNode = null,
-    depth = 0,
-    options = { sibling: true }
-  ) {
+  constructor(globalID = 0, id = 0, parentNode = null, depth = 0) {
     this._gid = globalID;
     this._id = id;
     this._name = "";
-    this._fx = 100;
-    this._fy = options.sibling ? 100 : 200;
     this._parentNode = parentNode;
-    this._nodes = [];
+    this._children = [];
     this._collapsed = false;
     this._depth = depth;
-    this._editing = false; //parentNode !== null;
+    this._el = null;
+    this._editing = parentNode !== null;
     this._firstEdit = true;
   }
 
   addChild(node) {
     if (!(node instanceof Node)) return;
-    this._nodes.push(node);
-  }
-
-  collapse() {
-    this._collapsed = !this.collapsed;
+    this._children.push(node);
   }
 
   setName(value) {
@@ -42,8 +31,8 @@ class Node {
   get parent() {
     return this._parentNode;
   }
-  get nodes() {
-    return this._nodes;
+  get children() {
+    return this.collapsed ? [] : this._children;
   }
 
   get collapsed() {
@@ -51,7 +40,7 @@ class Node {
   }
 
   get name() {
-    return this._name;
+    return this._name || `node #${this._gid}`;
   }
 
   get editing() {
@@ -62,16 +51,16 @@ class Node {
     return this._depth;
   }
 
-  get fx() {
-    return this._fx;
+  get childrenLength() {
+    return this._children.length;
   }
 
-  get fy() {
-    return this._fy;
+  get value() {
+    return this._name || `node #${this._gid}`;
   }
 
-  get text() {
-    return `node #${this._gid}`;
+  get el() {
+    return this._el;
   }
 
   set name(value) {
@@ -85,19 +74,24 @@ class Node {
   }
 
   set collapsed(value) {
-    this._collapsed = value;
+    if (this._children.length) this._collapsed = value;
+  }
+
+  set el(el) {
+    this._el = el;
   }
 }
 
 class Tree {
   constructor() {
     this._root = this.createNode(0, null);
+    this._connections = [];
     this.lastNode = this._root;
     this._counter = 0;
   }
 
   addSibling() {
-    if (this._lastNode.editing) return;
+    if (this._lastNode.editing) return (this.lastNode.editing = false);
     const node = this.createNode(
       this.lastNodeID,
       !this.lastNodeParent ? this._root : this.lastNodeParent,
@@ -105,8 +99,8 @@ class Tree {
     );
 
     this.lastNodeParent
-      ? this.pushNode(this.lastNodeParent.nodes, node)
-      : this.pushNode(this._root.nodes, node);
+      ? this.pushNode(this.lastNodeParent.children, node)
+      : this.pushNode(this._root.children, node);
     this.lastNode = node;
   }
 
@@ -115,17 +109,20 @@ class Tree {
       if (!this._lastNode._firstEdit) return;
       this.deleteLastNode();
     }
-    const id = this._lastNode ? this._lastNode.nodes.length : this.lastNodeID;
+    const id = this._lastNode
+      ? this._lastNode.children.length
+      : this.lastNodeID;
+
     const node = this.createNode(
       id,
       this._lastNode,
-      (this._lastNode.depth || 0) + 1,
-      { sibling: false }
+      (this._lastNode.depth || 0) + 1
     );
 
     this._lastNode
-      ? this.pushNode(this._lastNode.nodes, node)
+      ? this.pushNode(this._lastNode.children, node)
       : this.pushNode(this._root, node);
+
     this.lastNode = node;
     this.lastNodeParent.collapsed = false;
   }
@@ -139,25 +136,25 @@ class Tree {
   }
 
   deleteLastNode() {
-    if (!this.lastNodeParent) return;
+    if (this._lastNode.editing || !this.lastNodeParent) return;
 
     let newLast = null;
 
     if (this._lastNode.id - 1 >= 0) {
-      newLast = this.lastNodeParent.nodes[this._lastNode.id - 1];
-    } else if (this.lastNodeParent?.parent?.nodes) {
-      newLast = this.lastNodeParent.parent.nodes[
-        this.lastNodeParent.parent.nodes.length - 1
+      newLast = this.lastNodeParent.children[this._lastNode.id - 1];
+    } else if (this.lastNodeParent?.parent?.children) {
+      newLast = this.lastNodeParent.parent.children[
+        this.lastNodeParent.parent.children.length - 1
       ];
     } else {
       newLast = this.lastNodeParent.parent;
     }
-    this.lastNodeParent.nodes.splice(this._lastNode.id, 1);
+    this.lastNodeParent.children.splice(this._lastNode.id, 1);
     this.lastNode = newLast;
   }
 
   collapseLastNode() {
-    this._lastNode.collapse();
+    this._lastNode.collapsed = !this._lastNode.collapsed;
   }
 
   editLastNode() {
@@ -167,44 +164,45 @@ class Tree {
   goUp() {
     if (this._lastNode.editing) return;
     if (this._lastNode.id - 1 >= 0) {
-      this.lastNode = this.lastNodeParent.nodes[this._lastNode.id - 1];
+      this.lastNode = this.lastNodeParent.children[this._lastNode.id - 1];
     } else {
-      if (this.lastNodeParent.id > 0 && this.lastNodeParent.parent) {
+      if (this.lastNodeParent?.id > 0 && this.lastNodeParent.parent) {
         let closestTopNode;
         for (let i = this.lastNodeParent.id - 1; i >= 0; i--) {
-          if (this.lastNodeParent.parent.nodes[i].nodes.length) {
-            closestTopNode = this.lastNodeParent.parent.nodes[i];
+          if (this.lastNodeParent.parent.children[i].children.length) {
+            closestTopNode = this.lastNodeParent.parent.children[i];
             break;
           }
         }
 
         if (closestTopNode)
-          this.lastNode = closestTopNode.nodes[closestTopNode.nodes.length - 1];
+          this.lastNode =
+            closestTopNode.children[closestTopNode.children.length - 1];
       }
     }
   }
   goDown() {
     if (this._lastNode.editing) return;
-    if (this._lastNode.id + 1 < this.lastNodeParent.nodes.length) {
-      this.lastNode = this.lastNodeParent.nodes[this._lastNode.id + 1];
+    if (this._lastNode.id + 1 < this.lastNodeParent.children.length) {
+      this.lastNode = this.lastNodeParent.children[this._lastNode.id + 1];
     } else {
       if (
         this.lastNodeParent.parent &&
-        this.lastNodeParent.id < this.lastNodeParent.parent.nodes.length
+        this.lastNodeParent.id < this.lastNodeParent.parent.children.length
       ) {
         let closestBottomNode;
         for (
           let i = this.lastNodeParent.id + 1;
-          i < this.lastNodeParent.parent.nodes.length;
+          i < this.lastNodeParent.parent.children.length;
           i++
         ) {
-          if (this.lastNodeParent.parent.nodes[i].nodes.length) {
-            closestBottomNode = this.lastNodeParent.parent.nodes[i];
+          if (this.lastNodeParent.parent.children[i].children.length) {
+            closestBottomNode = this.lastNodeParent.parent.children[i];
             break;
           }
         }
 
-        if (closestBottomNode) this.lastNode = closestBottomNode.nodes[0];
+        if (closestBottomNode) this.lastNode = closestBottomNode.children[0];
       }
     }
   }
@@ -217,23 +215,35 @@ class Tree {
 
   goRight() {
     if (this._lastNode.editing) return;
-    if (!this._lastNode || !this._lastNode.nodes.length) return;
-    let index = Math.floor(this._lastNode.nodes.length / 2);
-    this.lastNode = this._lastNode.nodes[index];
+    if (!this._lastNode || !this._lastNode.children.length) return;
+    let index = Math.floor(this._lastNode.children.length / 2);
+    this.lastNode = this._lastNode.children[index];
   }
 
-  get nodes() {
-    return this._root.nodes;
+  get children() {
+    return this._root.children;
+  }
+
+  get name() {
+    return "root";
+  }
+
+  get connections() {
+    return this._connections;
   }
 
   get lastNodeID() {
     return this.lastNodeParent
-      ? this.lastNodeParent.nodes.length
-      : this._root.nodes.length;
+      ? this.lastNodeParent.children.length
+      : this._root.children.length;
   }
 
   get lastNode() {
     return this._lastNode;
+  }
+
+  get value() {
+    return "root";
   }
 
   get lastNodeParent() {
@@ -244,9 +254,18 @@ class Tree {
     return this._counter++;
   }
 
+  get canvas() {
+    return this._canvas;
+  }
+
+  get arrows() {
+    return this._arrows;
+  }
+
   set lastNode(node) {
     if (!(node instanceof Node))
       return console.error(`${node} is not instance of Node`);
+    this._lastNode?.setEditing(false);
     this._lastNode = node;
   }
 }

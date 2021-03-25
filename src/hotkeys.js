@@ -11,7 +11,7 @@ function keydown(e) {
 
   switch (key) {
     case "tab":
-      call("tree-add-child", true);
+      call("tree-add-child", null, { prevent: true });
       break;
     case "enter":
       call("tree-add-sibling");
@@ -20,11 +20,10 @@ function keydown(e) {
       call("tree-node-collapse");
       break;
     case "e":
-      call("tree-node-edit");
+      call("tree-node-edit", e);
       break;
     case "d":
     case "delete":
-    case "backspace":
       call("tree-delete-last-node");
       break;
     case "arrowup":
@@ -43,9 +42,9 @@ function keydown(e) {
       break;
   }
 
-  function call(event, prevent) {
-    if (prevent) e.preventDefault();
-    eventBus.$emit(event);
+  function call(eventName, event, options = { prevent: false }) {
+    if (options.prevent) e.preventDefault();
+    eventBus.$emit(eventName, event);
   }
 }
 

@@ -20,6 +20,7 @@
         <p>{{ node.name || text }}</p>
       </div>
     </div>
+
     <div class="entry">
       <Node
         v-show="!node.collapsed"
@@ -33,6 +34,7 @@
 <script>
 import { eventBus } from "@/hotkeys";
 import { Node as NodeClass, tree } from "@/tree";
+import { getBoxToBoxArrow } from "perfect-arrows";
 
 export default {
   name: "Node",
@@ -40,15 +42,22 @@ export default {
     node: NodeClass,
   },
   watch: {
-    "node.editing": function (value) {
+    "node.editing": function(value) {
       if (value) this.focusNode();
     },
+    "position.top": function(newVal) {
+      console.log(this.node._gid, newVal);
+    },
   },
+
   computed: {
     text() {
       return `${this.node.children.length ? "parent" : "child"} ${
         this.node.children.length ? (this.node.collapsed ? ">" : "^") : ""
       }`;
+    },
+    position() {
+      return this.node?.el?.querySelector(".content")?.getBoundingClientRect();
     },
   },
   data() {
@@ -61,6 +70,33 @@ export default {
     eventBus.$on("tree-add-sibling", this.setName);
     if (this.node.editing) {
       this.focusNode();
+    }
+  },
+  mounted() {
+    this.node.el = this.$el;
+    if (this.node.parent) {
+      const from = this.node.parent.el
+        .querySelector(".content")
+        .getBoundingClientRect();
+      const to = this.node.el.querySelector(".content").getBoundingClientRect();
+
+      const arrow = getBoxToBoxArrow(
+        from.left,
+        from.top,
+        from.width,
+        from.height,
+        to.left,
+        to.top,
+        to.width,
+        to.height
+      );
+
+      const [sx, sy, cx, cy, ex, ey, ae] = arrow;
+
+      const path = `M${sx},${sy} Q${cx},${cy} ${ex},${ey}`;
+      const transform = `translate(${ex},${ey}) rotate(${ae *
+        (180 / Math.PI)})`;
+      tree.addArrow({ path, transform });
     }
   },
   methods: {
@@ -102,36 +138,6 @@ export default {
   position: relative;
   padding: 5px 0 5px 15px;
   box-sizing: border-box;
-}
-
-.branch:before {
-  content: "";
-  border: 1px solid black;
-  border-top: none;
-  border-left: none;
-  width: 16px;
-  height: 0;
-  position: absolute;
-  left: -5px;
-}
-
-.branch:not(:only-of-type):after {
-  content: "";
-  border: 1px solid black;
-  border-top: none;
-  border-left: none;
-  width: 0px;
-  height: 100%;
-  position: absolute;
-  left: -5px;
-}
-
-.branch:first-of-type:after {
-  top: 50%;
-}
-
-.branch:last-of-type:after {
-  bottom: 50%;
 }
 
 .branch > .content {
