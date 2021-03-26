@@ -27,7 +27,6 @@
           v-bind:node="node.data"
           v-bind:collapsed="node.data._collapsed"
         >
-          <!-- 默认展示value字段 -->
           <span>{{ node.data.value }}</span>
         </slot>
       </div>
@@ -222,9 +221,6 @@ export default {
         this.initTransformY = Math.floor(containerHeight / 2);
       }
     },
-    /**
-     * 根据link数据,生成svg path data
-     */
     generateLinkPath(d) {
       const self = this;
       if (this.linkStyle === LinkStyle.CURVE) {
@@ -282,7 +278,6 @@ export default {
         return linkPath.toString();
       }
     },
-    // 使用扇形数据开始绘图
     draw() {
       const [nodeDataList, linkDataList] = this.buildTree(this.dataset);
       this.linkDataList = linkDataList;
@@ -335,7 +330,6 @@ export default {
       let startX = 0;
       let startY = 0;
       let isDrag = false;
-      // 保存鼠标点下时的位移
       let mouseDownTransform = "";
       container.onmousedown = (event) => {
         mouseDownTransform = svgElement.style.transform;

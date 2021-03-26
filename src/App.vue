@@ -1,15 +1,6 @@
 <template>
   <div id="app">
     <Tree />
-    <!-- <svg height="100%" width="100%" stroke="#000" fill="#000" strokeWidth="3">
-      <path
-        v-for="(arrow, index) in tree.arrows"
-        :key="index"
-        :d="arrow.path"
-        fill="none"
-      />
-      <polygon points="0,-6 12,0, 0,6" transform="${transform}" />
-    </svg> -->
   </div>
 </template>
 

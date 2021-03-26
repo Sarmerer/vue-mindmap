@@ -3,6 +3,7 @@ class Node {
     this._gid = globalID;
     this._id = id;
     this._name = "";
+    this._nameEdit = "";
     this._parentNode = parentNode;
     this._children = [];
     this._collapsed = false;
@@ -15,10 +16,6 @@ class Node {
   addChild(node) {
     if (!(node instanceof Node)) return;
     this._children.push(node);
-  }
-
-  setName(value) {
-    this.name = value;
   }
 
   setEditing(value) {
@@ -41,6 +38,10 @@ class Node {
 
   get name() {
     return this._name || `node #${this._gid}`;
+  }
+
+  get nameEdit() {
+    return this._nameEdit;
   }
 
   get editing() {
@@ -84,17 +85,16 @@ class Node {
 
 class Tree {
   constructor() {
-    this._root = this.createNode(0, null);
-    this._connections = [];
+    this._root = new Node(this.counter, 0, null, 0);
     this.lastNode = this._root;
     this._counter = 0;
   }
 
   addSibling() {
-    if (this._lastNode.editing) return (this.lastNode.editing = false);
+    if (this._lastNode.editing) return this.setLastNodeName();
     const node = this.createNode(
       this.lastNodeID,
-      !this.lastNodeParent ? this._root : this.lastNodeParent,
+      this.lastNodeParent ? this.lastNodeParent : this._root,
       this._lastNode.depth || 1
     );
 
@@ -136,7 +136,11 @@ class Tree {
   }
 
   deleteLastNode() {
-    if (this._lastNode.editing || !this.lastNodeParent) return;
+    if (
+      (this._lastNode.editing && !this._lastNode._firstEdit) ||
+      !this.lastNodeParent
+    )
+      return;
 
     let newLast = null;
 
@@ -147,7 +151,7 @@ class Tree {
         this.lastNodeParent.parent.children.length - 1
       ];
     } else {
-      newLast = this.lastNodeParent.parent;
+      newLast = this.lastNodeParent;
     }
     this.lastNodeParent.children.splice(this._lastNode.id, 1);
     this.lastNode = newLast;
@@ -159,6 +163,17 @@ class Tree {
 
   editLastNode() {
     this._lastNode.setEditing(true);
+  }
+
+  blurLastNode() {
+    this._lastNode._firstEdit
+      ? this.deleteLastNode()
+      : (this._lastNode.editing = false);
+  }
+
+  setLastNodeName() {
+    this._lastNode.name = this._lastNode.nameEdit;
+    this._lastNode.editing = false;
   }
 
   goUp() {
@@ -209,7 +224,7 @@ class Tree {
 
   goLeft() {
     if (this._lastNode.editing) return;
-    if (!this._lastNode?.parent) return;
+    if (!this._lastNode?.parent?.parent) return;
     this.lastNode = this._lastNode.parent;
   }
 
@@ -264,7 +279,9 @@ class Tree {
 
   set lastNode(node) {
     if (!(node instanceof Node))
-      return console.error(`${node} is not instance of Node`);
+      return !node?._root
+        ? console.error(`${node} is not instance of Node`)
+        : null;
     this._lastNode?.setEditing(false);
     this._lastNode = node;
   }

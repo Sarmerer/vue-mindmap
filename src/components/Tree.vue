@@ -1,5 +1,20 @@
 <template>
   <div class="wrapper">
+    <modal name="info-modal" :adaptive="true" height="auto" width="500px">
+      <div id="modal">
+        <table class="info-table">
+          <tr v-for="(i, index) in info" :key="index" class="info-row">
+            <td class="info-col-action">
+              {{ i.action }}
+            </td>
+            <td class="info-col-hotkey">
+              {{ i.hotkey }}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </modal>
+    <button id="modal-button" @click="$modal.show('info-modal')">Help</button>
     <vue-tree
       style="width: 100%; height: 100%"
       :dataset="tree"
@@ -17,7 +32,12 @@
           @click="setLastNode(node)"
         >
           <span v-if="!node.editing" class="tree-node">{{ node.value }} </span>
-          <input v-else v-model="node._name" :ref="`node-#${node._gid}`" />
+          <input
+            v-else
+            v-model="node._nameEdit"
+            :ref="`node-#${node._gid}`"
+            @blur="blurLastNode"
+          />
         </div>
       </template>
     </vue-tree>
@@ -39,7 +59,13 @@ export default {
     return {
       tree: tree,
       counter: 0,
-
+      info: [
+        { action: "Add sibling", hotkey: "Enter" },
+        { action: "Add child", hotkey: "Tab" },
+        { action: "Edit selected node", hotkey: "E" },
+        { action: "Collapse selected node", hotkey: "C" },
+        { action: "Delete selected node", hotkey: "D / Delete" },
+      ],
       treeConfig: { nodeWidth: 120, nodeHeight: 80, levelHeight: 200 },
     };
   },
@@ -76,9 +102,8 @@ export default {
         this.$refs[`node-#${tree.lastNode._gid}`]?.focus();
       });
     },
-    setName() {
-      tree.lastNode.setName(this.lastNode.name);
-      this.updateKey();
+    setLastNodeName() {
+      tree.setLastNodeName();
     },
     setLastNode(node) {
       if (tree.lastNode._gid === node._gid) return this.collapseLastNode();
@@ -90,6 +115,10 @@ export default {
       this.$nextTick(() => {
         this.$refs[`node-#${tree.lastNode._gid}`]?.focus();
       });
+    },
+    blurLastNode() {
+      tree.blurLastNode();
+      this.updateKey();
     },
     collapseLastNode() {
       tree.collapseLastNode();
@@ -135,9 +164,50 @@ export default {
   height: 100%;
 }
 
-#title {
-  padding: 0;
-  margin: 0;
+#modal-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+  border: none;
+  z-index: 1;
+}
+
+#modal-button:active {
+  top: 1.07rem;
+  border: none;
+}
+
+#modal {
+  padding: 1rem;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-row:nth-child(odd) {
+  background-color: rgba(101, 101, 101, 0.408);
+}
+
+.info-row > td {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  border: 1px solid black;
+}
+
+.info-col-action {
+  width: 50%;
+  padding-right: 1rem;
+  text-align: right;
+}
+
+.info-col-hotkey {
+  width: 50%;
+  padding-left: 1rem;
+  text-align: left;
 }
 
 .tree {
@@ -146,7 +216,6 @@ export default {
 
 .highlighted {
   border: 2px solid black;
-  /* box-shadow: inset 0 0 0 2px black; */
 }
 
 .stack {
