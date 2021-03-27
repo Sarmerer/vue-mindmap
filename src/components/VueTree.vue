@@ -12,23 +12,30 @@
         v-for="node of nodeDataList"
         :key="node.data._key"
         :style="{
-          left: formatDimension(
-            direction === DIRECTION.VERTICAL ? node.x : node.y
-          ),
-          top: formatDimension(
-            direction === DIRECTION.VERTICAL ? node.y : node.x
-          ),
+          left: formatDimension(node.y),
+          top: formatDimension(node.x),
           width: formatDimension(config.nodeWidth),
           height: formatDimension(config.nodeHeight),
         }"
       >
-        <slot
-          name="node"
-          v-bind:node="node.data"
-          v-bind:collapsed="node.data._collapsed"
+        <div
+          class="node"
+          :class="{
+            highlighted: node.data._gid === dataset.lastNode._gid,
+            stack: node.data.childrenLength && node.data.collapsed,
+          }"
+          @click="setLastNode(node.data)"
         >
-          <span>{{ node.data.value }}</span>
-        </slot>
+          <span v-if="!node.data.editing" class="tree-node"
+            >{{ node.data.name }}
+          </span>
+          <input
+            v-else
+            v-model="node.data._nameEdit"
+            :ref="`node-#${node.data._gid}`"
+            @blur="blurLastNode"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -36,6 +43,8 @@
 
 <script>
 import * as d3 from "d3";
+import { tree } from "@/tree";
+import { eventBus } from "@/hotkeys";
 
 const MATCH_TRANSLATE_REGEX = /translate\((-?\d+)px, ?(-?\d+)px\)/i;
 const MATCH_SCALE_REGEX = /scale\((\S*)\)/i;
@@ -45,12 +54,7 @@ const LinkStyle = {
   STRAIGHT: "straight",
 };
 
-const DIRECTION = {
-  VERTICAL: "vertical",
-  HORIZONTAL: "horizontal",
-};
-
-const DEFAULT_NODE_WIDTH = 100;
+const DEFAULT_NODE_WIDTH = 200;
 const DEFAULT_NODE_HEIGHT = 100;
 const DEFAULT_LEVEL_HEIGHT = 200;
 
@@ -92,25 +96,16 @@ export default {
       type: String,
       default: LinkStyle.CURVE,
     },
-    direction: {
-      type: String,
-      default: DIRECTION.VERTICAL,
-    },
-    // 展示的层级数据, 样例数据如: hierachical.json
-    dataset: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
       d3,
+      dataset: tree,
       colors: "568FE1",
       nodeDataList: [],
       linkDataList: [],
       initTransformX: 0,
       initTransformY: 0,
-      DIRECTION,
       currentScale: 1,
     };
   },
@@ -126,6 +121,22 @@ export default {
     this.addUniqueKey(this.dataset);
     window.addEventListener("wheel", this.handleZoom);
     window.addEventListener("auxclick", this.handleZoom);
+
+    eventBus.$on("tree-add-sibling", this.addSibling);
+    eventBus.$on("tree-add-child", this.addChild);
+    eventBus.$on("tree-set-last-node", (args) => {
+      if (args && args[0]) this.setLastNode(args[0]);
+    });
+    eventBus.$on("tree-node-collapse", this.collapseLastNode);
+    eventBus.$on("tree-node-edit", (e) => this.editLastNode(e));
+
+    eventBus.$on("tree-delete-last-node", this.deleteLastNode);
+    eventBus.$on("tree-delete-last-level", this.deleteLastLevel);
+
+    eventBus.$on("tree-go-up", this.goUp);
+    eventBus.$on("tree-go-down", this.goDown);
+    eventBus.$on("tree-go-left", this.goLeft);
+    eventBus.$on("tree-go-right", this.goRight);
   },
   mounted() {
     this.init();
@@ -136,6 +147,68 @@ export default {
     window.removeEventListener("auxclick", this.handleZoom);
   },
   methods: {
+    addSibling() {
+      tree.addSibling();
+      this.$nextTick(() => {
+        const input = this.$refs[`node-#${tree.lastNode._gid}`];
+        if (input[0]) input[0].focus();
+      });
+    },
+    addChild() {
+      tree.addChild();
+      this.$nextTick(() => {
+        const input = this.$refs[`node-#${tree.lastNode._gid}`];
+        if (input[0]) input[0].focus();
+      });
+    },
+    setLastNodeName() {
+      tree.setLastNodeName();
+    },
+    setLastNode(node) {
+      if (tree.lastNode._gid === node._gid) return this.collapseLastNode();
+      tree.lastNode = node;
+    },
+    editLastNode(e) {
+      if (!tree.lastNode.editing) e?.preventDefault();
+      tree.editLastNode();
+      this.$nextTick(() => {
+        const input = this.$refs[`node-#${tree.lastNode._gid}`];
+        if (input[0]) input[0].focus();
+      });
+    },
+    blurLastNode() {
+      tree.blurLastNode();
+    },
+    collapseLastNode() {
+      tree.collapseLastNode();
+    },
+    deleteLastNode() {
+      tree.deleteLastNode();
+    },
+
+    goUp() {
+      tree.goUp();
+    },
+    goDown() {
+      tree.goDown();
+    },
+    goLeft() {
+      tree.goLeft();
+    },
+    goRight() {
+      tree.goRight();
+    },
+    getID(node) {
+      return node._gid;
+    },
+    clickedText(node) {
+      this.setLastNode(node.data);
+    },
+    clickedNode(node) {
+      this.setLastNode(node);
+      tree.collapseLastNode();
+    },
+
     handleZoom(e) {
       if (e.which === 2) {
         return this.restoreScale();
@@ -196,9 +269,6 @@ export default {
       let y = parseInt(match[2]);
       return [x, y];
     },
-    isVertical() {
-      return this.direction === DIRECTION.VERTICAL;
-    },
     addUniqueKey(rootNode) {
       const queue = [rootNode];
       while (queue.length !== 0) {
@@ -211,22 +281,13 @@ export default {
       return rootNode;
     },
     initTransform() {
-      const containerWidth = this.$refs.container.offsetWidth;
       const containerHeight = this.$refs.container.offsetHeight;
-      if (this.isVertical()) {
-        this.initTransformX = Math.floor(containerWidth / 2);
-        this.initTransformY = Math.floor(this.config.nodeHeight);
-      } else {
-        this.initTransformX = Math.floor(this.config.nodeWidth);
-        this.initTransformY = Math.floor(containerHeight / 2);
-      }
+      this.initTransformX = Math.floor(this.config.nodeWidth);
+      this.initTransformY = Math.floor(containerHeight / 2);
     },
     generateLinkPath(d) {
-      const self = this;
       if (this.linkStyle === LinkStyle.CURVE) {
-        const linkPath = this.isVertical()
-          ? d3.linkVertical()
-          : d3.linkHorizontal();
+        const linkPath = d3.linkHorizontal();
         linkPath
           .x(function(d) {
             return d.x;
@@ -239,18 +300,14 @@ export default {
               x: d.source.x,
               y: d.source.y,
             };
-            return self.direction === self.DIRECTION.VERTICAL
-              ? sourcePoint
-              : rotatePoint(sourcePoint);
+            return rotatePoint(sourcePoint);
           })
           .target(function(d) {
             const targetPoint = {
               x: d.target.x,
               y: d.target.y,
             };
-            return self.direction === self.DIRECTION.VERTICAL
-              ? targetPoint
-              : rotatePoint(targetPoint);
+            return rotatePoint(targetPoint);
           });
         return linkPath(d);
       }
@@ -259,18 +316,14 @@ export default {
         const linkPath = d3.path();
         let sourcePoint = { x: d.source.x, y: d.source.y };
         let targetPoint = { x: d.target.x, y: d.target.y };
-        if (!this.isVertical()) {
-          sourcePoint = rotatePoint(sourcePoint);
-          targetPoint = rotatePoint(targetPoint);
-        }
+        sourcePoint = rotatePoint(sourcePoint);
+        targetPoint = rotatePoint(targetPoint);
         const xOffset = targetPoint.x - sourcePoint.x;
-        const yOffset = targetPoint.y - sourcePoint.y;
-        const secondPoint = this.isVertical()
-          ? { x: sourcePoint.x, y: sourcePoint.y + yOffset / 2 }
-          : { x: sourcePoint.x + xOffset / 2, y: sourcePoint.y };
-        const thirdPoint = this.isVertical()
-          ? { x: targetPoint.x, y: sourcePoint.y + yOffset / 2 }
-          : { x: sourcePoint.x + xOffset / 2, y: targetPoint.y };
+        const secondPoint = {
+          x: sourcePoint.x + xOffset / 2,
+          y: sourcePoint.y,
+        };
+        const thirdPoint = { x: sourcePoint.x + xOffset / 2, y: targetPoint.y };
         linkPath.moveTo(sourcePoint.x, sourcePoint.y);
         linkPath.lineTo(secondPoint.x, secondPoint.y);
         linkPath.lineTo(thirdPoint.x, thirdPoint.y);
@@ -402,8 +455,12 @@ export default {
     },
   },
   watch: {
-    dataset() {
-      this.draw();
+    dataset: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.draw();
+      },
     },
   },
 };
@@ -411,8 +468,14 @@ export default {
 
 <style lang="scss">
 .tree-container {
+  width: 100%;
+  height: 100%;
   .node {
-    fill: grey !important;
+    padding: 1rem;
+    border-radius: 0.2rem;
+    background-color: grey;
+    color: white;
+    user-select: none;
   }
 
   .link {
@@ -424,19 +487,6 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-.tree-node-item-enter,
-.tree-node-item-leave-to {
-  transition-timing-function: ease-in-out;
-  transition: transform 0.8s;
-  opacity: 0;
-}
-
-.tree-node-item-enter-active,
-.tree-node-item-leave-active {
-  transition-timing-function: ease-in-out;
-  transition: all 0.8s;
-}
-
 .tree-container {
   position: relative;
   overflow: hidden;
@@ -472,7 +522,45 @@ export default {
   align-items: center;
   justify-content: center;
   box-sizing: content-box;
-  transition: all 0.8s;
+  transition: all 0.1s;
   transition-timing-function: ease-in-out;
+}
+
+.highlighted {
+  border: 2px solid black;
+}
+
+.stack {
+  position: relative;
+}
+
+.stack,
+.stack::before,
+.stack::after {
+  box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.15);
+}
+
+.stack::before,
+.stack::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: grey;
+  border-radius: 0.2rem;
+}
+
+/* Second sheet of stack */
+.stack::before {
+  left: 4px;
+  top: 4px;
+  z-index: -1;
+}
+
+/* Third sheet of stack */
+.stack::after {
+  left: 8px;
+  top: 8px;
+  z-index: -2;
 }
 </style>

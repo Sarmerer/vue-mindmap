@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Tree from "@/components/Tree";
+import Tree from "@/components/VueTree";
 
 export default {
   name: "App",

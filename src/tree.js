@@ -18,10 +18,6 @@ class Node {
     this._children.push(node);
   }
 
-  setEditing(value) {
-    this.editing = value;
-  }
-
   get id() {
     return this._id;
   }
@@ -56,17 +52,13 @@ class Node {
     return this._children.length;
   }
 
-  get value() {
-    return this._name || `node #${this._gid}`;
-  }
-
   get el() {
     return this._el;
   }
 
   set name(value) {
     this._name = value;
-    this.setEditing(false);
+    this.editing = false;
   }
 
   set editing(value) {
@@ -85,6 +77,7 @@ class Node {
 
 class Tree {
   constructor() {
+    this._name = "root";
     this._root = new Node(this.counter, 0, null, 0);
     this.lastNode = this._root;
     this._counter = 0;
@@ -136,12 +129,7 @@ class Tree {
   }
 
   deleteLastNode() {
-    if (
-      (this._lastNode.editing && !this._lastNode._firstEdit) ||
-      !this.lastNodeParent
-    )
-      return;
-
+    if (this._lastNode.editing || !this.lastNodeParent) return;
     let newLast = null;
 
     if (this._lastNode.id - 1 >= 0) {
@@ -158,11 +146,13 @@ class Tree {
   }
 
   collapseLastNode() {
+    if (this._lastNode.editing) return;
     this._lastNode.collapsed = !this._lastNode.collapsed;
   }
 
   editLastNode() {
-    this._lastNode.setEditing(true);
+    if (this._lastNode.editing) return;
+    this._lastNode.editing = !this._lastNode.editing;
   }
 
   blurLastNode() {
@@ -235,16 +225,12 @@ class Tree {
     this.lastNode = this._lastNode.children[index];
   }
 
+  get name() {
+    return this._name;
+  }
+
   get children() {
     return this._root.children;
-  }
-
-  get name() {
-    return "root";
-  }
-
-  get connections() {
-    return this._connections;
   }
 
   get lastNodeID() {
@@ -257,10 +243,6 @@ class Tree {
     return this._lastNode;
   }
 
-  get value() {
-    return "root";
-  }
-
   get lastNodeParent() {
     return this._lastNode?.parent || null;
   }
@@ -269,20 +251,13 @@ class Tree {
     return this._counter++;
   }
 
-  get canvas() {
-    return this._canvas;
-  }
-
-  get arrows() {
-    return this._arrows;
-  }
-
   set lastNode(node) {
     if (!(node instanceof Node))
       return !node?._root
         ? console.error(`${node} is not instance of Node`)
         : null;
-    this._lastNode?.setEditing(false);
+
+    if (this?._lastNode?.editing) this._lastNode.editing = false;
     this._lastNode = node;
   }
 }
