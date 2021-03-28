@@ -1,5 +1,20 @@
 <template>
   <div class="tree-container" ref="container">
+    <modal name="info-modal" :adaptive="true" height="auto" width="500px">
+      <div id="modal">
+        <table class="info-table">
+          <tr v-for="(e, index) in events" :key="index" class="info-row">
+            <td class="info-col-action">
+              {{ e.name }}
+            </td>
+            <td class="info-col-hotkey">
+              {{ e.hotkey.join(" / ") }}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </modal>
+    <button id="modal-button" @click="$modal.show('info-modal')">Help</button>
     <svg class="svg vue-tree" ref="svg" :style="initialTransformStyle"></svg>
 
     <div
@@ -34,6 +49,7 @@
             v-model="node.data._nameEdit"
             :ref="`node-#${node.data._gid}`"
             @blur="blurLastNode"
+            @keydown.esc="cancelNodeEdit"
           />
         </div>
       </div>
@@ -44,7 +60,7 @@
 <script>
 import * as d3 from "d3";
 import { tree } from "@/tree";
-import { eventBus } from "@/hotkeys";
+import { events, eventBus } from "@/hotkeys";
 
 const MATCH_TRANSLATE_REGEX = /translate\((-?\d+)px, ?(-?\d+)px\)/i;
 const MATCH_SCALE_REGEX = /scale\((\S*)\)/i;
@@ -100,6 +116,7 @@ export default {
   data() {
     return {
       d3,
+      events,
       dataset: tree,
       colors: "568FE1",
       nodeDataList: [],
@@ -149,17 +166,11 @@ export default {
   methods: {
     addSibling() {
       tree.addSibling();
-      this.$nextTick(() => {
-        const input = this.$refs[`node-#${tree.lastNode._gid}`];
-        if (input[0]) input[0].focus();
-      });
+      this.focusInput(`node-#${tree.lastNode._gid}`);
     },
     addChild() {
       tree.addChild();
-      this.$nextTick(() => {
-        const input = this.$refs[`node-#${tree.lastNode._gid}`];
-        if (input[0]) input[0].focus();
-      });
+      this.focusInput(`node-#${tree.lastNode._gid}`);
     },
     setLastNodeName() {
       tree.setLastNodeName();
@@ -171,10 +182,7 @@ export default {
     editLastNode(e) {
       if (!tree.lastNode.editing) e?.preventDefault();
       tree.editLastNode();
-      this.$nextTick(() => {
-        const input = this.$refs[`node-#${tree.lastNode._gid}`];
-        if (input[0]) input[0].focus();
-      });
+      this.focusInput(`node-#${tree.lastNode._gid}`);
     },
     blurLastNode() {
       tree.blurLastNode();
@@ -184,6 +192,11 @@ export default {
     },
     deleteLastNode() {
       tree.deleteLastNode();
+    },
+    cancelNodeEdit() {
+      tree.lastNode.firstEdit
+        ? tree.deleteLastNode({ force: true })
+        : (tree.lastNode.editing = false);
     },
 
     goUp() {
@@ -198,9 +211,6 @@ export default {
     goRight() {
       tree.goRight();
     },
-    getID(node) {
-      return node._gid;
-    },
     clickedText(node) {
       this.setLastNode(node.data);
     },
@@ -208,14 +218,20 @@ export default {
       this.setLastNode(node);
       tree.collapseLastNode();
     },
+    focusInput(ref) {
+      if (!ref) return;
+      this.$nextTick(() => {
+        const input = this.$refs[ref];
+        if (input && input[0]) input[0].focus();
+      });
+    },
 
     handleZoom(e) {
-      if (e.which === 2) {
-        return this.restoreScale();
-      }
-      ((e.deltaY || -e.wheelDelta || e.detail) >> 10 || 1) < 0
-        ? this.zoomIn()
-        : this.zoomOut();
+      if (e.which === 2) return this.restoreScale();
+      if (!e.which)
+        ((e.deltaY || -e.wheelDelta || e.detail) >> 10 || 1) < 0
+          ? this.zoomIn()
+          : this.zoomOut();
     },
     init() {
       this.draw();
@@ -467,6 +483,53 @@ export default {
 </script>
 
 <style lang="scss">
+#modal-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+  border: none;
+  z-index: 1;
+}
+
+#modal-button:active {
+  top: 1.07rem;
+  border: none;
+}
+
+#modal {
+  padding: 1rem;
+  user-select: none;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-row:nth-child(odd) {
+  background-color: rgba(167, 167, 167, 0.408);
+}
+
+.info-row > td {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  border: 1px solid black;
+}
+
+.info-col-action {
+  width: 50%;
+  padding-right: 1rem;
+  text-align: right;
+}
+
+.info-col-hotkey {
+  width: 50%;
+  padding-left: 1rem;
+  text-align: left;
+}
+
 .tree-container {
   width: 100%;
   height: 100%;

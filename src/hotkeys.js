@@ -2,45 +2,54 @@ import Vue from "vue";
 
 export const eventBus = new Vue();
 
+export const events = [
+  {
+    name: "Add child",
+    action: "tree-add-child",
+    hotkey: "tab",
+    options: { prevent: true },
+  },
+  { name: "Add sibling", action: "tree-add-sibling", hotkey: "enter" },
+  { name: "Collapse last node", action: "tree-node-collapse", hotkey: "c" },
+  { name: "Edit last node", action: "tree-node-edit", hotkey: "e" },
+  {
+    name: "Delete last node",
+    action: "tree-delete-last-node",
+    hotkey: ["d", "delete", "backspace"],
+  },
+  { name: "Cursor up", action: "tree-go-up", hotkey: "arrowup" },
+  { name: "Cursor right", action: "tree-go-right", hotkey: "arrowright" },
+  { name: "Cursor down", action: "tree-go-down", hotkey: "arrowdown" },
+  { name: "Cursor left", action: "tree-go-left", hotkey: "arrowleft" },
+];
+
+const eventsMap = {};
+
 export function Init() {
   window.addEventListener("keydown", keydown);
+
+  for (let event of events) {
+    if (!(event.hotkey instanceof Array)) {
+      event.hotkey = [event.hotkey];
+    }
+
+    for (let key of event.hotkey) {
+      const k = key.toLowerCase();
+      if (eventsMap[k]) {
+        console.error(
+          `Multiple hotkeys binding on single action: ${event.action}`
+        );
+        continue;
+      }
+      eventsMap[k] = event;
+    }
+  }
 }
 
 function keydown(e) {
   const key = getCombination(e);
-
-  switch (key) {
-    case "tab":
-      call("tree-add-child", null, { prevent: true });
-      break;
-    case "enter":
-      call("tree-add-sibling");
-      break;
-    case "c":
-      call("tree-node-collapse");
-      break;
-    case "e":
-      call("tree-node-edit", e);
-      break;
-    case "d":
-    case "delete":
-      call("tree-delete-last-node");
-      break;
-    case "arrowup":
-      call("tree-go-up");
-      break;
-    case "arrowdown":
-      call("tree-go-down");
-      break;
-    case "arrowleft":
-      call("tree-go-left");
-      break;
-    case "arrowright":
-      call("tree-go-right");
-      break;
-    default:
-      break;
-  }
+  const match = eventsMap[key];
+  if (match) call(match.action, e, match.options);
 
   function call(eventName, event, options = { prevent: false }) {
     if (options.prevent) e.preventDefault();

@@ -52,6 +52,10 @@ class Node {
     return this._children.length;
   }
 
+  get firstEdit() {
+    return this._firstEdit;
+  }
+
   get el() {
     return this._el;
   }
@@ -99,8 +103,11 @@ class Tree {
 
   addChild() {
     if (this._lastNode.editing) {
-      if (!this._lastNode._firstEdit) return;
-      this.deleteLastNode();
+      if (!this._lastNode._firstEdit) {
+        this.setLastNodeName();
+      } else {
+        this.deleteLastNode();
+      }
     }
     const id = this._lastNode
       ? this._lastNode.children.length
@@ -128,8 +135,9 @@ class Tree {
     return new Node(this.counter, id, parent, depth);
   }
 
-  deleteLastNode() {
-    if (this._lastNode.editing || !this.lastNodeParent) return;
+  deleteLastNode(options = { force: false }) {
+    if ((this._lastNode.editing || !this.lastNodeParent) && !options.force)
+      return;
     let newLast = null;
 
     if (this._lastNode.id - 1 >= 0) {
@@ -163,7 +171,6 @@ class Tree {
 
   setLastNodeName() {
     this._lastNode.name = this._lastNode.nameEdit;
-    this._lastNode.editing = false;
   }
 
   goUp() {
