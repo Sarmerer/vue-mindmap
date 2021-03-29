@@ -61,6 +61,7 @@
 import * as d3 from "d3";
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
+import { store } from "@/store";
 
 const MATCH_TRANSLATE_REGEX = /translate\((-?\d+)px, ?(-?\d+)px\)/i;
 const MATCH_SCALE_REGEX = /scale\((\S*)\)/i;
@@ -96,7 +97,7 @@ function rotatePoint({ x, y }) {
 }
 
 export default {
-  name: "vue-tree",
+  name: "Tree",
   props: {
     config: {
       type: Object,
@@ -138,6 +139,7 @@ export default {
     this.addUniqueKey(this.dataset);
     window.addEventListener("wheel", this.handleZoom);
     window.addEventListener("auxclick", this.handleZoom);
+    window.addEventListener("unload", this.beforeUnload);
 
     eventBus.$on("tree-add-sibling", this.addSibling);
     eventBus.$on("tree-add-child", this.addChild);
@@ -159,11 +161,19 @@ export default {
     this.init();
   },
 
-  beforeDestroyed() {
-    window.removeEventListener("wheel", this.handleZoom);
-    window.removeEventListener("auxclick", this.handleZoom);
-  },
+  // beforeUnmount() {
+  //   window.removeEventListener("wheel", this.handleZoom);
+  //   window.removeEventListener("auxclick", this.handleZoom);
+  //   store.save(tree);
+  // },
+
   methods: {
+    beforeUnload() {
+      store.save(tree);
+      window.removeEventListener("wheel", this.handleZoom);
+      window.removeEventListener("auxclick", this.handleZoom);
+      window.removeEventListener("unload", this.beforeUnload);
+    },
     addSibling() {
       tree.addSibling();
       this.focusInput(`node-#${tree.lastNode._gid}`);

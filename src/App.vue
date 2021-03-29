@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <Tree />
+    <tree></tree>
   </div>
 </template>
 
 <script>
-import Tree from "@/components/VueTree";
+import Tree from "@/components/Tree";
 
 export default {
   name: "App",
