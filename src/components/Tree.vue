@@ -46,7 +46,7 @@
           </span>
           <input
             v-else
-            v-model="node.data._nameEdit"
+            v-model="node.data._name"
             :ref="`node-#${node.data._gid}`"
             @blur="blurLastNode"
             @keydown.esc="cancelNodeEdit"
@@ -183,9 +183,6 @@ export default {
     addChild() {
       tree.addChild();
       this.focusInput(`node-#${tree.lastNode._gid}`);
-    },
-    setLastNodeName() {
-      tree.setLastNodeName();
     },
     setLastNode(node) {
       if (tree.lastNode._gid === node._gid) return this.collapseLastNode();

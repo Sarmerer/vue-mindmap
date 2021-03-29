@@ -13,7 +13,6 @@ class Node {
     this._gid = globalID;
     this._id = id;
     this._name = name;
-    this._nameEdit = "";
     this._parentNode = parentNode;
     this._children = children;
     this._collapsed = false;
@@ -44,10 +43,6 @@ class Node {
 
   get name() {
     return this._name || `node #${this._gid}`;
-  }
-
-  get nameEdit() {
-    return this._nameEdit;
   }
 
   get editing() {
@@ -103,7 +98,7 @@ class Tree {
   }
 
   addSibling() {
-    if (this._lastNode.editing) return this.setLastNodeName();
+    if (this._lastNode.editing) return (this._lastNode.editing = false);
     const node = this.createNode(
       this.lastNodeID,
       this.lastNodeParent ? this.lastNodeParent : this._root,
@@ -119,7 +114,7 @@ class Tree {
   addChild() {
     if (this._lastNode.editing) {
       if (!this._lastNode._firstEdit) {
-        this.setLastNodeName();
+        this._lastNode.editing = false;
       } else {
         this.deleteLastNode();
       }
@@ -182,10 +177,6 @@ class Tree {
     this._lastNode._firstEdit
       ? this.deleteLastNode()
       : (this._lastNode.editing = false);
-  }
-
-  setLastNodeName() {
-    this._lastNode.name = this._lastNode.nameEdit;
   }
 
   goUp() {
