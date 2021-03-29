@@ -156,6 +156,8 @@ export default {
     eventBus.$on("tree-go-down", this.goDown);
     eventBus.$on("tree-go-left", this.goLeft);
     eventBus.$on("tree-go-right", this.goRight);
+
+    eventBus.$on("document-save", store.save);
   },
   mounted() {
     this.init();

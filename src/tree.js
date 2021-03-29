@@ -270,10 +270,10 @@ class Tree {
     }
 
     function parseChildren(data, parent) {
-      return data?.children?.map((c) => {
+      return data?.children?.map((c, index) => {
         let newNode = new Node(
           self.counter,
-          0,
+          index,
           parent,
           parent.depth + 1,
           c.name,
@@ -323,5 +323,3 @@ class Tree {
 }
 
 export const tree = new Tree();
-
-console.log(tree);

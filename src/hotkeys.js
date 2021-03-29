@@ -21,6 +21,12 @@ export const events = [
   { name: "Cursor right", action: "tree-go-right", hotkey: "arrowright" },
   { name: "Cursor down", action: "tree-go-down", hotkey: "arrowdown" },
   { name: "Cursor left", action: "tree-go-left", hotkey: "arrowleft" },
+  {
+    name: "Save document",
+    action: "document-save",
+    hotkey: "ctrl+s",
+    options: { prevent: true },
+  },
 ];
 
 const eventsMap = {};

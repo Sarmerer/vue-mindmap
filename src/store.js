@@ -14,7 +14,7 @@ class Store {
     function parse(data) {
       return {
         name: data.name,
-        children: data.children.length
+        children: data?.children?.length
           ? data.children.map((c) =>
               c.children.length ? parse(c) : { name: c.name, children: [] }
             )
