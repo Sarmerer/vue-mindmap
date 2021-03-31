@@ -15,6 +15,14 @@
       </div>
     </modal>
     <button id="modal-button" @click="$modal.show('info-modal')">Help</button>
+
+    <div style="position: absolute">
+      <div v-for="(doc, index) in store.documents" :key="index">
+        <span @click="setDocument(doc.name)">{{ doc.name }}</span>
+        <button @click="deleteDocument(doc.name)">delete</button>
+      </div>
+      <button @click="createNewDocument">New doc</button>
+    </div>
     <svg class="svg vue-tree" ref="svg" :style="initialTransformStyle"></svg>
 
     <div
@@ -118,6 +126,7 @@ export default {
     return {
       d3,
       events,
+      store,
       dataset: tree,
       colors: "568FE1",
       nodeDataList: [],
@@ -157,21 +166,15 @@ export default {
     eventBus.$on("tree-go-left", this.goLeft);
     eventBus.$on("tree-go-right", this.goRight);
 
-    eventBus.$on("document-save", store.save);
+    eventBus.$on("document-save", this.saveDocument);
   },
   mounted() {
     this.init();
   },
 
-  // beforeUnmount() {
-  //   window.removeEventListener("wheel", this.handleZoom);
-  //   window.removeEventListener("auxclick", this.handleZoom);
-  //   store.save(tree);
-  // },
-
   methods: {
     beforeUnload() {
-      store.save(tree);
+      this.saveDocument();
       window.removeEventListener("wheel", this.handleZoom);
       window.removeEventListener("auxclick", this.handleZoom);
       window.removeEventListener("unload", this.beforeUnload);
@@ -179,11 +182,14 @@ export default {
     addSibling() {
       tree.addSibling();
       this.focusInput(`node-#${tree.lastNode._gid}`);
+      this.saveDocument();
     },
     addChild() {
       tree.addChild();
       this.focusInput(`node-#${tree.lastNode._gid}`);
+      this.saveDocument();
     },
+
     setLastNode(node) {
       if (tree.lastNode._gid === node._gid) return this.collapseLastNode();
       tree.lastNode = node;
@@ -192,6 +198,7 @@ export default {
       if (!tree.lastNode.editing) e?.preventDefault();
       tree.editLastNode();
       this.focusInput(`node-#${tree.lastNode._gid}`);
+      this.saveDocument();
     },
     blurLastNode() {
       tree.blurLastNode();
@@ -201,6 +208,7 @@ export default {
     },
     deleteLastNode() {
       tree.deleteLastNode();
+      this.saveDocument();
     },
     cancelNodeEdit() {
       tree.lastNode.firstEdit
@@ -233,6 +241,18 @@ export default {
         const input = this.$refs[ref];
         if (input && input[0]) input[0].focus();
       });
+    },
+    saveDocument() {
+      store.save(tree.exportToStore());
+    },
+    setDocument(name) {
+      tree.parseTreeData(store.setDocument(name));
+    },
+    createNewDocument() {
+      tree.parseTreeData(store.newDocument());
+    },
+    deleteDocument(name) {
+      tree.parseTreeData(store.deleteDocument(name));
     },
 
     handleZoom(e) {

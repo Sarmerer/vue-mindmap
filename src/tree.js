@@ -94,7 +94,7 @@ class Tree {
     this._root = new Node(this.counter, 0, null, 0);
     this.lastNode = this._root;
     this._counter = 0;
-    this.parseStore();
+    this.parseTreeData(store.data);
   }
 
   addSibling() {
@@ -238,10 +238,29 @@ class Tree {
     this.lastNode = this._lastNode.children[index];
   }
 
-  parseStore() {
-    if (!store.data?.children?.length) return;
+  exportToStore() {
+    return parse(this);
+    function parse(data) {
+      return {
+        name: data.name,
+        children: data?.children?.length
+          ? data.children.map((c) =>
+              c.children.length ? parse(c) : { name: c.name, children: [] }
+            )
+          : [],
+      };
+    }
+  }
+
+  parseTreeData(data) {
+    console.log(data);
+    if (!data) return;
     let self = this;
-    for (let node of store.data.children) {
+    this._root.children = [];
+    this._lastNode = this._root;
+    this._counter = 0;
+    if (!data.children) return;
+    for (let node of data.children) {
       parse(node, this._root);
     }
 

@@ -33,6 +33,7 @@ const eventsMap = {};
 
 export function Init() {
   window.addEventListener("keydown", keydown);
+  window.addEventListener("unload", unload);
 
   for (let event of events) {
     if (!(event.hotkey instanceof Array)) {
@@ -72,4 +73,9 @@ function getCombination(event) {
 
   combination.push(event.key.toLowerCase());
   return combination.join("+");
+}
+
+function unload() {
+  window.removeEventListener("keydown", keydown);
+  window.removeEventListener("unload", unload);
 }
