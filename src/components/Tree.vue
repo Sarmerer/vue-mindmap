@@ -1,5 +1,24 @@
 <template>
-  <div class="tree-container" ref="container">
+  <div class="wrapper">
+    <context-menu ref="contextMenu">
+      <template #items>
+        <button class="context-menu-item" @click="addSibling">
+          Add sibling
+        </button>
+        <button class="context-menu-item" @click="addChild">
+          Add child
+        </button>
+        <button class="context-menu-item" @click="collapseLastNode">
+          Collapse
+        </button>
+        <button class="context-menu-item" @click="editLastNode">
+          Edit
+        </button>
+        <button class="context-menu-item" @click="deleteLastNode">
+          Delete
+        </button>
+      </template>
+    </context-menu>
     <modal name="info-modal" :adaptive="true" height="auto" width="500px">
       <div id="modal">
         <table class="info-table">
@@ -14,51 +33,65 @@
         </table>
       </div>
     </modal>
-    <button id="modal-button" @click="$modal.show('info-modal')">Help</button>
+    <button id="modal-button" @click="$modal.show('info-modal')">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        class="bi bi-question"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"
+        />
+      </svg>
+    </button>
 
-    <div style="position: absolute">
-      <div v-for="(doc, index) in store.documents" :key="index">
-        <span @click="setDocument(doc.name)">{{ doc.name }}</span>
-        <button @click="deleteDocument(doc.name)">delete</button>
-      </div>
-      <button @click="createNewDocument">New doc</button>
-    </div>
-    <svg class="svg vue-tree" ref="svg" :style="initialTransformStyle"></svg>
+    <documents-list
+      @doc-create="createNewDocument()"
+      @doc-select="setDocument(...$event)"
+      @doc-delete="deleteDocument(...$event)"
+    ></documents-list>
+    <div class="tree-container" ref="container">
+      <svg class="svg vue-tree" ref="svg" :style="initialTransformStyle"></svg>
 
-    <div
-      class="dom-container"
-      ref="domContainer"
-      :style="initialTransformStyle"
-    >
       <div
-        class="node-slot"
-        v-for="node of nodeDataList"
-        :key="node.data._key"
-        :style="{
-          left: formatDimension(node.y),
-          top: formatDimension(node.x),
-          width: formatDimension(config.nodeWidth),
-          height: formatDimension(config.nodeHeight),
-        }"
+        class="dom-container"
+        ref="domContainer"
+        :style="initialTransformStyle"
       >
         <div
-          class="node"
-          :class="{
-            highlighted: node.data._gid === dataset.lastNode._gid,
-            stack: node.data.childrenLength && node.data.collapsed,
+          class="node-slot"
+          v-for="node of nodeDataList"
+          :key="node.data._key"
+          :style="{
+            left: formatDimension(node.y),
+            top: formatDimension(node.x),
+            width: formatDimension(config.nodeWidth),
+            height: formatDimension(config.nodeHeight),
           }"
-          @click="setLastNode(node.data)"
         >
-          <span v-if="!node.data.editing" class="tree-node"
-            >{{ node.data.name }}
-          </span>
-          <input
-            v-else
-            v-model="node.data._name"
-            :ref="`node-#${node.data._gid}`"
-            @blur="blurLastNode"
-            @keydown.esc="cancelNodeEdit"
-          />
+          <div
+            class="node"
+            :class="{
+              highlighted: node.data._gid === dataset.lastNode._gid,
+              stack: node.data.childrenLength && node.data.collapsed,
+            }"
+            @mousedown.left="setLastNode(node.data, $event)"
+            @contextmenu="nodeContextClick($event, node.data)"
+          >
+            <span v-if="!node.data.editing" class="tree-node"
+              >{{ node.data.name }}
+            </span>
+            <input
+              v-else
+              v-model="node.data._name"
+              :ref="`node-#${node.data._gid}`"
+              @blur="blurLastNode"
+              @keydown.esc="cancelNodeEdit"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -66,6 +99,8 @@
 </template>
 
 <script>
+import DocumentsList from "@/components/DocumentsList";
+import ContextMenu from "@/components/ContextMenu";
 import * as d3 from "d3";
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
@@ -122,6 +157,7 @@ export default {
       default: LinkStyle.CURVE,
     },
   },
+  components: { DocumentsList, ContextMenu },
   data() {
     return {
       d3,
@@ -159,7 +195,6 @@ export default {
     eventBus.$on("tree-node-edit", (e) => this.editLastNode(e));
 
     eventBus.$on("tree-delete-last-node", this.deleteLastNode);
-    eventBus.$on("tree-delete-last-level", this.deleteLastLevel);
 
     eventBus.$on("tree-go-up", this.goUp);
     eventBus.$on("tree-go-down", this.goDown);
@@ -190,8 +225,9 @@ export default {
       this.saveDocument();
     },
 
-    setLastNode(node) {
-      if (tree.lastNode._gid === node._gid) return this.collapseLastNode();
+    setLastNode(node, event) {
+      if (event?.which === 1 && tree.lastNode._gid === node._gid)
+        return this.collapseLastNode();
       tree.lastNode = node;
     },
     editLastNode(e) {
@@ -471,19 +507,6 @@ export default {
         isDrag = false;
       };
     },
-    onClickNode(index) {
-      const curNode = this.nodeDataList[index];
-      if (curNode.data.children) {
-        curNode.data._children = curNode.data.children;
-        curNode.data.children = null;
-        curNode.data._collapsed = true;
-      } else {
-        curNode.data.children = curNode.data._children;
-        curNode.data._children = null;
-        curNode.data._collapsed = false;
-      }
-      this.draw();
-    },
     formatDimension(dimension) {
       if (typeof dimension === "number") return `${dimension}px`;
       if (dimension.indexOf("px") !== -1) {
@@ -498,6 +521,11 @@ export default {
       }
       return parseInt(dimension.replace("px", ""));
     },
+    nodeContextClick(event, node) {
+      event.preventDefault();
+      this.setLastNode(node);
+      this.$refs.contextMenu?.open(event);
+    },
   },
   watch: {
     dataset: {
@@ -510,8 +538,12 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.wrapper {
+  width: 100%;
+  height: 100%;
+}
 
-<style lang="scss">
 #modal-button {
   position: absolute;
   top: 1rem;
@@ -519,7 +551,7 @@ export default {
   padding: 0.5rem 1rem;
   border-radius: 0.4rem;
   border: none;
-  z-index: 1;
+  z-index: 999;
 }
 
 #modal-button:active {
@@ -530,6 +562,8 @@ export default {
 #modal {
   padding: 1rem;
   user-select: none;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .info-table {
@@ -558,7 +592,8 @@ export default {
   padding-left: 1rem;
   text-align: left;
 }
-
+</style>
+<style lang="scss">
 .tree-container {
   width: 100%;
   height: 100%;

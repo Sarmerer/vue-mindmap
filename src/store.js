@@ -4,28 +4,26 @@ class Document {
     schema = {},
     options = { rawName: false, unique: false }
   ) {
-    this._name = fullName ? fullName : `mindmapdocument-${Date.now()}`; //${fullName ? `-${fullName}` : ""}
+    this._id = fullName ? fullName : `mindmapdocument-${Date.now()}`;
     this._schema = schema;
     this._options = options;
-    const { lastEdit, data } = this.load();
+    const { lastEdit, name, data } = this.load();
     this._lastEdit = lastEdit;
     this._data = data;
+    this._name = name;
   }
 
   save(data) {
     if (!data) data = this._data;
-    const result = JSON.stringify({ lastEdit: Date.now(), data: data });
-    localStorage.setItem(this._name, result);
+    const result = JSON.stringify(defaultSchema(this._name, data));
+    localStorage.setItem(this._id, result);
   }
 
   load() {
-    if (!localStorageHas(this._name))
-      localStorage.setItem(
-        this._name,
-        JSON.stringify({ lastEdit: 0, data: this._schema })
-      );
+    if (!localStorageHas(this._id))
+      localStorage.setItem(this._id, JSON.stringify(this._schema));
     return (
-      JSON.parse(localStorage.getItem(this._name)) || {
+      JSON.parse(localStorage.getItem(this._id)) || {
         lastEdit: Date.now(),
         data: [],
       }
@@ -42,6 +40,14 @@ class Document {
 
   get name() {
     return this._name;
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  get lastEdit() {
+    return this._lastEdit;
   }
 }
 
@@ -62,11 +68,11 @@ class Store {
       { rawName: true, unique: true }
     );
 
-    this._document = new Document(this._settings.get("lastDocument"), {
-      name: "",
-      children: [],
-    });
-    this._settings.set("lastDocument", this._document._name);
+    this._document = new Document(
+      this._settings.get("lastDocument"),
+      defaultSchema()
+    );
+    this._settings.set("lastDocument", this._document.id);
     this._loaded = true;
   }
 
@@ -76,31 +82,34 @@ class Store {
     this._document.save(data);
   }
 
-  setDocument(name) {
-    if (!name) return;
-    if (localStorageHas(name)) {
-      this.document = name;
+  setDocument(id) {
+    if (!id) return;
+    if (localStorageHas(id)) {
+      this.document = id;
       return this.data;
     }
   }
 
   newDocument() {
-    this._document = new Document(undefined, { name: "", children: [] });
-    this._settings.set("lastDocument", this._document._name);
+    this._document = new Document(
+      undefined,
+      defaultSchema(`document-${this._documents.length}`)
+    );
+    this._settings.set("lastDocument", this._document.id);
     this.getDocumentsList();
     return this._document._data;
   }
 
-  deleteDocument(name) {
-    if (!name) return;
-    if (localStorageHas(name)) {
-      localStorage.removeItem(name);
+  deleteDocument(id) {
+    if (!id) return;
+    if (localStorageHas(id)) {
+      localStorage.removeItem(id);
       this.getDocumentsList();
-      if (this._document.name === name)
+      if (this._document.id === id)
         if (this._documents.length)
           this._document = this._documents[this._documents.length - 1];
-        else this.document = "mindmapdocument-1";
-      this._settings.set("lastDocument", this._document.name);
+        else this._document = new Document(undefined, defaultSchema());
+      this._settings.set("lastDocument", this._document.id);
       this.getDocumentsList();
       return this.data;
     }
@@ -116,6 +125,10 @@ class Store {
     return this._document._data;
   }
 
+  get document() {
+    return this._document;
+  }
+
   get documents() {
     return this._documents;
   }
@@ -124,8 +137,8 @@ class Store {
     if (this._settings) this._settings.set("lastDocument", value);
   }
 
-  set document(name) {
-    this._document = new Document(name, { lastEdit: 0, children: [] });
+  set document(id) {
+    this._document = new Document(id, defaultSchema());
   }
 }
 
@@ -133,8 +146,8 @@ function localStorageHas(key) {
   return localStorage.getItem(key) !== null;
 }
 
-// function localStorageGet(key) {
-//   if (localStorageHas(key)) return JSON.parse(localStorage.getItem(key));
-// }
+function defaultSchema(name, data) {
+  return { lastEdit: Date.now(), name: name || "document", data: data || {} };
+}
 
 export const store = new Store();

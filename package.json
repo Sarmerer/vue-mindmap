@@ -13,6 +13,7 @@
     "node-sass": "^5.0.0",
     "sass-loader": "^10.1.1",
     "vue": "^2.6.11",
+    "vue-clickaway2": "^2.3.2",
     "vue-js-modal": "^2.0.0-rc.6"
   },
   "devDependencies": {

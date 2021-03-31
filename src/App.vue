@@ -16,6 +16,19 @@ export default {
 </script>
 
 <style>
+:root {
+  --body-bg-clr: #282c34;
+  --inputs-bg-clr: #353b45;
+  --inputs-bg-secondary-clr: #282c34;
+  --sidebar-bg-clr: #282c34;
+  --context-menu-bg-clr: #353b45;
+  --context-menu-item-hover-clr: #2c313a;
+  --hr-clr: #6e6b74;
+  --max-height: calc(100vh - 1.5rem);
+  --text-primary: rgba(255, 255, 255, 0.6);
+  --text-secondary: rgba(255, 255, 255, 0.87);
+}
+
 html,
 body {
   margin: 0;
