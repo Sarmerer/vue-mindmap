@@ -5,14 +5,13 @@
     class="context-menu"
     :style="style"
     tabindex="0"
-    v-on-clickaway="close"
+    v-on-clickaway:mousedown="close"
     @click="close()"
   >
     <slot name="items" />
   </div>
 </template>
 <script>
-import Vue from "vue";
 import { mixin as clickaway } from "vue-clickaway2";
 export default {
   mixins: [clickaway],
@@ -47,7 +46,7 @@ export default {
       }
       this.top = newY;
       this.left = newX;
-      Vue.nextTick(() => this.$el.focus());
+      this.$nextTick(() => this.$el.focus());
       this.shown = true;
     },
     close() {

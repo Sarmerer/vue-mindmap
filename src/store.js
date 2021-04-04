@@ -22,12 +22,7 @@ class Document {
   load() {
     if (!localStorageHas(this._id))
       localStorage.setItem(this._id, JSON.stringify(this._schema));
-    return (
-      JSON.parse(localStorage.getItem(this._id)) || {
-        lastEdit: Date.now(),
-        data: [],
-      }
-    );
+    return JSON.parse(localStorage.getItem(this._id));
   }
 
   set(key, value) {
@@ -64,7 +59,7 @@ class Store {
     this.getDocumentsList();
     this._settings = new Document(
       "settings",
-      { lastDocument: "" },
+      defaultSchema("settings", { lastDocument: "" }),
       { rawName: true, unique: true }
     );
 

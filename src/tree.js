@@ -105,7 +105,11 @@ class Tree {
   }
 
   addSibling() {
-    if (this._lastNode.editing) return (this._lastNode.editing = false);
+    if (this._lastNode.editing) {
+      this._lastNode.editing = false;
+      this._lastNode._name = this._lastNode._name.trim();
+      return;
+    }
     const node = this.createNode(
       this.lastNodeID,
       this.lastNodeParent ? this.lastNodeParent : this._root,
@@ -120,11 +124,8 @@ class Tree {
 
   addChild() {
     if (this._lastNode.editing) {
-      if (!this._lastNode._firstEdit) {
-        this._lastNode.editing = false;
-      } else {
-        this.deleteLastNode();
-      }
+      this._lastNode.editing = false;
+      this._lastNode._name = this._lastNode._name.trim();
     }
     const id = this._lastNode
       ? this._lastNode.children.length
@@ -155,7 +156,7 @@ class Tree {
   deleteLastNode(options = { force: false }) {
     if ((this._lastNode.editing || !this.lastNodeParent) && !options.force)
       return;
-    let newLast;
+    let newLast = null;
 
     if (this._lastNode.id - 1 >= 0) {
       newLast = this.lastNodeParent.children[this._lastNode.id - 1];
@@ -180,7 +181,8 @@ class Tree {
     this._lastNode.editing = true;
   }
 
-  blurLastNode() {
+  blurLastNode(triggerNode) {
+    if (!triggerNode || this._lastNode._gid !== triggerNode._gid) return;
     this._lastNode._firstEdit
       ? this.deleteLastNode({ force: true })
       : (this._lastNode.editing = false);
@@ -245,9 +247,12 @@ class Tree {
     this.lastNode = this._lastNode.children[index];
   }
 
+  getChildren() {
+    return this._root._children;
+  }
+
   exportToStore() {
     return parse(this);
-
     function parse(data) {
       return {
         name: data.name,
@@ -265,14 +270,14 @@ class Tree {
     }
   }
 
-  parseTreeData(data) {
-    if (!data) return;
+  parseTreeData(treeData) {
+    if (!treeData) return;
     let self = this;
     this._root.children = [];
     this._lastNode = this._root;
     this._counter = 0;
-    if (!data.children) return;
-    for (let node of data.children) {
+    if (!treeData.children) return;
+    for (let node of treeData.children) {
       parse(node, this._root);
     }
 
@@ -282,7 +287,11 @@ class Tree {
         parent.children.length,
         parent,
         parent.depth + 1 || 0,
-        { name: data.name, firstEdit: false, collapsed: data.collapsed }
+        {
+          name: data.name,
+          firstEdit: false,
+          collapsed: data.collapsed || false,
+        }
       );
       newNode.children = data.children.length
         ? parseChildren(data, newNode)
@@ -291,20 +300,18 @@ class Tree {
     }
 
     function parseChildren(data, parent) {
-      return data?.children?.map((c, index) => {
+      return data?.children?.map((child, index) => {
         let newNode = new Node(self.counter, index, parent, parent.depth + 1, {
-          name: c.name,
+          name: child.name,
           firstEdit: false,
-          collapsed: c.collapsed,
+          collapsed: child.collapsed || false,
         });
-        newNode.children = c?.children.length ? parseChildren(c, newNode) : [];
+        newNode.children = child?.children.length
+          ? parseChildren(child, newNode)
+          : [];
         return newNode;
       });
     }
-  }
-
-  getChildren() {
-    return this._root._children;
   }
 
   get name() {

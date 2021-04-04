@@ -1,5 +1,5 @@
 <template>
-  <div class="docs">
+  <div class="docs" v-on-clickaway:mousedown="close">
     <button class="doc-menu-toggle" @click="showMenu = !showMenu">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +18,7 @@
       </svg>
     </button>
     <div class="doc-menu" v-show="showMenu">
-      <button @click="emit('doc-create')">
+      <button class="doc-new" @click="emit('doc-create')">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -72,9 +72,10 @@
 </template>
 <script>
 import { store } from "@/store";
+import { mixin as clickaway } from "vue-clickaway2";
 export default {
   name: "DocumentsList",
-
+  mixins: [clickaway],
   data() {
     return {
       store,
@@ -108,6 +109,9 @@ export default {
         months[date.getMonth()]
       }`;
     },
+    close() {
+      if (this.showMenu) this.showMenu = false;
+    },
   },
 };
 </script>
@@ -117,11 +121,21 @@ button {
   border-radius: 0.4rem;
   border: none;
   z-index: 1;
+  color: black;
+  background-color: var(--node-bg-clr);
+  box-shadow: 0px 0px 5px -2px black;
 }
 
 button:active {
   top: 1.07rem;
+  background-color: var(--primary-clr);
+  box-shadow: 0px 0px 4px -2px black;
   border: none;
+}
+
+button:focus {
+  background-color: var(--primary-clr);
+  outline: none;
 }
 
 .docs {
@@ -134,7 +148,7 @@ button:active {
   user-select: none;
 
   .doc-menu {
-    background-color: blanchedalmond;
+    background-color: white;
     border-radius: 0.2rem;
     position: relative;
     margin-left: 1rem;
@@ -142,9 +156,10 @@ button:active {
   }
 
   .doc-list {
-    background-color: white;
-    padding: 0.5rem;
+    background-color: #fff;
+    padding: 0.2rem;
     border-radius: 0.2rem;
+    margin-top: 0.5rem;
 
     .doc {
       display: flex;
@@ -158,12 +173,17 @@ button:active {
         padding: 0;
         margin: 0;
       }
+
+      button {
+        margin-left: 0.5rem;
+      }
     }
     .doc:not(:last-child) {
       margin-bottom: 0.5rem;
     }
     .doc.active {
-      background-color: grey;
+      color: var(--primary-clr);
+      background-color: var(--secondary-clr);
     }
   }
 }

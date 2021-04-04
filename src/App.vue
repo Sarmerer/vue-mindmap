@@ -16,17 +16,23 @@ export default {
 </script>
 
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
 :root {
-  --body-bg-clr: #282c34;
-  --inputs-bg-clr: #353b45;
-  --inputs-bg-secondary-clr: #282c34;
-  --sidebar-bg-clr: #282c34;
-  --context-menu-bg-clr: #353b45;
-  --context-menu-item-hover-clr: #2c313a;
+  --body-bg-clr: #eef2f5;
+  --primary-clr: #eef2f5;
+  --secondary-clr: #a03bc3;
+  --node-bg-clr: white;
+  --node-link-clr: #a03bc3;
+  --node-bg-secondary-clr: #282c34;
+  --context-menu-bg-clr: #293845;
+  --context-menu-item-hover-clr: #a03bc3;
   --hr-clr: #6e6b74;
   --max-height: calc(100vh - 1.5rem);
   --text-primary: rgba(255, 255, 255, 0.6);
   --text-secondary: rgba(255, 255, 255, 0.87);
+
+  --font-family: "Roboto", sans-serif;
 }
 
 html,
@@ -35,10 +41,11 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
+  background-color: var(--body-bg-clr);
 }
 
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;

@@ -8,22 +8,26 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@ssthouse/vue-tree-chart": "^0.5.1",
     "core-js": "^3.6.5",
-    "node-sass": "^5.0.0",
-    "sass-loader": "^10.1.1",
+    "d3": "^6.6.2",
     "vue": "^2.6.11",
     "vue-clickaway2": "^2.3.2",
-    "vue-js-modal": "^2.0.0-rc.6"
+    "vue-js-modal": "*"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.11"
+    "prettier": "^2.2.1",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.46.0"
   },
   "eslintConfig": {
     "root": true,
@@ -32,7 +36,8 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended"
+      "eslint:recommended",
+      "@vue/prettier"
     ],
     "parserOptions": {
       "parser": "babel-eslint"

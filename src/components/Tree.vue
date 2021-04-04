@@ -3,18 +3,100 @@
     <context-menu ref="contextMenu">
       <template #items>
         <button class="context-menu-item" @click="addSibling">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-node-plus"
+            viewBox="0 -3 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"
+            />
+          </svg>
           Add sibling
         </button>
         <button class="context-menu-item" @click="addChild">
-          Add child
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-diagram-2"
+            viewBox="0 -2 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5v-1zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"
+            /></svg
+          >Add child
         </button>
-        <button class="context-menu-item" @click="collapseLastNode">
+        <button
+          v-if="dataset.lastNode.collapsed"
+          class="context-menu-item"
+          @click="collapseLastNode"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="13"
+            height="13"
+            fill="currentColor"
+            class="bi bi-arrows-expand"
+            viewBox="0 -1 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z"
+            />
+          </svg>
+          Expand
+        </button>
+        <button v-else class="context-menu-item" @click="collapseLastNode">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="13"
+            height="13"
+            fill="currentColor"
+            class="bi bi-arrows-collapse"
+            viewBox="0 -1 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0zm-.5 11.707-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793z"
+            />
+          </svg>
           Collapse
         </button>
         <button class="context-menu-item" @click="editLastNode">
-          Edit
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            fill="currentColor"
+            class="bi bi-pencil"
+            viewBox="1 -1 16 16"
+          >
+            <path
+              d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
+            /></svg
+          >Edit
         </button>
         <button class="context-menu-item" @click="deleteLastNode">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-node-minus"
+            viewBox="0 -3 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zM8 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 8 8z"
+            />
+          </svg>
           Delete
         </button>
       </template>
@@ -78,29 +160,28 @@
               highlighted: node.data._gid === dataset.lastNode._gid,
               stack: node.data.childrenLength && node.data.collapsed,
             }"
+            @mousedown.stop
             @mousedown.left="setLastNode(node.data, $event)"
             @contextmenu="nodeContextClick($event, node.data)"
           >
-            <span v-if="!node.data.editing" class="tree-node"
-              >{{ node.data.name }}
-            </span>
-            <input
+            <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
+            <textarea
               v-else
               v-model="node.data._name"
               :ref="`node-#${node.data._gid}`"
-              @blur="blurLastNode"
+              @blur="blurLastNode(node.data)"
               @keydown.esc="cancelNodeEdit"
-            />
+            ></textarea>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import DocumentsList from "@/components/DocumentsList";
 import ContextMenu from "@/components/ContextMenu";
+
 import * as d3 from "d3";
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
@@ -236,8 +317,8 @@ export default {
       this.focusInput(`node-#${tree.lastNode._gid}`);
       this.saveDocument();
     },
-    blurLastNode() {
-      tree.blurLastNode();
+    blurLastNode(triggerNode) {
+      tree.blurLastNode(triggerNode);
     },
     collapseLastNode() {
       tree.collapseLastNode();
@@ -370,20 +451,20 @@ export default {
       if (this.linkStyle === LinkStyle.CURVE) {
         const linkPath = d3.linkHorizontal();
         linkPath
-          .x(function(d) {
+          .x(function (d) {
             return d.x;
           })
-          .y(function(d) {
+          .y(function (d) {
             return d.y;
           })
-          .source(function(d) {
+          .source(function (d) {
             const sourcePoint = {
               x: d.source.x,
               y: d.source.y,
             };
             return rotatePoint(sourcePoint);
           })
-          .target(function(d) {
+          .target(function (d) {
             const targetPoint = {
               x: d.target.x,
               y: d.target.y,
@@ -431,14 +512,14 @@ export default {
         .ease(d3.easeCubicInOut)
         .style("opacity", 1)
         .attr("class", "link")
-        .attr("d", function(d) {
+        .attr("d", function (d) {
           return self.generateLinkPath(d);
         });
       links
         .transition()
         .duration(ANIMATION_DURATION)
         .ease(d3.easeCubicInOut)
-        .attr("d", function(d) {
+        .attr("d", function (d) {
           return self.generateLinkPath(d);
         });
       links
@@ -599,16 +680,32 @@ export default {
   height: 100%;
   .node {
     padding: 1rem;
-    border-radius: 0.2rem;
-    background-color: grey;
-    color: white;
+    border-radius: 1rem;
+    border: 1px solid grey;
+    background-color: var(--node-bg-clr);
+    color: black;
     user-select: none;
+    height: fit-content;
+    pre {
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      height: fit-content;
+      font-family: var(--font-family);
+    }
+
+    textarea {
+      height: 4rem;
+      font-size: 1rem;
+      font-family: var(--font-family);
+      resize: none;
+    }
   }
 
   .link {
     stroke-width: 2px !important;
     fill: transparent !important;
-    stroke: #cecece !important;
+    stroke: var(--node-link-clr) !important;
   }
 }
 </style>
@@ -654,7 +751,7 @@ export default {
 }
 
 .highlighted {
-  border: 2px solid black;
+  border: 2px solid var(--secondary-clr);
 }
 
 .stack {
@@ -673,8 +770,8 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: grey;
-  border-radius: 0.2rem;
+  background-color: white;
+  border-radius: 1rem;
 }
 
 /* Second sheet of stack */
