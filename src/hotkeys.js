@@ -3,6 +3,8 @@ import Vue from "vue";
 export const eventBus = new Vue();
 
 export const events = [
+  // { name: "Set root", action: "tree-push-root", hotkey: "g" },
+  // { name: "Set root", action: "tree-pop-root", hotkey: "h" },
   {
     name: "Add child",
     action: "tree-add-child",

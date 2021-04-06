@@ -20,7 +20,6 @@ class Node {
     this._children = override.children;
     this._collapsed = override.collapsed;
     this._depth = depth;
-    this._el = null;
     this._editing = !override.firstEdit ? false : parentNode !== null;
     this._firstEdit = override.firstEdit;
   }
@@ -68,10 +67,6 @@ class Node {
     return this._firstEdit;
   }
 
-  get el() {
-    return this._el;
-  }
-
   set name(value) {
     this._name = value;
     this.editing = false;
@@ -86,10 +81,6 @@ class Node {
     if (this._children.length) this._collapsed = value;
   }
 
-  set el(el) {
-    this._el = el;
-  }
-
   set children(value) {
     this._children = value;
   }
@@ -98,8 +89,9 @@ class Node {
 class Tree {
   constructor() {
     this._name = "root";
-    this._root = new Node(this.counter, 0, null, 0);
+    this._root = new Node(this.counter, 0, null, 0, { name: "root" });
     this.lastNode = this._root;
+    this._query = [];
     this._counter = 0;
     this.parseTreeData(store.data);
   }
@@ -252,7 +244,7 @@ class Tree {
   }
 
   exportToStore() {
-    return parse(this);
+    return parse(this._query.length ? this._query[0] : this._root);
     function parse(data) {
       return {
         name: data.name,
@@ -314,8 +306,23 @@ class Tree {
     }
   }
 
+  spliceRootsQuery(n) {
+    if (n <= 0 || n > this._query.length) return;
+    if (n > 1) this._query = this._query.slice(0, -(n - 1));
+    const newRoot = this._query.pop();
+    this._name = newRoot.name;
+    this._root = newRoot;
+  }
+
+  pushRootToQuery(newRoot) {
+    if (!newRoot || !(newRoot instanceof Node)) return;
+    this._query.push(this._root);
+    newRoot.collapsed = false;
+    this._root = newRoot;
+  }
+
   get name() {
-    return this._name;
+    return this._root.name;
   }
 
   get children() {
@@ -338,6 +345,14 @@ class Tree {
 
   get counter() {
     return this._counter++;
+  }
+
+  get root() {
+    return this._root;
+  }
+
+  get query() {
+    return this._query;
   }
 
   set lastNode(node) {

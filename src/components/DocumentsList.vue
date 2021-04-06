@@ -116,51 +116,26 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-button {
-  padding: 0.5rem;
-  border-radius: 0.4rem;
-  border: none;
-  z-index: 1;
-  color: black;
-  background-color: var(--node-bg-clr);
-  box-shadow: 0px 0px 5px -2px black;
-}
-
-button:active {
-  top: 1.07rem;
-  background-color: var(--primary-clr);
-  box-shadow: 0px 0px 4px -2px black;
-  border: none;
-}
-
-button:focus {
-  background-color: var(--primary-clr);
-  outline: none;
-}
-
 .docs {
-  top: 1rem;
-  left: 1rem;
-  position: absolute;
-  z-index: 10;
   display: flex;
   align-items: flex-start;
   user-select: none;
+  flex-direction: row-reverse;
 
   .doc-menu {
     background-color: white;
     border-radius: 0.2rem;
     position: relative;
-    margin-left: 1rem;
+    margin-right: 1rem;
     padding: 0.5rem;
   }
 
   .doc-list {
-    background-color: #fff;
-    padding: 0.2rem;
+    background-color: #e6e6e6;
+    padding: 0.5rem;
     border-radius: 0.2rem;
     margin-top: 0.5rem;
-
+    border: 1px solid #b3b3b3;
     .doc {
       display: flex;
       flex-wrap: wrap;

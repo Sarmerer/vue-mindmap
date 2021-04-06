@@ -10,6 +10,7 @@
             fill="currentColor"
             class="bi bi-node-plus"
             viewBox="0 -3 16 16"
+            id="addSibling"
           >
             <path
               fill-rule="evenodd"
@@ -26,6 +27,7 @@
             fill="currentColor"
             class="bi bi-diagram-2"
             viewBox="0 -2 16 16"
+            id="addChild"
           >
             <path
               fill-rule="evenodd"
@@ -34,7 +36,27 @@
           >Add child
         </button>
         <button
-          v-if="dataset.lastNode.collapsed"
+          class="context-menu-item"
+          @click="pushRootToQuery"
+          v-if="tree.lastNode.getChildren().length"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-arrow-bar-down"
+            viewBox="0 -2 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z"
+            />
+          </svg>
+          Drill down
+        </button>
+        <button
+          v-if="tree.lastNode.collapsed"
           class="context-menu-item"
           @click="collapseLastNode"
         >
@@ -101,40 +123,7 @@
         </button>
       </template>
     </context-menu>
-    <modal name="info-modal" :adaptive="true" height="auto" width="500px">
-      <div id="modal">
-        <table class="info-table">
-          <tr v-for="(e, index) in events" :key="index" class="info-row">
-            <td class="info-col-action">
-              {{ e.name }}
-            </td>
-            <td class="info-col-hotkey">
-              {{ e.hotkey.join(" / ") }}
-            </td>
-          </tr>
-        </table>
-      </div>
-    </modal>
-    <button id="modal-button" @click="$modal.show('info-modal')">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="bi bi-question"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"
-        />
-      </svg>
-    </button>
-
-    <documents-list
-      @doc-create="createNewDocument()"
-      @doc-select="setDocument(...$event)"
-      @doc-delete="deleteDocument(...$event)"
-    ></documents-list>
+    <toolbar></toolbar>
     <div class="tree-container" ref="container">
       <svg class="svg vue-tree" ref="svg" :style="initialTransformStyle"></svg>
 
@@ -157,21 +146,55 @@
           <div
             class="node"
             :class="{
-              highlighted: node.data._gid === dataset.lastNode._gid,
+              highlighted: node.data._gid === tree.lastNode._gid,
               stack: node.data.childrenLength && node.data.collapsed,
             }"
             @mousedown.stop
             @mousedown.left="setLastNode(node.data, $event)"
             @contextmenu="nodeContextClick($event, node.data)"
           >
-            <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
+            <div style="display: flex; gap: 0.5rem">
+              <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
+              <button
+                v-if="
+                  tree._query.length && !node.data._parentNode && !node.ediiting
+                "
+                @click="spliceRootsQuery"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-arrow-bar-up"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z"
+                  />
+                </svg>
+              </button>
+            </div>
             <textarea
-              v-else
+              v-if="node.data.editing"
               v-model="node.data._name"
               :ref="`node-#${node.data._gid}`"
               @blur="blurLastNode(node.data)"
               @keydown.esc="cancelNodeEdit"
             ></textarea>
+            <div class="controls">
+              <button class="add-child" @click="addSibling()">
+                <svg width="16" height="16" viewBox="0 2 16 16">
+                  <use href="#addSibling" />
+                </svg>
+              </button>
+              <button class="add-sibling" @click="addChild()">
+                <svg width="16" height="16" viewBox="0 0 16 16">
+                  <use href="#addChild" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -179,7 +202,7 @@
   </div>
 </template>
 <script>
-import DocumentsList from "@/components/DocumentsList";
+import Toolbar from "@/components/Toolbar";
 import ContextMenu from "@/components/ContextMenu";
 
 import * as d3 from "d3";
@@ -238,12 +261,13 @@ export default {
       default: LinkStyle.CURVE,
     },
   },
-  components: { DocumentsList, ContextMenu },
+  components: { Toolbar, ContextMenu },
   data() {
     return {
       d3,
       events,
       store,
+      tree,
       dataset: tree,
       colors: "568FE1",
       nodeDataList: [],
@@ -251,6 +275,7 @@ export default {
       initTransformX: 0,
       initTransformY: 0,
       currentScale: 1,
+      key: 0,
     };
   },
   computed: {
@@ -267,6 +292,8 @@ export default {
     window.addEventListener("auxclick", this.handleZoom);
     window.addEventListener("unload", this.beforeUnload);
 
+    eventBus.$on("tree-push-root", this.pushRootToQuery);
+    eventBus.$on("tree-pop-root", this.spliceRootsQuery);
     eventBus.$on("tree-add-sibling", this.addSibling);
     eventBus.$on("tree-add-child", this.addChild);
     eventBus.$on("tree-set-last-node", (args) => {
@@ -295,6 +322,13 @@ export default {
       window.removeEventListener("auxclick", this.handleZoom);
       window.removeEventListener("unload", this.beforeUnload);
     },
+    spliceRootsQuery(n = 1) {
+      tree.spliceRootsQuery(n);
+    },
+    pushRootToQuery() {
+      if (tree.lastNode && tree.lastNode.getChildren().length)
+        tree.pushRootToQuery(tree.lastNode);
+    },
     addSibling() {
       tree.addSibling();
       this.focusInput(`node-#${tree.lastNode._gid}`);
@@ -305,11 +339,11 @@ export default {
       this.focusInput(`node-#${tree.lastNode._gid}`);
       this.saveDocument();
     },
-
     setLastNode(node, event) {
       if (event?.which === 1 && tree.lastNode._gid === node._gid)
         return this.collapseLastNode();
       tree.lastNode = node;
+      this.$refs?.contextMenu?.close();
     },
     editLastNode(e) {
       if (!tree.lastNode.editing) e?.preventDefault();
@@ -361,15 +395,6 @@ export default {
     },
     saveDocument() {
       store.save(tree.exportToStore());
-    },
-    setDocument(name) {
-      tree.parseTreeData(store.setDocument(name));
-    },
-    createNewDocument() {
-      tree.parseTreeData(store.newDocument());
-    },
-    deleteDocument(name) {
-      tree.parseTreeData(store.deleteDocument(name));
     },
 
     handleZoom(e) {
@@ -624,55 +649,6 @@ export default {
   width: 100%;
   height: 100%;
 }
-
-#modal-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.4rem;
-  border: none;
-  z-index: 999;
-}
-
-#modal-button:active {
-  top: 1.07rem;
-  border: none;
-}
-
-#modal {
-  padding: 1rem;
-  user-select: none;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.info-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.info-row:nth-child(odd) {
-  background-color: rgba(167, 167, 167, 0.408);
-}
-
-.info-row > td {
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
-  border: 1px solid black;
-}
-
-.info-col-action {
-  width: 50%;
-  padding-right: 1rem;
-  text-align: right;
-}
-
-.info-col-hotkey {
-  width: 50%;
-  padding-left: 1rem;
-  text-align: left;
-}
 </style>
 <style lang="scss">
 .tree-container {
@@ -686,6 +662,7 @@ export default {
     color: black;
     user-select: none;
     height: fit-content;
+    position: relative;
     pre {
       margin: 0;
       padding: 0;
@@ -693,12 +670,36 @@ export default {
       height: fit-content;
       font-family: var(--font-family);
     }
-
     textarea {
       height: 4rem;
       font-size: 1rem;
       font-family: var(--font-family);
       resize: none;
+    }
+    &:not(.highlighted) .controls {
+      display: none;
+    }
+    button {
+      outline: none;
+      border: 1px solid var(--secondary-clr);
+      border-radius: 0.4rem;
+      box-sizing: border-box;
+      background-color: white;
+    }
+    button:active {
+      border: 1px solid white;
+    }
+    .add-sibling {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: calc(100% + 1rem);
+    }
+    .add-child {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: calc(100% + 0.5rem);
     }
   }
 
