@@ -146,12 +146,19 @@
           <div
             class="node"
             :class="{
+              dragover: isDraggedOver(node.data),
+              dragging: nodeDrag.dragging,
               highlighted: node.data._gid === tree.lastNode._gid,
               stack: node.data.childrenLength && node.data.collapsed,
             }"
+            @dragover="mouseOverNode($event, node)"
             @mousedown.stop
-            @mousedown.left="setLastNode(node.data, $event)"
+            @mouseup.left="setLastNode(node.data, $event)"
             @contextmenu="nodeContextClick($event, node.data)"
+            draggable
+            @dragstart="startDrag($event, node)"
+            @drag="onDrag($event, node)"
+            @dragend="onDrop($event, node)"
           >
             <div style="display: flex; gap: 0.5rem">
               <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
@@ -275,6 +282,11 @@ export default {
       initTransformX: 0,
       initTransformY: 0,
       currentScale: 1,
+      nodeDrag: {
+        dragging: false,
+        source: null,
+        target: null,
+      },
       key: 0,
     };
   },
@@ -316,6 +328,37 @@ export default {
   },
 
   methods: {
+    isDraggedOver(node) {
+      return (
+        this.nodeDrag?.target?.data._gid === node._gid &&
+        this.nodeDrag?.source?.data._gid !== node._gid
+      );
+    },
+    startDrag(evt, node) {
+      evt.dataTransfer.dropEffect = "move";
+      evt.dataTransfer.effectAllowed = "move";
+      node.data.collapsed = true;
+      this.nodeDrag.source = node;
+    },
+    onDrag() {
+      this.nodeDrag.dragging = true;
+    },
+    onDrop(_, node) {
+      if (!this.nodeDrag.target || this.nodeDrag.target === node)
+        return (this.nodeDrag.dragging = false);
+      tree.cloneNode(node.data, this.nodeDrag.target.data);
+      node.collapsed = false;
+      this.nodeDrag.dragging = false;
+      this.nodeDrag.target = null;
+    },
+    mouseOverNode(_, node) {
+      if (!this.nodeDrag.dragging) return;
+      this.nodeDrag.target = node;
+    },
+    mouseLeaveNode(_, node) {
+      if (node.data._gid !== this.nodeDrag?.target?.data._gid) return;
+      this.nodeDrag.target = null;
+    },
     beforeUnload() {
       this.saveDocument();
       window.removeEventListener("wheel", this.handleZoom);
@@ -657,12 +700,21 @@ export default {
   .node {
     padding: 1rem;
     border-radius: 1rem;
+    box-sizing: border-box;
     border: 1px solid grey;
     background-color: var(--node-bg-clr);
     color: black;
     user-select: none;
     height: fit-content;
     position: relative;
+
+    &.dragging {
+      opacity: 0.5;
+    }
+    &.dragover {
+      border: 0.2rem solid var(--secondary-clr);
+      opacity: 1;
+    }
     pre {
       margin: 0;
       padding: 0;

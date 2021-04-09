@@ -33,6 +33,11 @@ class Node {
     return this._children;
   }
 
+  delete() {
+    const index = this._parentNode._children.indexOf(this);
+    this._parentNode.children.splice(index, 1);
+  }
+
   get id() {
     return this._id;
   }
@@ -83,6 +88,10 @@ class Node {
 
   set children(value) {
     this._children = value;
+  }
+
+  set parent(value) {
+    this._parentNode = value;
   }
 }
 
@@ -135,6 +144,24 @@ class Tree {
 
     this.lastNode = node;
     this.lastNodeParent.collapsed = false;
+  }
+
+  cloneNode(node, destination) {
+    const self = this;
+    function deepClone(node, parent) {
+      const newNode = new Node(self.counter, node.id, parent, node.depth, {
+        name: node.name,
+        collapsed: false,
+        firstEdit: node.firstEdit,
+        children: [],
+      });
+      newNode.children = node.getChildren().map((n) => deepClone(n, newNode));
+      return newNode;
+    }
+    const newNode = deepClone(node, destination);
+    node.delete();
+    destination.addChild(newNode);
+    this.lastNode = newNode;
   }
 
   pushNode(destination, node) {
