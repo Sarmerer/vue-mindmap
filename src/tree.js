@@ -29,6 +29,11 @@ class Node {
     this._children.push(node);
   }
 
+  addChildAtIndex(node, index) {
+    if (!(node instanceof Node) || index < 0) return;
+    this._children.splice(index, 0, node);
+  }
+
   getChildren() {
     return this._children;
   }
@@ -72,6 +77,10 @@ class Node {
     return this._firstEdit;
   }
 
+  set id(value) {
+    this._id = value;
+  }
+
   set name(value) {
     this._name = value;
     this.editing = false;
@@ -102,6 +111,7 @@ class Tree {
     this.lastNode = this._root;
     this._query = [];
     this._counter = 0;
+    this.isRoot = true;
     this.parseTreeData(store.data);
   }
 
@@ -146,7 +156,7 @@ class Tree {
     this.lastNodeParent.collapsed = false;
   }
 
-  cloneNode(node, destination) {
+  cloneNode(node, destination, position) {
     const self = this;
     function deepClone(node, parent) {
       const newNode = new Node(self.counter, node.id, parent, node.depth, {
@@ -158,9 +168,26 @@ class Tree {
       newNode.children = node.getChildren().map((n) => deepClone(n, newNode));
       return newNode;
     }
-    const newNode = deepClone(node, destination);
+    const newNode =
+      position === "bottom" || position === "top"
+        ? deepClone(node, destination.parent)
+        : deepClone(node, destination);
+    if (!position || position === "right") {
+      destination.addChild(newNode);
+    } else if (!position || position === "top") {
+      destination.parent.addChildAtIndex(
+        newNode,
+        destination.parent._children.indexOf(destination)
+      );
+    } else if (!position || position === "bottom") {
+      destination.parent.addChildAtIndex(
+        newNode,
+        destination.parent._children.indexOf(destination) + 1
+      );
+    } else {
+      return;
+    }
     node.delete();
-    destination.addChild(newNode);
     this.lastNode = newNode;
   }
 
@@ -346,6 +373,11 @@ class Tree {
     this._query.push(this._root);
     newRoot.collapsed = false;
     this._root = newRoot;
+  }
+
+  sortLastNode(by, direction) {
+    console.log(by, direction);
+    this.lastNode._children.sort((a, b) => (a.name < b.name ? -1 : 1));
   }
 
   get name() {

@@ -91,6 +91,38 @@
           </svg>
           Collapse
         </button>
+        <!-- <div class="selector" v-if="tree.lastNode.getChildren().length > 1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-filter"
+            viewBox="0 -1 16 16"
+          >
+            <path
+              d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"
+            />
+          </svg>
+          Sort
+          <ul>
+            <li @click="sortTree('name', 'asc')">By name asc</li>
+            <li @click="sortTree('name', 'desc')">By name desc</li>
+          </ul>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-chevron-right"
+            viewBox="0 -1 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+            />
+          </svg>
+        </div> -->
         <button class="context-menu-item" @click="editLastNode">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +156,11 @@
       </template>
     </context-menu>
     <toolbar></toolbar>
-    <div class="tree-container" ref="container">
+    <div
+      class="tree-container"
+      ref="container"
+      :class="{ dragging: nodeDrag.dragging }"
+    >
       <svg class="svg vue-tree" ref="svg" :style="initialTransformStyle"></svg>
 
       <div
@@ -134,6 +170,12 @@
       >
         <div
           class="node-slot"
+          :class="{
+            'node-top': nodeDrag.snap === 'top' && isDraggedOver(node.data),
+            'node-bottom':
+              nodeDrag.snap === 'bottom' && isDraggedOver(node.data),
+            'node-right': nodeDrag.snap === 'right' && isDraggedOver(node.data),
+          }"
           v-for="node of nodeDataList"
           :key="node.data._key"
           :style="{
@@ -142,23 +184,24 @@
             width: formatDimension(config.nodeWidth),
             height: formatDimension(config.nodeHeight),
           }"
+          @dragover.stop="mouseOverNode($event, node)"
+          @dragleave="mouseLeaveNode($event, node)"
+          @dragend="onDrop($event, node)"
         >
           <div
             class="node"
             :class="{
               dragover: isDraggedOver(node.data),
-              dragging: nodeDrag.dragging,
+
               highlighted: node.data._gid === tree.lastNode._gid,
               stack: node.data.childrenLength && node.data.collapsed,
             }"
-            @dragover="mouseOverNode($event, node)"
             @mousedown.stop
             @mouseup.left="setLastNode(node.data, $event)"
             @contextmenu="nodeContextClick($event, node.data)"
             draggable
             @dragstart="startDrag($event, node)"
             @drag="onDrag($event, node)"
-            @dragend="onDrop($event, node)"
           >
             <div style="display: flex; gap: 0.5rem">
               <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
@@ -286,6 +329,7 @@ export default {
         dragging: false,
         source: null,
         target: null,
+        snap: "",
       },
       key: 0,
     };
@@ -331,7 +375,8 @@ export default {
     isDraggedOver(node) {
       return (
         this.nodeDrag?.target?.data._gid === node._gid &&
-        this.nodeDrag?.source?.data._gid !== node._gid
+        this.nodeDrag?.source?.data._gid !== node._gid &&
+        !node.isRoot
       );
     },
     startDrag(evt, node) {
@@ -346,14 +391,26 @@ export default {
     onDrop(_, node) {
       if (!this.nodeDrag.target || this.nodeDrag.target === node)
         return (this.nodeDrag.dragging = false);
-      tree.cloneNode(node.data, this.nodeDrag.target.data);
+      tree.cloneNode(node.data, this.nodeDrag.target.data, this.nodeDrag.snap);
       node.collapsed = false;
       this.nodeDrag.dragging = false;
       this.nodeDrag.target = null;
     },
-    mouseOverNode(_, node) {
-      if (!this.nodeDrag.dragging) return;
+    mouseOverNode(e, node) {
+      if (!this.nodeDrag.dragging || node.isRoot) return;
       this.nodeDrag.target = node;
+      let rect = e.target.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      let y = e.clientY - rect.top;
+      let yHalf = rect.height / 2;
+
+      if (x > rect.width - rect.width / 4) {
+        this.nodeDrag.snap = "right";
+      } else if (y < yHalf) {
+        this.nodeDrag.snap = "top";
+      } else if (y >= yHalf) {
+        this.nodeDrag.snap = "bottom";
+      }
     },
     mouseLeaveNode(_, node) {
       if (node.data._gid !== this.nodeDrag?.target?.data._gid) return;
@@ -371,6 +428,9 @@ export default {
     pushRootToQuery() {
       if (tree.lastNode && tree.lastNode.getChildren().length)
         tree.pushRootToQuery(tree.lastNode);
+    },
+    sortTree(by, direction) {
+      tree.sortLastNode(by, direction);
     },
     addSibling() {
       tree.addSibling();
@@ -574,11 +634,11 @@ export default {
       links
         .enter()
         .append("path")
-        .style("opacity", 0)
-        .transition()
-        .duration(ANIMATION_DURATION)
-        .ease(d3.easeCubicInOut)
-        .style("opacity", 1)
+        // .style("opacity", 0)
+        // .transition()
+        // .duration(ANIMATION_DURATION)
+        // .ease(d3.easeCubicInOut)
+        // .style("opacity", 1)
         .attr("class", "link")
         .attr("d", function (d) {
           return self.generateLinkPath(d);
@@ -708,9 +768,6 @@ export default {
     height: fit-content;
     position: relative;
 
-    &.dragging {
-      opacity: 0.5;
-    }
     &.dragover {
       border: 0.2rem solid var(--secondary-clr);
       opacity: 1;
@@ -761,6 +818,10 @@ export default {
     stroke: var(--node-link-clr) !important;
   }
 }
+
+.tree-container.dragging .link {
+  opacity: 0.2;
+}
 </style>
 
 <style lang="scss" scoped>
@@ -787,6 +848,10 @@ export default {
     z-index: 1;
     // pointer-events: none;
   }
+
+  &.dragging .node {
+    opacity: 0.7;
+  }
 }
 
 .node-slot {
@@ -801,6 +866,60 @@ export default {
   box-sizing: content-box;
   transition: all 0.1s;
   transition-timing-function: ease-in-out;
+
+  &.node-right {
+    margin-right: 5rem;
+  }
+
+  // top
+  &.node-top::before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    position: relative;
+    top: calc(-50% - 1rem);
+    right: -50%;
+    width: 100%;
+    height: 3rem;
+    text-align: center;
+    background-color: white;
+    border-radius: 1rem;
+  }
+
+  // bottom
+  &.node-bottom::before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    position: relative;
+    top: calc(50% + 1rem);
+    right: -50%;
+    width: 100%;
+    height: 3rem;
+    text-align: center;
+    background-color: white;
+    border-radius: 1rem;
+  }
+
+  // right
+  &.node-right::before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    position: relative;
+    right: calc(-100% - 1rem);
+    width: 100%;
+    height: 3rem;
+    text-align: center;
+    background-color: white;
+    border-radius: 1rem;
+  }
 }
 
 .highlighted {

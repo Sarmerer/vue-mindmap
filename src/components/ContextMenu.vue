@@ -59,7 +59,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .context-menu {
   display: flex;
   flex-wrap: wrap;
@@ -93,6 +93,61 @@ export default {
   margin: 0;
   padding: 0;
 }
+
+.selector {
+  transition: background-color 0.2s linear;
+  background-color: var(--context-menu-bg-clr);
+  color: rgba(255, 255, 255, 0.87);
+  text-align: start;
+  padding: 0.6rem 0 0.4rem 0.5rem;
+  margin: 0;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  width: 94%;
+  position: relative;
+  &:hover {
+    background-color: var(--context-menu-item-hover-clr);
+    & ul {
+      display: block;
+    }
+  }
+  ul {
+    position: absolute;
+    display: none;
+    left: 100%;
+    top: -1rem;
+    padding: 0.4rem 0;
+    border-radius: 0 0.2rem 0.2rem 0;
+    background-color: var(--context-menu-bg-clr);
+    overflow: visible;
+    width: 8rem;
+    list-style: none;
+    li {
+      transition: background-color 0.2s linear;
+      background-color: var(--context-menu-bg-clr);
+      color: rgba(255, 255, 255, 0.87);
+      text-align: start;
+      padding: 0.6rem 0 0.4rem 0.5rem;
+      margin: 0;
+      border: none;
+      outline: none;
+      &:hover {
+        background-color: var(--context-menu-item-hover-clr);
+      }
+    }
+
+    &:hover {
+      display: block;
+    }
+  }
+
+  :last-child {
+    float: right;
+    margin-right: 0.5rem;
+  }
+}
+
 hr {
   margin: 0 auto;
   width: 70%;
