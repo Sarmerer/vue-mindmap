@@ -170,12 +170,6 @@
       >
         <div
           class="node-slot"
-          :class="{
-            'node-top': nodeDrag.snap === 'top' && isDraggedOver(node.data),
-            'node-bottom':
-              nodeDrag.snap === 'bottom' && isDraggedOver(node.data),
-            'node-right': nodeDrag.snap === 'right' && isDraggedOver(node.data),
-          }"
           v-for="node of nodeDataList"
           :key="node.data._key"
           :style="{
@@ -185,65 +179,78 @@
             height: formatDimension(config.nodeHeight),
           }"
           @dragover.stop="mouseOverNode($event, node)"
-          @dragleave="mouseLeaveNode($event, node)"
           @dragend="onDrop($event, node)"
         >
+          <!-- @dragleave="mouseLeaveNode($event, node)" -->
           <div
-            class="node"
+            class="node-slot-overlay"
             :class="{
-              dragover: isDraggedOver(node.data),
-
-              highlighted: node.data._gid === tree.lastNode._gid,
-              stack: node.data.childrenLength && node.data.collapsed,
+              'node-top': nodeDrag.snap === 'top' && isDraggedOver(node.data),
+              'node-bottom':
+                nodeDrag.snap === 'bottom' && isDraggedOver(node.data),
+              'node-right':
+                nodeDrag.snap === 'right' && isDraggedOver(node.data),
             }"
-            @mousedown.stop
-            @mouseup.left="setLastNode(node.data, $event)"
-            @contextmenu="nodeContextClick($event, node.data)"
-            draggable
-            @dragstart="startDrag($event, node)"
-            @drag="onDrag($event, node)"
           >
-            <div style="display: flex; gap: 0.5rem">
-              <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
-              <button
-                v-if="
-                  tree._query.length && !node.data._parentNode && !node.ediiting
-                "
-                @click="spliceRootsQuery"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-arrow-bar-up"
-                  viewBox="0 0 16 16"
+            <div
+              class="node"
+              :class="{
+                dragover: isDraggedOver(node.data),
+
+                highlighted: node.data._gid === tree.lastNode._gid,
+                stack: node.data.childrenLength && node.data.collapsed,
+              }"
+              @mousedown.stop
+              @mouseup.left="setLastNode(node.data, $event)"
+              @contextmenu="nodeContextClick($event, node.data)"
+              draggable
+              @dragstart="startDrag($event, node)"
+              @drag="onDrag($event, node)"
+            >
+              <div style="display: flex; gap: 0.5rem">
+                <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
+                <button
+                  v-if="
+                    tree._query.length &&
+                    !node.data._parentNode &&
+                    !node.ediiting
+                  "
+                  @click="spliceRootsQuery"
                 >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z"
-                  />
-                </svg>
-              </button>
-            </div>
-            <textarea
-              v-if="node.data.editing"
-              v-model="node.data._name"
-              :ref="`node-#${node.data._gid}`"
-              @blur="blurLastNode(node.data)"
-              @keydown.esc="cancelNodeEdit"
-            ></textarea>
-            <div class="controls">
-              <button class="add-child" @click="addSibling()">
-                <svg width="16" height="16" viewBox="0 2 16 16">
-                  <use href="#addSibling" />
-                </svg>
-              </button>
-              <button class="add-sibling" @click="addChild()">
-                <svg width="16" height="16" viewBox="0 0 16 16">
-                  <use href="#addChild" />
-                </svg>
-              </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-arrow-bar-up"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <textarea
+                v-if="node.data.editing"
+                v-model="node.data._name"
+                :ref="`node-#${node.data._gid}`"
+                @blur="blurLastNode(node.data)"
+                @keydown.esc="cancelNodeEdit"
+              ></textarea>
+              <div class="controls">
+                <button class="add-child" @click="addSibling()">
+                  <svg width="16" height="16" viewBox="0 2 16 16">
+                    <use href="#addSibling" />
+                  </svg>
+                </button>
+                <button class="add-sibling" @click="addChild()">
+                  <svg width="16" height="16" viewBox="0 0 16 16">
+                    <use href="#addChild" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -867,58 +874,55 @@ export default {
   transition: all 0.1s;
   transition-timing-function: ease-in-out;
 
-  &.node-right {
-    margin-right: 5rem;
-  }
-
-  // top
-  &.node-top::before {
-    content: "";
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    margin-right: 5px;
+  .node-slot-overlay {
     position: relative;
-    top: calc(-50% - 1rem);
-    right: -50%;
-    width: 100%;
-    height: 3rem;
-    text-align: center;
-    background-color: white;
-    border-radius: 1rem;
-  }
 
-  // bottom
-  &.node-bottom::before {
-    content: "";
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    margin-right: 5px;
-    position: relative;
-    top: calc(50% + 1rem);
-    right: -50%;
-    width: 100%;
-    height: 3rem;
-    text-align: center;
-    background-color: white;
-    border-radius: 1rem;
-  }
+    // top
+    &.node-top::before {
+      content: "";
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 5px;
+      position: absolute;
+      top: calc(-100% - 0.5rem);
+      width: 100%;
+      height: 3rem;
+      text-align: center;
+      background-color: white;
+      border-radius: 1rem;
+    }
 
-  // right
-  &.node-right::before {
-    content: "";
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    margin-right: 5px;
-    position: relative;
-    right: calc(-100% - 1rem);
-    width: 100%;
-    height: 3rem;
-    text-align: center;
-    background-color: white;
-    border-radius: 1rem;
+    // bottom
+    &.node-bottom::before {
+      content: "";
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 5px;
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      width: 100%;
+      height: 3rem;
+      text-align: center;
+      background-color: white;
+      border-radius: 1rem;
+    }
+
+    // right
+    &.node-right::before {
+      content: "";
+      width: 15px;
+      height: 15px;
+      margin-right: 5px;
+      position: absolute;
+      right: calc(-50% - 0.5rem);
+      width: 50%;
+      height: 3rem;
+      text-align: center;
+      background-color: white;
+      border-radius: 1rem;
+    }
   }
 }
 
