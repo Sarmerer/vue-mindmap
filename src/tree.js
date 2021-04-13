@@ -172,6 +172,7 @@ class Tree {
       position === "bottom" || position === "top"
         ? deepClone(node, destination.parent)
         : deepClone(node, destination);
+    node.delete();
     if (!position || position === "right") {
       destination.addChild(newNode);
     } else if (!position || position === "top") {
@@ -187,7 +188,6 @@ class Tree {
     } else {
       return;
     }
-    node.delete();
     this.lastNode = newNode;
   }
 

@@ -396,8 +396,10 @@ export default {
       this.nodeDrag.dragging = true;
     },
     onDrop(_, node) {
-      if (!this.nodeDrag.target || this.nodeDrag.target === node)
-        return (this.nodeDrag.dragging = false);
+      if (!this.nodeDrag.target || this.nodeDrag.target === node) {
+        this.nodeDrag.dragging = false;
+        return;
+      }
       tree.cloneNode(node.data, this.nodeDrag.target.data, this.nodeDrag.snap);
       node.collapsed = false;
       this.nodeDrag.dragging = false;
@@ -871,8 +873,6 @@ export default {
   align-items: center;
   justify-content: center;
   box-sizing: content-box;
-  transition: all 0.1s;
-  transition-timing-function: ease-in-out;
 
   .node-slot-overlay {
     position: relative;
