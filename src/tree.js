@@ -11,6 +11,7 @@ class Node {
       firstEdit: true,
       collapsed: false,
       children: [],
+      emoji: [],
     }
   ) {
     this._gid = globalID;
@@ -22,6 +23,7 @@ class Node {
     this._depth = depth;
     this._editing = !override.firstEdit ? false : parentNode !== null;
     this._firstEdit = override.firstEdit;
+    this._emoji = override.emoji || [];
   }
 
   addChild(node) {
@@ -32,6 +34,12 @@ class Node {
   addChildAtIndex(node, index) {
     if (!(node instanceof Node) || index < 0) return;
     this._children.splice(index, 0, node);
+  }
+
+  toggleEmoji(emoji) {
+    this._emoji.includes(emoji)
+      ? this._emoji.splice(this._emoji.indexOf(emoji), 1)
+      : this._emoji.push(emoji);
   }
 
   getChildren() {
@@ -75,6 +83,10 @@ class Node {
 
   get firstEdit() {
     return this._firstEdit;
+  }
+
+  get emoji() {
+    return this._emoji;
   }
 
   set id(value) {
@@ -309,9 +321,10 @@ class Tree {
               .map((c) =>
                 c.getChildren().length
                   ? parse(c)
-                  : { name: c.name, children: [] }
+                  : { name: c.name, children: [], emoji: c.emoji }
               )
           : [],
+        emoji: data.emoji,
       };
     }
   }
@@ -337,6 +350,7 @@ class Tree {
           name: data.name,
           firstEdit: false,
           collapsed: data.collapsed || false,
+          emoji: data.emoji,
         }
       );
       newNode.children = data.children.length
@@ -351,6 +365,7 @@ class Tree {
           name: child.name,
           firstEdit: false,
           collapsed: child.collapsed || false,
+          emoji: child.emoji,
         });
         newNode.children = child?.children.length
           ? parseChildren(child, newNode)
@@ -412,6 +427,10 @@ class Tree {
 
   get query() {
     return this._query;
+  }
+
+  get emoji() {
+    return this._root.emoji;
   }
 
   set lastNode(node) {

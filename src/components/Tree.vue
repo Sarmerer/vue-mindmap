@@ -160,6 +160,8 @@
       class="tree-container"
       ref="container"
       :class="{ dragging: nodeDrag.dragging }"
+      @mousewheel="handleZoom"
+      @click.middle="handleZoom"
     >
       <svg class="svg vue-tree" ref="svg" :style="initialTransformStyle"></svg>
 
@@ -208,6 +210,19 @@
               @drag="onDrag($event, node)"
             >
               <div style="display: flex; gap: 0.5rem">
+                <div
+                  v-if="
+                    !node.data.editing &&
+                    node.data.emoji &&
+                    node.data.emoji.length
+                  "
+                >
+                  <span
+                    v-for="(emoji, key) in emojifyArray(node.data.emoji)"
+                    :key="key"
+                    >{{ emoji }}
+                  </span>
+                </div>
                 <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
                 <button
                   v-if="
@@ -266,6 +281,7 @@ import * as d3 from "d3";
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
 import { store } from "@/store";
+import emojis from "node-emoji";
 
 const MATCH_TRANSLATE_REGEX = /translate\((-?\d+)px, ?(-?\d+)px\)/i;
 const MATCH_SCALE_REGEX = /scale\((\S*)\)/i;
@@ -351,8 +367,6 @@ export default {
   },
   created() {
     this.addUniqueKey(this.dataset);
-    window.addEventListener("wheel", this.handleZoom);
-    window.addEventListener("auxclick", this.handleZoom);
     window.addEventListener("unload", this.beforeUnload);
 
     eventBus.$on("tree-push-root", this.pushRootToQuery);
@@ -362,6 +376,7 @@ export default {
     eventBus.$on("tree-set-last-node", (args) => {
       if (args && args[0]) this.setLastNode(args[0]);
     });
+    eventBus.$on("tree-node-toggle-emoji", this.toggleEmoji);
     eventBus.$on("tree-node-collapse", this.collapseLastNode);
     eventBus.$on("tree-node-edit", (e) => this.editLastNode(e));
 
@@ -427,8 +442,6 @@ export default {
     },
     beforeUnload() {
       this.saveDocument();
-      window.removeEventListener("wheel", this.handleZoom);
-      window.removeEventListener("auxclick", this.handleZoom);
       window.removeEventListener("unload", this.beforeUnload);
     },
     spliceRootsQuery(n = 1) {
@@ -450,6 +463,13 @@ export default {
       tree.addChild();
       this.focusInput(`node-#${tree.lastNode._gid}`);
       this.saveDocument();
+    },
+    toggleEmoji(emoji) {
+      tree.lastNode.toggleEmoji(emoji);
+    },
+    emojifyArray(array) {
+      if (!array?.length) return "";
+      return array.map((a) => emojis.get(a));
     },
     setLastNode(node, event) {
       if (event?.which === 1 && tree.lastNode._gid === node._gid)
@@ -511,10 +531,11 @@ export default {
 
     handleZoom(e) {
       if (e.which === 2) return this.restoreScale();
-      if (!e.which)
+      if (!e.which) {
         ((e.deltaY || -e.wheelDelta || e.detail) >> 10 || 1) < 0
           ? this.zoomIn()
           : this.zoomOut();
+      }
     },
     init() {
       this.draw();
