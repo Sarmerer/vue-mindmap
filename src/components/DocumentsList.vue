@@ -18,7 +18,7 @@
       </svg>
     </button>
     <div class="doc-menu" v-show="showMenu">
-      <button class="doc-new" @click="emit('doc-create')">
+      <button class="doc-new" @click="createNewDocument">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -38,15 +38,15 @@
       <div class="doc-list">
         <div
           class="doc"
-          :class="{ active: activeDoc(doc.id) }"
-          v-for="doc in store.documents"
-          :key="doc.id"
-          @click="activeDoc(doc.id) ? null : emit('doc-select', doc.id)"
+          :class="{ active: activeDoc(uuid) }"
+          v-for="(doc, uuid) in documents"
+          :key="uuid"
+          @click="setDocument(uuid)"
         >
           <span>{{ doc.name }}</span>
           <span>
-            <span>{{ timeAgo(doc.lastEdit) }}</span>
-            <button @click="emit('doc-delete', doc.id)">
+            <span v-if="doc.lastEdit">{{ timeAgo(doc.lastEdit) }}</span>
+            <button @click.stop="deleteDocument(uuid)">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -71,8 +71,10 @@
   </div>
 </template>
 <script>
-import { store } from "@/store";
+import { store } from "@/store2.0";
+import { tree } from "@/tree";
 import { mixin as clickaway } from "vue-clickaway2";
+
 export default {
   name: "DocumentsList",
   mixins: [clickaway],
@@ -82,12 +84,29 @@ export default {
       showMenu: false,
     };
   },
+  watch: {
+    documents: (newVal) => console.log(newVal),
+  },
+  computed: {
+    documents() {
+      return store.state.documents;
+    },
+  },
   methods: {
-    emit(event, ...args) {
-      this.$emit(event, args);
+    setDocument(uuid) {
+      store.commit("setDocument", uuid);
+      tree.parseTreeData(store.getters.treeData);
+    },
+    createNewDocument() {
+      store.commit("createDocument");
+      tree.parseTreeData(store.getters.treeData);
+    },
+    deleteDocument(uuid) {
+      store.commit("deleteDocument", uuid);
+      tree.parseTreeData(store.getters.treeData);
     },
     activeDoc(id) {
-      return id === store.document?.id;
+      return id === store.state.settings.lastDocument;
     },
     timeAgo(ts) {
       const date = new Date(ts);

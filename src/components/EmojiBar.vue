@@ -2,12 +2,28 @@
   <transition name="slide">
     <div class="bar" v-show="shown">
       <div class="title">
-        <input
-          type="text"
-          v-model="searchInput"
-          @keydown.stop
-          @mousewheel.stop
-        />
+        <div class="search">
+          <input
+            type="text"
+            v-model="searchInput"
+            @keydown.stop
+            @mousewheel.stop
+          />
+          <span class="input-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-search"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+              />
+            </svg>
+          </span>
+        </div>
         <button @click="close">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -49,6 +65,7 @@
               class="emoji"
               :title="e.key"
               @click="toggleEmoji(e.key)"
+              @contextmenu.prevent="toggleFavorite(e.key)"
               v-text="e.emoji"
             ></div>
           </div>
@@ -157,12 +174,13 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
-  max-width: 15rem;
+  max-width: 20rem;
   z-index: 999;
   overflow: auto;
   max-height: 100%;
   background-color: white;
   user-select: none;
+  overflow-x: hidden;
 
   .title {
     text-align: center;
@@ -170,9 +188,33 @@ export default {
     display: flex;
     align-items: flex-start;
     gap: 0.4rem;
-    input {
-      // width: 95%;
-      height: 2rem;
+    width: 100%;
+
+    .search {
+      position: relative;
+      flex-grow: 1;
+
+      input {
+        width: 95%;
+        height: 2rem;
+        border-radius: 0.4rem;
+        border: none;
+        outline: none;
+        background-color: var(--primary-clr);
+        box-sizing: border-box;
+        padding-left: 2rem;
+        width: 100%;
+        &:focus {
+          // border: 2px solid var(--secondary-clr);
+          box-shadow: inset 1px 1px 4px 0px rgba(0, 0, 0, 0.75);
+        }
+      }
+
+      .input-icon {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.7rem;
+      }
     }
     button {
       // width: 1rem;

@@ -16,11 +16,7 @@
     </modal>
     <breadcrumb></breadcrumb>
     <div class="buttons">
-      <documents-list
-        @doc-create="createNewDocument()"
-        @doc-select="setDocument(...$event)"
-        @doc-delete="deleteDocument(...$event)"
-      ></documents-list>
+      <documents-list></documents-list>
       <button @click="toggleEmojiBar">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +59,6 @@ import EmojiBar from "@/components/EmojiBar";
 
 import { tree } from "@/tree";
 import { events } from "@/hotkeys";
-import { store } from "@/store";
 
 export default {
   name: "Toolbar",
@@ -79,15 +74,6 @@ export default {
     };
   },
   methods: {
-    setDocument(name) {
-      tree.parseTreeData(store.setDocument(name));
-    },
-    createNewDocument() {
-      tree.parseTreeData(store.newDocument());
-    },
-    deleteDocument(name) {
-      tree.parseTreeData(store.deleteDocument(name));
-    },
     toggleEmojiBar() {
       this.$refs?.emojiBar?.toggle();
     },

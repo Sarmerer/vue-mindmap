@@ -1,4 +1,4 @@
-import { store } from "@/store";
+import { store } from "@/store2.0";
 
 class Node {
   constructor(
@@ -124,7 +124,7 @@ class Tree {
     this._query = [];
     this._counter = 0;
     this.isRoot = true;
-    this.parseTreeData(store.data);
+    this.parseTreeData(store.getters.treeData);
   }
 
   addSibling() {

@@ -36,7 +36,6 @@ export default {
   },
   methods: {
     popStack(amount) {
-      console.log(tree.query.length - amount);
       tree.spliceRootsQuery(tree.query.length - amount);
     },
   },

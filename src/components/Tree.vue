@@ -280,7 +280,7 @@ import ContextMenu from "@/components/ContextMenu";
 import * as d3 from "d3";
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
-import { store } from "@/store";
+import { store } from "@/store2.0";
 import emojis from "node-emoji";
 
 const MATCH_TRANSLATE_REGEX = /translate\((-?\d+)px, ?(-?\d+)px\)/i;
@@ -526,7 +526,7 @@ export default {
       });
     },
     saveDocument() {
-      store.save(tree.exportToStore());
+      store.commit("saveDocument", tree.exportToStore());
     },
 
     handleZoom(e) {
