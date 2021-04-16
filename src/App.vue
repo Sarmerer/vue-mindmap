@@ -1,16 +1,22 @@
 <template>
   <div id="app">
-    <tree></tree>
+    <tree v-if="tree.loaded"></tree>
   </div>
 </template>
 
 <script>
 import Tree from "@/components/Tree";
+import { tree } from "@/tree";
 
 export default {
   name: "App",
   components: {
     Tree,
+  },
+  data() {
+    return {
+      tree,
+    };
   },
 };
 </script>

@@ -281,6 +281,7 @@ import * as d3 from "d3";
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
 import { store } from "@/store2.0";
+import { mapActions } from "vuex";
 import emojis from "node-emoji";
 
 const MATCH_TRANSLATE_REGEX = /translate\((-?\d+)px, ?(-?\d+)px\)/i;
@@ -394,6 +395,9 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      saveDocumentAction: "saveDocument",
+    }),
     isDraggedOver(node) {
       return (
         this.nodeDrag?.target?.data._gid === node._gid &&
@@ -526,7 +530,7 @@ export default {
       });
     },
     saveDocument() {
-      store.commit("saveDocument", tree.exportToStore());
+      this.saveDocumentAction(tree.exportToStore());
     },
 
     handleZoom(e) {

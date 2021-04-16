@@ -43,34 +43,61 @@
           :key="uuid"
           @click="setDocument(uuid)"
         >
-          <span>{{ doc.name }}</span>
-          <span>
-            <span v-if="doc.lastEdit">{{ timeAgo(doc.lastEdit) }}</span>
-            <button @click.stop="deleteDocument(uuid)">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-trash"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                />
-              </svg>
-            </button>
-          </span>
+          <div v-if="!doc.editing" class="content">
+            <span class="doc-name">{{ doc.name }}</span>
+            <span>
+              <span v-if="doc.lastEdit" class="doc-date">{{
+                timeAgo(doc.lastEdit)
+              }}</span>
+              <!-- <button @click.stop="toggleDocumentEdit(doc)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-pencil-square"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
+                  />
+                </svg>
+              </button> -->
+              <button @click.stop="deleteDocument(uuid)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-trash"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                  />
+                </svg>
+              </button>
+            </span>
+          </div>
+          <div v-else class="content">
+            <input type="text" v-model="doc.name" />
+            <button @click="toggleDocumentEdit(doc)"></button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { mapActions } from "vuex";
 import { store } from "@/store2.0";
 import { tree } from "@/tree";
 import { mixin as clickaway } from "vue-clickaway2";
@@ -84,46 +111,38 @@ export default {
       showMenu: false,
     };
   },
-  watch: {
-    documents: (newVal) => console.log(newVal),
-  },
   computed: {
     documents() {
       return store.state.documents;
     },
   },
   methods: {
+    ...mapActions({
+      setDocumentAction: "setDocument",
+      createDocumentAction: "createDocument",
+      deleteDocumentAction: "deleteDocument",
+    }),
     setDocument(uuid) {
-      store.commit("setDocument", uuid);
-      tree.parseTreeData(store.getters.treeData);
+      this.setDocumentAction(uuid).then((data) => tree.parseTreeData(data));
     },
     createNewDocument() {
-      store.commit("createDocument");
-      tree.parseTreeData(store.getters.treeData);
+      this.createDocumentAction().then((data) => tree.parseTreeData(data));
+    },
+    toggleDocumentEdit(doc) {
+      this.$set(doc, "editing", !doc.editing);
     },
     deleteDocument(uuid) {
-      store.commit("deleteDocument", uuid);
-      tree.parseTreeData(store.getters.treeData);
+      this.deleteDocumentAction(uuid).then((data) => {
+        if (this.activeDoc(uuid)) tree.parseTreeData(data);
+      });
     },
     activeDoc(id) {
       return id === store.state.settings.lastDocument;
     },
     timeAgo(ts) {
       const date = new Date(ts);
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
+      // prettier-ignore
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       return `${date.getHours()}:${date.getMinutes()} ${date.getDate()} ${
         months[date.getMonth()]
       }`;
@@ -155,14 +174,18 @@ export default {
     border-radius: 0.2rem;
     margin-top: 0.5rem;
     border: 1px solid #b3b3b3;
-    .doc {
+    .doc > .content {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 0.5rem;
+      gap: 2rem;
       align-items: center;
       padding: 0.2rem;
       border-radius: 0.2rem;
+
+      .doc-date {
+        font-size: 0.8rem;
+      }
       span {
         padding: 0;
         margin: 0;

@@ -124,7 +124,11 @@ class Tree {
     this._query = [];
     this._counter = 0;
     this.isRoot = true;
-    this.parseTreeData(store.getters.treeData);
+    this.loaded = false;
+    store.dispatch("getTreeData").then((data) => {
+      this.parseTreeData(data);
+      this.loaded = true;
+    });
   }
 
   addSibling() {

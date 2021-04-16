@@ -33,35 +33,70 @@ export const store = new Vuex.Store({
     },
 
     setDocument: function (state, uuid) {
-      if (!uuid) return;
-      state.settings.lastDocument = uuid;
+      if (uuid) state.settings.lastDocument = uuid;
     },
-    createDocument: function (state, data = { name: "document", data: {} }) {
+    updateDocument: (state, { uuid, data }) => {
+      Object.assign(state.documents[uuid], data);
+    },
+    addDocument: (state, { uuid, document }) => {
+      state.documents[uuid] = document;
+    },
+  },
+  actions: {
+    getTreeData: ({ state, dispatch }) => {
+      if (
+        !state.settings.lastDocument ||
+        !state.documents[state.settings.lastDocument]
+      ) {
+        return dispatch("createDocument");
+      }
+      return state.documents[state.settings.lastDocument].data;
+    },
+    setDocument: ({ commit, state }, uuid) => {
+      if (uuid) commit("setDocument", uuid);
+      return state.documents[uuid].data;
+    },
+    saveDocument: ({ commit, state, getters }, data) => {
+      if (!getters.lastDocExists) return;
+      commit("updateDocument", {
+        uuid: state.settings.lastDocument,
+        data: { lastEdit: Date.now(), data: data },
+      });
+    },
+    createDocument: (
+      { commit, state },
+      data = { name: "document", data: {} }
+    ) => {
       const uuid = uuidv4();
-      state.documents[uuid] = new Document(data.name, data.data);
-      this.commit("setDocument", uuid);
+      commit("addDocument", {
+        uuid: uuid,
+        document: new Document(data.name, data.data),
+      });
+      commit("setDocument", uuid);
+      return state.documents[uuid].data;
     },
-    saveDocument: function (state, data) {
-      if (!state.documents[state.settings.lastDocument]) return;
-      state.documents[state.settings.lastDocument].lastEdit = Date.now();
-      state.documents[state.settings.lastDocument].data = data;
-    },
-    deleteDocument: function (state, uuid) {
-      delete state.documents[uuid];
+    deleteDocument: ({ commit, state, dispatch }, uuid) => {
+      Vue.delete(state.documents, uuid);
       const keys = Object.keys(state.documents);
       if (!keys.length) {
-        this.commit("createDocument");
+        return dispatch("createDocument");
       } else {
-        store.commit("setDocument", keys[0]);
+        commit("setDocument", keys[0]);
+        return state.documents[keys[0]].data;
       }
     },
   },
   getters: {
     documents: (state) => state.documents,
-    treeData: (state) => {
-      if (!state.documents[state.settings.lastDocument]) return {};
+    treeData: function (state) {
+      if (
+        !state.settings.lastDocument ||
+        !state.documents[state.settings.lastDocument]
+      )
+        return {};
       return state.documents[state.settings.lastDocument].data;
     },
+    lastDocExists: (state) => !!state.documents[state.settings.lastDocument],
   },
 });
 
