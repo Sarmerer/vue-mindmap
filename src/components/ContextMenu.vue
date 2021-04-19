@@ -70,7 +70,7 @@ export default {
   padding: 0.4rem 0;
   width: auto;
   height: auto;
-  border-radius: 0.2rem;
+  // border-radius: 0.2rem;
   background-color: var(--context-menu-bg-clr);
 }
 .context-menu > .context-menu-item {
@@ -78,10 +78,12 @@ export default {
   background-color: var(--context-menu-bg-clr);
   color: rgba(255, 255, 255, 0.87);
   text-align: start;
-  padding: 0.6rem 3rem 0.4rem 0.5rem;
+  padding: 0 3rem 0 0.5rem;
   margin: 0;
   border: none;
   outline: none;
+  height: 1.8rem;
+  cursor: pointer;
 }
 .context-menu > .context-menu-item:hover:enabled {
   background-color: var(--context-menu-item-hover-clr);
@@ -94,17 +96,17 @@ export default {
   padding: 0;
 }
 
-.selector {
+.context-menu-selector {
   transition: background-color 0.2s linear;
   background-color: var(--context-menu-bg-clr);
   color: rgba(255, 255, 255, 0.87);
+  padding: 0 0 0 0.5rem;
   text-align: start;
-  padding: 0.6rem 0 0.4rem 0.5rem;
   margin: 0;
   border: none;
   outline: none;
+  height: 1.8rem;
   font-size: 14px;
-  width: 94%;
   position: relative;
   &:hover {
     background-color: var(--context-menu-item-hover-clr);
@@ -112,13 +114,20 @@ export default {
       display: block;
     }
   }
+
+  .arrow {
+    float: right;
+    clear: both;
+    margin-right: 0.4rem;
+  }
+
   ul {
     position: absolute;
     display: none;
     left: 100%;
-    top: -1rem;
+    top: -1.3rem;
     padding: 0.4rem 0;
-    border-radius: 0 0.2rem 0.2rem 0;
+    // border-radius: 0 0.2rem 0.2rem 0;
     background-color: var(--context-menu-bg-clr);
     overflow: visible;
     width: 8rem;
@@ -128,10 +137,14 @@ export default {
       background-color: var(--context-menu-bg-clr);
       color: rgba(255, 255, 255, 0.87);
       text-align: start;
-      padding: 0.6rem 0 0.4rem 0.5rem;
       margin: 0;
+      padding: 0;
       border: none;
       outline: none;
+      height: 1.8rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
       &:hover {
         background-color: var(--context-menu-item-hover-clr);
       }
@@ -140,11 +153,6 @@ export default {
     &:hover {
       display: block;
     }
-  }
-
-  :last-child {
-    float: right;
-    margin-right: 0.5rem;
   }
 }
 

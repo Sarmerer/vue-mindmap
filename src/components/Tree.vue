@@ -37,6 +37,40 @@
         </button>
         <button
           class="context-menu-item"
+          @click="toggleDone"
+          v-if="!tree.lastNode.done"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-check2"
+            viewBox="0 -2 16 16"
+          >
+            <path
+              d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"
+            />
+          </svg>
+          Done
+        </button>
+        <button class="context-menu-item" @click="toggleDone" v-else>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-x"
+            viewBox="0 -2 16 16"
+          >
+            <path
+              d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+            />
+          </svg>
+          Undo
+        </button>
+        <button
+          class="context-menu-item"
           @click="pushRootToQuery"
           v-if="tree.lastNode.getChildren().length"
         >
@@ -91,38 +125,6 @@
           </svg>
           Collapse
         </button>
-        <!-- <div class="selector" v-if="tree.lastNode.getChildren().length > 1">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-filter"
-            viewBox="0 -1 16 16"
-          >
-            <path
-              d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"
-            />
-          </svg>
-          Sort
-          <ul>
-            <li @click="sortTree('name', 'asc')">By name asc</li>
-            <li @click="sortTree('name', 'desc')">By name desc</li>
-          </ul>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-chevron-right"
-            viewBox="0 -1 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-            />
-          </svg>
-        </div> -->
         <button class="context-menu-item" @click="editLastNode">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -136,6 +138,59 @@
               d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
             /></svg
           >Edit
+        </button>
+        <button class="context-menu-selector">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-gear"
+            viewBox="0 -2 18 18"
+          >
+            <path
+              d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
+            />
+            <path
+              d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
+            />
+          </svg>
+          Settings
+          <ul>
+            <li
+              v-for="(value, key) in tree.lastNode.settings"
+              :key="key"
+              @click="tree.lastNode.toggleSetting(key)"
+            >
+              {{ key }}
+              <svg
+                v-if="value"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-check2"
+                viewBox="0 -2 16 16"
+              >
+                <path
+                  d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"
+                />
+              </svg>
+            </li>
+          </ul>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="arrow"
+            viewBox="0 -1 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+            />
+          </svg>
         </button>
         <button class="context-menu-item" @click="deleteLastNode">
           <svg
@@ -201,15 +256,16 @@
 
                 highlighted: node.data._gid === tree.lastNode._gid,
                 stack: node.data.childrenLength && node.data.collapsed,
+                done: node.data.done,
               }"
               @mousedown.stop
-              @mouseup.left="setLastNode(node.data, $event)"
+              @click="setLastNode(node.data, $event)"
               @contextmenu="nodeContextClick($event, node.data)"
               draggable
               @dragstart="startDrag($event, node)"
               @drag="onDrag($event, node)"
             >
-              <div style="display: flex; gap: 0.5rem">
+              <div class="content" v-if="!node.data.editing">
                 <div
                   v-if="
                     !node.data.editing &&
@@ -254,8 +310,9 @@
                 @blur="blurLastNode(node.data)"
                 @keydown.esc="cancelNodeEdit"
               ></textarea>
+              <!-- <button v-if="node.data.editing">Save</button> -->
               <div class="controls">
-                <button class="add-child" @click="addSibling()">
+                <button class="add-child" @click.stop="addSibling()">
                   <svg width="16" height="16" viewBox="0 2 16 16">
                     <use href="#addSibling" />
                   </svg>
@@ -265,6 +322,15 @@
                     <use href="#addChild" />
                   </svg>
                 </button>
+              </div>
+              <div
+                v-if="shouldDisplayProgress(node.data)"
+                class="progress"
+                :class="{ 'round-right': node.data.progress == 100 }"
+                :style="{ width: `${node.data.progress}%` }"
+                :title="`${node.data.progress}%`"
+              >
+                <!-- <span>{{ node.data.progress }}%</span> -->
               </div>
             </div>
           </div>
@@ -387,7 +453,6 @@ export default {
     eventBus.$on("tree-go-down", this.goDown);
     eventBus.$on("tree-go-left", this.goLeft);
     eventBus.$on("tree-go-right", this.goRight);
-
     eventBus.$on("document-save", this.saveDocument);
   },
   mounted() {
@@ -467,6 +532,12 @@ export default {
       tree.addChild();
       this.focusInput(`node-#${tree.lastNode._gid}`);
       this.saveDocument();
+    },
+    toggleDone() {
+      tree.lastNode.toggleDoneState();
+    },
+    shouldDisplayProgress(node) {
+      return node?.settings?.displayProgress;
     },
     toggleEmoji(emoji) {
       tree.lastNode.toggleEmoji(emoji);
@@ -792,8 +863,7 @@ export default {
   width: 100%;
   height: 100%;
   .node {
-    padding: 1rem;
-    border-radius: 1rem;
+    border-radius: 0.6rem;
     box-sizing: border-box;
     border: 1px solid grey;
     background-color: var(--node-bg-clr);
@@ -802,9 +872,39 @@ export default {
     height: fit-content;
     position: relative;
 
+    .content {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem;
+    }
+
+    .progress {
+      position: absolute;
+      overflow: hidden;
+      bottom: 0;
+      height: 0.4rem;
+      background-color: rgb(44, 189, 44);
+      border-bottom-left-radius: 0.5rem;
+      font-size: 0.8rem;
+      color: white;
+      transition: width 1s ease;
+      span {
+        margin-left: 0.4rem;
+      }
+
+      &.round-right {
+        border-bottom-right-radius: 0.5rem;
+      }
+    }
     &.dragover {
       border: 0.2rem solid var(--secondary-clr);
       opacity: 1;
+    }
+    &.done {
+      background-color: var(--primary-clr);
+    }
+    &.done pre {
+      text-decoration: line-through;
     }
     pre {
       margin: 0;
@@ -814,6 +914,7 @@ export default {
       font-family: var(--font-family);
     }
     textarea {
+      margin: 0.5rem;
       height: 4rem;
       font-size: 1rem;
       font-family: var(--font-family);
@@ -823,6 +924,7 @@ export default {
       display: none;
     }
     button {
+      cursor: pointer;
       outline: none;
       border: 1px solid var(--secondary-clr);
       border-radius: 0.4rem;

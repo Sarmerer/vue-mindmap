@@ -12,6 +12,11 @@ class Node {
       collapsed: false,
       children: [],
       emoji: [],
+      done: false,
+      settings: {
+        displayProgress: true,
+        deepProgress: true,
+      },
     }
   ) {
     this._gid = globalID;
@@ -24,6 +29,13 @@ class Node {
     this._editing = !override.firstEdit ? false : parentNode !== null;
     this._firstEdit = override.firstEdit;
     this._emoji = override.emoji || [];
+    this._done = override.done;
+
+    this._settings = {
+      displayProgress:
+        override.settings?.displayProgress === true ? true : false,
+      deepProgress: override.settings?.deepProgress === true ? true : false,
+    };
   }
 
   addChild(node) {
@@ -42,6 +54,10 @@ class Node {
       : this._emoji.push(emoji);
   }
 
+  toggleDoneState() {
+    this._done = !this._done;
+  }
+
   getChildren() {
     return this._children;
   }
@@ -49,6 +65,20 @@ class Node {
   delete() {
     const index = this._parentNode._children.indexOf(this);
     this._parentNode.children.splice(index, 1);
+  }
+
+  setSetting(key, value) {
+    if (this._settings[key] === undefined) return;
+    this._settings[key] = value;
+  }
+
+  toggleSetting(key) {
+    if (
+      this._settings[key] === undefined ||
+      typeof this._settings[key] !== "boolean"
+    )
+      return;
+    this.setSetting(key, !this._settings[key]);
   }
 
   get id() {
@@ -89,6 +119,57 @@ class Node {
     return this._emoji;
   }
 
+  get done() {
+    return this._done;
+  }
+
+  get progress() {
+    const { percentage } = this._settings.deepProgress
+      ? this.deepProgress
+      : this.shallowProgress;
+
+    return percentage;
+  }
+
+  get deepProgress() {
+    if (this._children.length) {
+      let sum = 0;
+      let totalNodes = this._children.length;
+      this._children.forEach((c) => {
+        sum += c.done ? 1 : 0;
+        if (c._children.length) {
+          let { sum: cSum, totalNodes: cTN } = c.deepProgress;
+          sum += cSum;
+          totalNodes += cTN;
+        }
+      });
+      return {
+        sum,
+        totalNodes,
+        percentage: ((sum / totalNodes) * 100).toFixed(0),
+      };
+    }
+    return { sum: 0, totalNodes: 0, percentage: 0 };
+  }
+
+  get shallowProgress() {
+    if (this._children.length) {
+      let sum = 0;
+      let totalNodes = this._children.length;
+      this._children.forEach((c) => (sum += c.done ? 1 : 0));
+      return {
+        sum,
+        totalNodes,
+        percentage: ((sum / totalNodes) * 100).toFixed(0),
+      };
+    }
+    return { sum: 0, totalNodes: 0, percentage: 0 };
+  }
+
+  get settings() {
+    return this._settings;
+  }
+
   set id(value) {
     this._id = value;
   }
@@ -113,6 +194,10 @@ class Node {
 
   set parent(value) {
     this._parentNode = value;
+  }
+
+  set done(value) {
+    this._done = value ? true : false;
   }
 }
 
@@ -180,6 +265,8 @@ class Tree {
         collapsed: false,
         firstEdit: node.firstEdit,
         children: [],
+        done: node.done,
+        settings: node.settings,
       });
       newNode.children = node.getChildren().map((n) => deepClone(n, newNode));
       return newNode;
@@ -319,14 +406,20 @@ class Tree {
       return {
         name: data.name,
         collapsed: data.collapsed || false,
+        done: data.done || false,
+        settings: data.settings,
         children: data.getChildren()?.length
-          ? data
-              .getChildren()
-              .map((c) =>
-                c.getChildren().length
-                  ? parse(c)
-                  : { name: c.name, children: [], emoji: c.emoji }
-              )
+          ? data.getChildren().map((c) =>
+              c.getChildren().length
+                ? parse(c)
+                : {
+                    name: c.name,
+                    children: [],
+                    emoji: c.emoji,
+                    done: c.done,
+                    settings: c.settings,
+                  }
+            )
           : [],
         emoji: data.emoji,
       };
@@ -355,6 +448,8 @@ class Tree {
           firstEdit: false,
           collapsed: data.collapsed || false,
           emoji: data.emoji,
+          done: data.done,
+          settings: data.settings,
         }
       );
       newNode.children = data.children.length
@@ -370,6 +465,8 @@ class Tree {
           firstEdit: false,
           collapsed: child.collapsed || false,
           emoji: child.emoji,
+          done: child.done,
+          settings: child.settings,
         });
         newNode.children = child?.children.length
           ? parseChildren(child, newNode)
