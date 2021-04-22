@@ -7,6 +7,7 @@
     tabindex="0"
     v-on-clickaway:mousedown="close"
     @click="close()"
+    @contextmenu.prevent
   >
     <slot name="items" />
   </div>

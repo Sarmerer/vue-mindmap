@@ -15,6 +15,11 @@ export const events = [
   { name: "Collapse last node", action: "tree-node-collapse", hotkey: "c" },
   { name: "Edit last node", action: "tree-node-edit", hotkey: "e" },
   {
+    name: "Toggle node done state",
+    action: "tree-node-toggle-done",
+    hotkey: "f",
+  },
+  {
     name: "Delete last node",
     action: "tree-delete-last-node",
     hotkey: ["d", "delete", "backspace"],

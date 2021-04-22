@@ -3,158 +3,43 @@
     <context-menu ref="contextMenu">
       <template #items>
         <button class="context-menu-item" @click="addSibling">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-node-plus"
-            viewBox="0 -3 16 16"
-            id="addSibling"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"
-            />
-          </svg>
+          <b-icon icon="node-plus"></b-icon>
           Add sibling
         </button>
         <button class="context-menu-item" @click="addChild">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-diagram-2"
-            viewBox="0 -2 16 16"
-            id="addChild"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5v-1zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"
-            /></svg
-          >Add child
+          <b-icon icon="diagram2"></b-icon>
+          Add child
         </button>
-        <button
-          class="context-menu-item"
-          @click="toggleDone"
-          v-if="!tree.lastNode.done"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-check2"
-            viewBox="0 -2 16 16"
-          >
-            <path
-              d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"
-            />
-          </svg>
-          Done
-        </button>
-        <button class="context-menu-item" @click="toggleDone" v-else>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-x"
-            viewBox="0 -2 16 16"
-          >
-            <path
-              d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
-            />
-          </svg>
-          Undo
+        <button class="context-menu-item" @click="toggleDone">
+          <b-icon :icon="tree.lastNode.done ? 'x' : 'check2'"></b-icon>
+          {{ tree.lastNode.done ? "Undo" : "Done" }}
         </button>
         <button
           class="context-menu-item"
           @click="pushRootToQuery"
-          v-if="tree.lastNode.getChildren().length"
+          v-if="tree.lastNode._children.length && !tree.lastNode.isRoot"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-arrow-bar-down"
-            viewBox="0 -2 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z"
-            />
-          </svg>
+          <b-icon icon="arrow-bar-down"></b-icon>
           Drill down
         </button>
         <button
-          v-if="tree.lastNode.collapsed"
+          v-if="tree.lastNode.childrenLength"
           class="context-menu-item"
           @click="collapseLastNode"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="13"
-            height="13"
-            fill="currentColor"
-            class="bi bi-arrows-expand"
-            viewBox="0 -1 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z"
-            />
-          </svg>
-          Expand
-        </button>
-        <button v-else class="context-menu-item" @click="collapseLastNode">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="13"
-            height="13"
-            fill="currentColor"
-            class="bi bi-arrows-collapse"
-            viewBox="0 -1 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0zm-.5 11.707-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793z"
-            />
-          </svg>
-          Collapse
+          <b-icon
+            :icon="
+              tree.lastNode.collapsed ? 'arrows-expand' : 'arrows-collapse'
+            "
+          ></b-icon>
+          {{ tree.lastNode.collapsed ? "Expand" : "Collapse" }}
         </button>
         <button class="context-menu-item" @click="editLastNode">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            fill="currentColor"
-            class="bi bi-pencil"
-            viewBox="1 -1 16 16"
-          >
-            <path
-              d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
-            /></svg
-          >Edit
+          <b-icon icon="pencil"></b-icon>
+          Edit
         </button>
         <button class="context-menu-selector">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-gear"
-            viewBox="0 -2 18 18"
-          >
-            <path
-              d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
-            />
-            <path
-              d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
-            />
-          </svg>
+          <b-icon icon="gear"></b-icon>
           Settings
           <ul>
             <li
@@ -163,49 +48,17 @@
               @click="tree.lastNode.toggleSetting(key)"
             >
               {{ key }}
-              <svg
-                v-if="value"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-check2"
-                viewBox="0 -2 16 16"
-              >
-                <path
-                  d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"
-                />
-              </svg>
+              <b-icon v-if="value" icon="check2"></b-icon>
             </li>
           </ul>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="arrow"
-            viewBox="0 -1 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-            />
-          </svg>
+          <b-icon icon="chevron-right" class="arrow"></b-icon>
         </button>
-        <button class="context-menu-item" @click="deleteLastNode">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-node-minus"
-            viewBox="0 -3 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zM8 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 8 8z"
-            />
-          </svg>
+        <button
+          v-if="tree.lastNode.deletable"
+          class="context-menu-item"
+          @click="deleteLastNode"
+        >
+          <b-icon icon="node-minus"></b-icon>
           Delete
         </button>
       </template>
@@ -258,12 +111,16 @@
                 stack: node.data.childrenLength && node.data.collapsed,
                 done: node.data.done,
               }"
+              :style="{
+                'max-width': formatDimension(config.nodeMaxWidth),
+                'max-height': formatDimension(config.nodeMaxHeight),
+              }"
               @mousedown.stop
               @click="setLastNode(node.data, $event)"
               @contextmenu="nodeContextClick($event, node.data)"
-              draggable
+              :draggable="node.data.draggable"
               @dragstart="startDrag($event, node)"
-              @drag="onDrag($event, node)"
+              @drag="onDrag()"
             >
               <div class="content" v-if="!node.data.editing">
                 <div
@@ -279,48 +136,34 @@
                     >{{ emoji }}
                   </span>
                 </div>
-                <pre v-if="!node.data.editing" v-text="node.data.name"></pre>
+                <pre
+                  v-if="!node.data.editing"
+                  v-text="node.data.name"
+                  @mousewheel.stop
+                ></pre>
                 <button
-                  v-if="
-                    tree._query.length &&
-                    !node.data._parentNode &&
-                    !node.ediiting
-                  "
-                  @click="spliceRootsQuery"
+                  class="drill-up"
+                  v-if="node.data.isRoot && tree.hasQuery"
+                  @click.stop="spliceRootsQuery"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-arrow-bar-up"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z"
-                    />
-                  </svg>
+                  <b-icon icon="arrow-bar-up"></b-icon>
                 </button>
               </div>
               <textarea
                 v-if="node.data.editing"
                 v-model="node.data._name"
                 :ref="`node-#${node.data._gid}`"
-                @blur="blurLastNode(node.data)"
                 @keydown.esc="cancelNodeEdit"
+                @blur="blurLastNode(node.data)"
+                @mousewheel.stop
               ></textarea>
               <!-- <button v-if="node.data.editing">Save</button> -->
               <div class="controls">
                 <button class="add-child" @click.stop="addSibling()">
-                  <svg width="16" height="16" viewBox="0 2 16 16">
-                    <use href="#addSibling" />
-                  </svg>
+                  <b-icon icon="node-plus"></b-icon>
                 </button>
                 <button class="add-sibling" @click="addChild()">
-                  <svg width="16" height="16" viewBox="0 0 16 16">
-                    <use href="#addChild" />
-                  </svg>
+                  <b-icon icon="diagram2"></b-icon>
                 </button>
               </div>
               <div
@@ -344,6 +187,9 @@ import Toolbar from "@/components/Toolbar";
 import ContextMenu from "@/components/ContextMenu";
 
 import * as d3 from "d3";
+import { flextree } from "d3-flextree";
+const layout = flextree();
+
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
 import { store } from "@/store2.0";
@@ -392,6 +238,8 @@ export default {
         return {
           nodeWidth: DEFAULT_NODE_WIDTH,
           nodeHeight: DEFAULT_NODE_HEIGHT,
+          nodeMaxWidth: 150,
+          nodeMaxHeight: 200,
           levelHeight: DEFAULT_LEVEL_HEIGHT,
         };
       },
@@ -408,7 +256,6 @@ export default {
       events,
       store,
       tree,
-      dataset: tree,
       colors: "568FE1",
       nodeDataList: [],
       linkDataList: [],
@@ -433,7 +280,7 @@ export default {
     },
   },
   created() {
-    this.addUniqueKey(this.dataset);
+    this.addUniqueKey(this.tree.root);
     window.addEventListener("unload", this.beforeUnload);
 
     eventBus.$on("tree-push-root", this.pushRootToQuery);
@@ -443,9 +290,12 @@ export default {
     eventBus.$on("tree-set-last-node", (args) => {
       if (args && args[0]) this.setLastNode(args[0]);
     });
+    eventBus.$on("tree-node-toggle-done", this.toggleDone);
     eventBus.$on("tree-node-toggle-emoji", this.toggleEmoji);
     eventBus.$on("tree-node-collapse", this.collapseLastNode);
     eventBus.$on("tree-node-edit", (e) => this.editLastNode(e));
+    eventBus.$on("tree-node-do-all-children", this.doAllChildren);
+    eventBus.$on("tree-node-undo-all-children", this.undoAllChildren);
 
     eventBus.$on("tree-delete-last-node", this.deleteLastNode);
 
@@ -480,14 +330,16 @@ export default {
       this.nodeDrag.dragging = true;
     },
     onDrop(_, node) {
-      if (!this.nodeDrag.target || this.nodeDrag.target === node) {
-        this.nodeDrag.dragging = false;
-        return;
-      }
-      tree.cloneNode(node.data, this.nodeDrag.target.data, this.nodeDrag.snap);
+      if (this.nodeDrag.target && this.nodeDrag.target !== node)
+        tree.cloneNode(
+          node.data,
+          this.nodeDrag.target.data,
+          this.nodeDrag.snap
+        );
       node.collapsed = false;
       this.nodeDrag.dragging = false;
       this.nodeDrag.target = null;
+      this.nodeDrag.source = null;
     },
     mouseOverNode(e, node) {
       if (!this.nodeDrag.dragging || node.isRoot) return;
@@ -538,6 +390,12 @@ export default {
     },
     shouldDisplayProgress(node) {
       return node?.settings?.displayProgress;
+    },
+    doAllChildren() {
+      tree.lastNode.setAllChildrenDoneState(true);
+    },
+    undoAllChildren() {
+      tree.lastNode.setAllChildrenDoneState(false);
     },
     toggleEmoji(emoji) {
       tree.lastNode.toggleEmoji(emoji);
@@ -727,7 +585,7 @@ export default {
       }
     },
     draw() {
-      const [nodeDataList, linkDataList] = this.buildTree(this.dataset);
+      const [nodeDataList, linkDataList] = this.buildTree(this.tree.root);
       this.linkDataList = linkDataList;
       this.svg = this.d3.select(this.$refs.svg);
 
@@ -770,6 +628,7 @@ export default {
         .tree()
         .nodeSize([this.config.nodeWidth, this.config.levelHeight]);
       const tree = treeBuilder(this.d3.hierarchy(rootNode));
+      layout(tree);
       return [tree.descendants(), tree.links()];
     },
     enableDrag() {
@@ -815,6 +674,12 @@ export default {
         this.$refs.domContainer.style.transform = transformStr;
       };
 
+      container.onmouseleave = () => {
+        startX = 0;
+        startY = 0;
+        isDrag = false;
+      };
+
       container.onmouseup = () => {
         startX = 0;
         startY = 0;
@@ -842,7 +707,7 @@ export default {
     },
   },
   watch: {
-    dataset: {
+    "tree.root": {
       deep: true,
       immediate: true,
       handler() {
@@ -874,8 +739,10 @@ export default {
 
     .content {
       display: flex;
+      flex-direction: column;
       gap: 0.5rem;
       margin: 1rem;
+      position: relative;
     }
 
     .progress {
@@ -907,18 +774,29 @@ export default {
       text-decoration: line-through;
     }
     pre {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-height: 150px;
       margin: 0;
       padding: 0;
       text-align: center;
       height: fit-content;
       font-family: var(--font-family);
+      white-space: pre-line;
+      word-wrap: break-word;
+      overflow: auto;
+    }
+    .drill-up {
+      align-self: center;
     }
     textarea {
       margin: 0.5rem;
       height: 4rem;
+      width: calc(100% - 1.5rem);
       font-size: 1rem;
       font-family: var(--font-family);
-      resize: none;
+      resize: vertical;
+      max-height: 150px;
     }
     &:not(.highlighted) .controls {
       display: none;
@@ -1012,7 +890,7 @@ export default {
       height: 15px;
       margin-right: 5px;
       position: absolute;
-      top: calc(-100% - 0.5rem);
+      bottom: calc(100% + 0.5rem);
       width: 100%;
       height: 3rem;
       text-align: center;
@@ -1043,7 +921,7 @@ export default {
       height: 15px;
       margin-right: 5px;
       position: absolute;
-      right: calc(-50% - 0.5rem);
+      left: calc(100% + 0.5rem);
       width: 50%;
       height: 3rem;
       text-align: center;

@@ -8,6 +8,9 @@ Init();
 import VModal from "vue-js-modal";
 Vue.use(VModal, { componentName: "Modal" });
 
+import { BootstrapVueIcons } from "bootstrap-vue";
+Vue.use(BootstrapVueIcons);
+
 Vue.config.productionTip = false;
 
 new Vue({
