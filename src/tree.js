@@ -1,4 +1,4 @@
-import { store } from "@/store2.0";
+import { store } from "@/store";
 /** @type {import("./node").Node} */
 import { Node } from "@/node";
 

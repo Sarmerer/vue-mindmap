@@ -86,7 +86,7 @@
 </template>
 <script>
 import emojis from "node-emoji";
-import { store } from "@/store2.0";
+import { store } from "@/store";
 import { eventBus } from "@/hotkeys";
 import { tree } from "@/tree";
 
@@ -112,6 +112,7 @@ export default {
       return emojis.search(this.searchInput);
     },
   },
+  // TODO use vuex actions instead of mutattions
   methods: {
     toggleEmoji(emoji) {
       if (!emoji) return;

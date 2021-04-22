@@ -74,7 +74,7 @@
 </template>
 <script>
 import { mapActions } from "vuex";
-import { store } from "@/store2.0";
+import { store } from "@/store";
 import { tree } from "@/tree";
 import { mixin as clickaway } from "vue-clickaway2";
 

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
-import { store } from "@/store2.0";
+import { store } from "@/store";
 
 import { Init } from "@/hotkeys";
 Init();
