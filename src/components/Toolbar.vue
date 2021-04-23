@@ -5,7 +5,7 @@
         <table class="info-table">
           <tr v-for="(e, index) in events" :key="index" class="info-row">
             <td class="info-col-action">
-              {{ e.name }}
+              {{ e.title }}
             </td>
             <td class="info-col-hotkey">
               {{ e.hotkey.join(" / ") }}
@@ -15,9 +15,14 @@
       </div>
     </modal>
     <breadcrumb></breadcrumb>
+    <documents-list></documents-list>
     <div class="toolbar">
       <div class="left-buttons">
-        <div v-for="(action, index) in actions" :key="index">
+        <div
+          v-for="(action, index) in actions"
+          :key="index"
+          :title="action.title"
+        >
           <button
             v-if="condSatisfied(action)"
             @click.stop="emitEvent(action.event)"
@@ -27,7 +32,9 @@
         </div>
       </div>
       <div class="right-buttons">
-        <documents-list></documents-list>
+        <button @click.stop="toggleDocMenu">
+          <b-icon icon="file-earmark-text"></b-icon>
+        </button>
         <button @click="toggleEmojiBar">
           <b-icon icon="emoji-smile"></b-icon>
         </button>
@@ -59,32 +66,54 @@ export default {
       tree,
       events,
       actions: [
-        { icon: "diagram2", event: "tree-add-child" },
-        { icon: "node-plus", event: "tree-add-sibling" },
+        { title: "Add child", icon: "diagram2", event: "tree-add-child" },
         {
+          title: "Add sibling",
+          icon: "node-plus",
+          event: "tree-add-sibling",
+        },
+        {
+          title: "Collapse",
           cond: () => tree.lastNode.collapsible,
           icon: "arrows-collapse",
           event: "tree-node-collapse",
         },
         {
+          title: "Expand",
           cond: () => tree.lastNode.expandable,
           icon: "arrows-expand",
           event: "tree-node-collapse",
         },
-        { icon: "pencil", event: "tree-node-edit" },
+        { title: "Edit", icon: "pencil", event: "tree-node-edit" },
         {
+          title: "Drill down",
           cond: () => tree.lastNode.canDrillDown,
           icon: "arrow-bar-down",
           event: "tree-push-root",
         },
         {
+          title: "Drill up",
           cond: () => tree.lastNode.canDrillUp,
           icon: "arrow-bar-up",
           event: "tree-pop-root",
         },
-        { icon: "check2", event: "tree-node-toggle-done" },
-        { icon: "check2-all", event: "tree-node-do-all-children" },
-        { icon: "x", event: "tree-node-undo-all-children" },
+        {
+          title: "Mark done",
+          icon: "check2",
+          event: "tree-node-toggle-done",
+        },
+        {
+          title: "Do all children",
+          cond: () => tree.lastNode.childrenLength > 0,
+          icon: "check2-square",
+          event: "tree-node-do-all-children",
+        },
+        {
+          title: "Undo all children",
+          cond: () => tree.lastNode.childrenLength > 0,
+          icon: "x-square",
+          event: "tree-node-undo-all-children",
+        },
       ],
     };
   },
@@ -93,9 +122,7 @@ export default {
       if (!event) return;
       eventBus.$emit(event);
     },
-    toggleEmojiBar() {
-      this.$refs?.emojiBar?.toggle();
-    },
+
     condSatisfied(action) {
       if (!action.cond) return true;
       return typeof action.cond === "function"
@@ -103,6 +130,12 @@ export default {
         : action.cond == false
         ? false
         : true;
+    },
+    toggleEmojiBar() {
+      this.$refs?.emojiBar?.toggle();
+    },
+    toggleDocMenu() {
+    this.$modal.show("docs-modal")
     },
   },
 };
@@ -128,6 +161,7 @@ export default {
   .left-buttons {
     display: flex;
     flex-wrap: wrap;
+    gap: 1px;
     max-width: 50%;
 
     button {
@@ -135,6 +169,9 @@ export default {
       border-radius: 0;
       height: 1.7rem;
       width: 1.7rem;
+      box-shadow: none;
+      // box-shadow: 0 0 2px 0px black;
+      border: 0.5px solid var(--secondary-clr);
     }
   }
 

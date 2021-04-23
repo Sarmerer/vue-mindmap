@@ -192,7 +192,7 @@ const layout = flextree();
 
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
-import { store } from "@/store2.0";
+import { store } from "@/store";
 import { mapActions } from "vuex";
 import emojis from "node-emoji";
 
@@ -739,7 +739,7 @@ export default {
 
     .content {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 0.5rem;
       margin: 1rem;
       position: relative;

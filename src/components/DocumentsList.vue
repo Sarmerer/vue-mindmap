@@ -1,26 +1,28 @@
 <template>
-  <div class="docs" v-on-clickaway:mousedown="close">
-    <modal
-      name="import-export-modal"
-      :adaptive="true"
-      height="auto"
-      width="500px"
-    ></modal>
-    <button class="doc-menu-toggle" @click="showMenu = !showMenu">
-      <b-icon icon="file-earmark-text"></b-icon>
-    </button>
-    <div class="doc-menu" v-show="showMenu">
+  <modal
+    name="docs-modal"
+    :adaptive="true"
+    height="auto"
+    width="30%"
+    @before-close="beforeClose"
+  >
+    <export-JSON
+      @return="switchTab('docs')"
+      v-if="currTab === 'export'"
+    ></export-JSON>
+    <div v-else-if="currTab === 'import'">import</div>
+    <div v-else class="doc-menu">
       <div class="buttons">
         <button class="doc-new" @click="createNewDocument">
           <b-icon icon="file-earmark-plus"></b-icon>
         </button>
         <div class="import-export">
-          <button class="doc-export" disabled @click="exportJSON">
+          <button class="doc-export" @click="exportJSON">
             <b-icon icon="upload"></b-icon>
           </button>
-          <button class="doc-import" disabled @click="exportJSON">
+          <!-- <button class="doc-import" @click="switchTab('import')">
             <b-icon icon="download"></b-icon>
-          </button>
+          </button> -->
         </div>
       </div>
       <div class="doc-list">
@@ -70,25 +72,25 @@
         </div>
       </div>
     </div>
-  </div>
+  </modal>
 </template>
 <script>
 import { mapActions } from "vuex";
 import { store } from "@/store";
 import { tree } from "@/tree";
-import { mixin as clickaway } from "vue-clickaway2";
+import ExportJSON from "@/components/ExportJSON";
 
 export default {
   name: "DocumentsList",
-  mixins: [clickaway],
   data() {
     return {
       store,
       newDocName: "",
       editingDoc: "",
-      showMenu: false,
+      currTab: "",
     };
   },
+  components: { ExportJSON },
   computed: {
     documents() {
       return store.state.documents;
@@ -130,8 +132,29 @@ export default {
     activeDoc(id) {
       return id === store.state.settings.lastDocument;
     },
+    switchTab(tabName) {
+      this.currTab =
+        tabName === "export" || tabName === "import" ? tabName : "";
+    },
+    exportJSON() {
+      var text = JSON.stringify(tree.exportToStore(), null, "\t"),
+        blob = new Blob([text], { type: "text/json" }),
+        anchor = document.createElement("a");
 
-    exportJSON() {},
+      anchor.download = "tree-data.json";
+      anchor.href = (window.webkitURL || window.URL).createObjectURL(blob);
+      anchor.dataset.downloadurl = [
+        "text/plain",
+        anchor.download,
+        anchor.href,
+      ].join(":");
+      anchor.click();
+    },
+
+    beforeClose() {
+      this.newDocName = "";
+      this.editingDoc = "";
+    },
 
     timeAgo(ts) {
       const date = new Date(ts);
@@ -141,96 +164,85 @@ export default {
         months[date.getMonth()]
       }`;
     },
-    close() {
-      if (this.showMenu) this.showMenu = false;
-    },
   },
 };
 </script>
 <style lang="scss" scoped>
-.docs {
-  display: flex;
-  align-items: flex-start;
+.doc-menu {
+  flex-grow: 1;
+  background-color: white;
+  border-radius: 0.2rem;
+  padding: 0.5rem;
   user-select: none;
-  flex-direction: row-reverse;
+}
 
-  .doc-menu {
-    background-color: white;
-    border-radius: 0.2rem;
-    position: absolute;
-    margin-right: 1rem;
-    padding: 0.5rem;
-    box-shadow: 0px 0px 5px -2px black;
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+
+  .import-export {
+    display: flex;
+    gap: 0.5rem;
   }
+}
 
-  .buttons {
+.doc-list {
+  background-color: #e6e6e6;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  margin-top: 0.5rem;
+  border: 1px solid #b3b3b3;
+
+  .doc > .content {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
     justify-content: space-between;
-
-    .import-export {
-      display: flex;
-      gap: 0.5rem;
-    }
-  }
-
-  .doc-list {
-    background-color: #e6e6e6;
-    padding: 0.5rem;
+    gap: 2rem;
+    align-items: center;
+    padding: 0.2rem;
     border-radius: 0.2rem;
-    margin-top: 0.5rem;
-    border: 1px solid #b3b3b3;
 
-    .doc > .content {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 2rem;
-      align-items: center;
-      padding: 0.2rem;
-      border-radius: 0.2rem;
+    .doc-date {
+      font-size: 0.8rem;
+    }
+    span {
+      padding: 0;
+      margin: 0;
+    }
 
-      .doc-date {
-        font-size: 0.8rem;
-      }
-      span {
-        padding: 0;
-        margin: 0;
-      }
+    button {
+      margin-left: 0.5rem;
+    }
 
-      button {
-        margin-left: 0.5rem;
-      }
+    .name-input {
+      position: relative;
+      flex-grow: 1;
 
-      .name-input {
-        position: relative;
-        flex-grow: 1;
-
-        input {
-          width: 95%;
-          height: 2rem;
-          border-radius: 0.4rem;
-          border: none;
-          outline: none;
-          background-color: var(--primary-clr);
-          box-sizing: border-box;
-          padding-left: 0.5rem;
-          width: 100%;
-          &:focus {
-            // border: 2px solid var(--secondary-clr);
-            box-shadow: inset 1px 1px 4px 0px rgba(0, 0, 0, 0.75);
-          }
+      input {
+        width: 95%;
+        height: 2rem;
+        border-radius: 0.4rem;
+        border: none;
+        outline: none;
+        background-color: var(--primary-clr);
+        box-sizing: border-box;
+        padding-left: 0.5rem;
+        width: 100%;
+        &:focus {
+          // border: 2px solid var(--secondary-clr);
+          box-shadow: inset 1px 1px 4px 0px rgba(0, 0, 0, 0.75);
         }
       }
     }
-    .doc:not(:last-child) {
-      margin-bottom: 0.5rem;
-    }
-    .doc.active {
-      color: var(--primary-clr);
-      background-color: var(--secondary-clr);
-    }
+  }
+  .doc:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .doc.active {
+    color: var(--primary-clr);
+    background-color: var(--secondary-clr);
   }
 }
 </style>

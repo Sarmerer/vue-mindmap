@@ -1,3 +1,7 @@
+export const NodeDefaultSettings = {
+  displayProgress: true,
+  deepProgress: true,
+};
 export class Node {
   constructor(
     globalID = 0,
@@ -32,7 +36,6 @@ export class Node {
 
     this.isRoot = override?.isRoot === true ? true : false;
     this.size = [250, 250];
-
     this._settings = {
       displayProgress:
         override.settings?.displayProgress === false ? false : true,

@@ -1,6 +1,6 @@
 import { store } from "@/store";
 /** @type {import("./node").Node} */
-import { Node } from "@/node";
+import { NodeDefaultSettings, Node } from "@/node";
 
 class Tree {
   constructor() {
@@ -202,26 +202,37 @@ class Tree {
   exportToStore() {
     return parse(this._query.length ? this._query[0] : this._root);
     function parse(data) {
-      return {
+      const node = {
         name: data.name,
-        collapsed: data.collapsed || false,
-        done: data.done || false,
-        settings: data.settings,
         children: data.getChildren()?.length
-          ? data.getChildren().map((c) =>
-              c.getChildren().length
-                ? parse(c)
-                : {
-                    name: c.name,
-                    children: [],
-                    emoji: c.emoji,
-                    done: c.done,
-                    settings: c.settings,
-                  }
-            )
+          ? data.getChildren().map((c) => {
+              if (c.getChildren().length) {
+                return parse(c);
+              } else {
+                const child = {
+                  name: c.name,
+                };
+                assign(child, c);
+                return child;
+              }
+            })
           : [],
-        emoji: data.emoji,
       };
+      assign(node, data);
+      return node;
+    }
+    function assign(node, data) {
+      if (data.collapsed) node.collapsed = true;
+      if (data.done) node.done = true;
+      if (data.emoji?.length) node.emoji = data.emoji;
+      if (
+        JSON.stringify(data.settings) !== JSON.stringify(NodeDefaultSettings)
+      ) {
+        node.settings = {};
+        Object.entries(data.settings).forEach(([k, v]) => {
+          if (v !== NodeDefaultSettings[k]) node.settings[k] = v;
+        });
+      }
     }
   }
 
@@ -252,7 +263,7 @@ class Tree {
           settings: data.settings,
         }
       );
-      newNode.children = data.children.length
+      newNode.children = data.children?.length
         ? parseChildren(data, newNode)
         : [];
       parent.children.push(newNode);
@@ -268,7 +279,7 @@ class Tree {
           done: child.done,
           settings: child.settings,
         });
-        newNode.children = child?.children.length
+        newNode.children = child.children?.length
           ? parseChildren(child, newNode)
           : [];
         return newNode;

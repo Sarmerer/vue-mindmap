@@ -6,33 +6,73 @@ export const events = [
   // { name: "Set root", action: "tree-push-root", hotkey: "g" },
   // { name: "Set root", action: "tree-pop-root", hotkey: "h" },
   {
-    name: "Add child",
-    action: "tree-add-child",
+    title: "Add Child",
+    icon: "diagram2",
+    event: "tree-add-child",
     hotkey: "tab",
     options: { prevent: true },
   },
-  { name: "Add sibling", action: "tree-add-sibling", hotkey: "enter" },
-  { name: "Collapse last node", action: "tree-node-collapse", hotkey: "c" },
-  { name: "Edit last node", action: "tree-node-edit", hotkey: "e" },
   {
-    name: "Toggle node done state",
-    action: "tree-node-toggle-done",
+    title: "Add Sibling",
+    icon: "node-plus",
+    event: "tree-add-sibling",
+    hotkey: "enter",
+  },
+  {
+    title: "Collapse Node",
+    icon: "arrows-collapse",
+    event: "tree-node-collapse",
+    hotkey: "c",
+  },
+  {
+    title: "Edit Node",
+    icon: "pencil",
+    event: "tree-node-edit",
+    hotkey: "e",
+  },
+
+  {
+    title: "Toggle Node Done State",
+    icon: "check2",
+    event: "tree-node-toggle-done",
     hotkey: "f",
   },
   {
-    name: "Delete last node",
-    action: "tree-delete-last-node",
+    title: "Delete Node",
+    icon: "trash",
+    event: "tree-delete-last-node",
     hotkey: ["d", "delete", "backspace"],
   },
-  { name: "Cursor up", action: "tree-go-up", hotkey: "arrowup" },
-  { name: "Cursor right", action: "tree-go-right", hotkey: "arrowright" },
-  { name: "Cursor down", action: "tree-go-down", hotkey: "arrowdown" },
-  { name: "Cursor left", action: "tree-go-left", hotkey: "arrowleft" },
   {
-    name: "Save document",
-    action: "document-save",
+    title: "Cursor Up",
+    event: "tree-go-up",
+    hotkey: "arrowup",
+    UIIgnore: true,
+  },
+  {
+    title: "Cursor Right",
+    event: "tree-go-right",
+    hotkey: "arrowright",
+    UIIgnore: true,
+  },
+  {
+    title: "Cursor Down",
+    event: "tree-go-down",
+    hotkey: "arrowdown",
+    UIIgnore: true,
+  },
+  {
+    title: "Cursor Left",
+    event: "tree-go-left",
+    hotkey: "arrowleft",
+    UIIgnore: true,
+  },
+  {
+    title: "Save Document",
+    event: "document-save",
     hotkey: "ctrl+s",
     options: { prevent: true },
+    UIIgnore: true,
   },
 ];
 
@@ -51,7 +91,7 @@ export function Init() {
       const k = key.toLowerCase();
       if (eventsMap[k]) {
         console.error(
-          `Multiple hotkeys binding on single action: ${event.action}`
+          `Multiple hotkeys binding on single event: ${event.event}`
         );
         continue;
       }
@@ -63,7 +103,7 @@ export function Init() {
 function keydown(e) {
   const key = getCombination(e);
   const match = eventsMap[key];
-  if (match) call(match.action, e, match.options);
+  if (match) call(match.event, e, match.options);
 
   function call(eventName, event, options = { prevent: false }) {
     if (options.prevent) e.preventDefault();
