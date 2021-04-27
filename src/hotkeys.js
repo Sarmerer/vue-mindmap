@@ -35,13 +35,13 @@ export const events = [
     title: "Toggle Node Done State",
     icon: "check2",
     event: "tree-node-toggle-done",
-    hotkey: "f",
+    hotkey: "d",
   },
   {
     title: "Delete Node",
     icon: "trash",
     event: "tree-delete-last-node",
-    hotkey: ["d", "delete", "backspace"],
+    hotkey: ["delete", "backspace"],
   },
   {
     title: "Cursor Up",
@@ -103,11 +103,11 @@ export function Init() {
 function keydown(e) {
   const key = getCombination(e);
   const match = eventsMap[key];
-  if (match) call(match.event, e, match.options);
+  if (match) call(match.event, match.options);
 
-  function call(eventName, event, options = { prevent: false }) {
+  function call(eventName, options = { prevent: false }) {
     if (options.prevent) e.preventDefault();
-    eventBus.$emit(eventName, event);
+    eventBus.$emit(eventName);
   }
 }
 

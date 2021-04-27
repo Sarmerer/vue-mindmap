@@ -1,6 +1,6 @@
 import { store } from "@/store";
 /** @type {import("./node").Node} */
-import { NodeDefaultSettings, Node } from "@/node";
+import { Node } from "@/node";
 
 class Tree {
   constructor() {
@@ -16,11 +16,11 @@ class Tree {
   }
 
   addSibling() {
-    if (this._lastNode.editing) {
-      this._lastNode.editing = false;
-      this._lastNode._name = this._lastNode._name.trim();
-      return;
-    }
+    // if (this._lastNode.editing) {
+    //   this._lastNode.editing = false;
+    //   this._lastNode._name = this._lastNode._name.trim();
+    //   return;
+    // }
     const node = this.createNode(
       this.lastNodeID,
       this.lastNodeParent ? this.lastNodeParent : this._root,
@@ -34,10 +34,10 @@ class Tree {
   }
 
   addChild() {
-    if (this._lastNode.editing) {
-      this._lastNode.editing = false;
-      this._lastNode._name = this._lastNode._name.trim();
-    }
+    // if (this._lastNode.editing) {
+    //   this._lastNode.editing = false;
+    //   this._lastNode._name = this._lastNode._name.trim();
+    // }
     const id = this._lastNode
       ? this._lastNode.children.length
       : this.lastNodeID;
@@ -85,11 +85,6 @@ class Tree {
   collapseLastNode() {
     if (this._lastNode.editing) return;
     this._lastNode.collapsed = !this._lastNode.collapsed;
-  }
-
-  editLastNode() {
-    if (this._lastNode.editing) return;
-    this._lastNode.editing = true;
   }
 
   blurLastNode(triggerNode) {
@@ -199,46 +194,59 @@ class Tree {
     this.lastNode = newNode;
   }
 
-  exportToStore() {
-    return parse(this._query.length ? this._query[0] : this._root);
-    function parse(data) {
-      const node = {
-        name: data.name,
-        children: data.getChildren()?.length
-          ? data.getChildren().map((c) => {
-              if (c.getChildren().length) {
-                return parse(c);
-              } else {
-                const child = {
-                  name: c.name,
-                };
-                assign(child, c);
-                return child;
-              }
-            })
-          : [],
-      };
-      assign(node, data);
-      return node;
+  export() {
+    const root = this._query.length ? this._query[0] : this._root;
+    return root.export();
+  }
+
+  import(nodes) {
+    if (!nodes?.children?.length) return;
+    const self = this;
+    for (let node of nodes.children) {
+      parse(node, this.lastNode);
     }
-    function assign(node, data) {
-      if (data.collapsed) node.collapsed = true;
-      if (data.done) node.done = true;
-      if (data.emoji?.length) node.emoji = data.emoji;
-      if (
-        JSON.stringify(data.settings) !== JSON.stringify(NodeDefaultSettings)
-      ) {
-        node.settings = {};
-        Object.entries(data.settings).forEach(([k, v]) => {
-          if (v !== NodeDefaultSettings[k]) node.settings[k] = v;
+    function parse(data, parent) {
+      let newNode = new Node(
+        self.counter,
+        parent.children.length,
+        parent,
+        parent.depth + 1 || 0,
+        {
+          name: data.name,
+          firstEdit: false,
+          collapsed: data.collapsed || false,
+          emoji: data.emoji,
+          done: data.done,
+          settings: data.settings,
+        }
+      );
+      newNode.children = data.children?.length
+        ? parseChildren(data, newNode)
+        : [];
+      parent.children.push(newNode);
+    }
+
+    function parseChildren(data, parent) {
+      return data?.children?.map((child, index) => {
+        let newNode = new Node(self.counter, index, parent, parent.depth + 1, {
+          name: child.name,
+          firstEdit: false,
+          collapsed: child.collapsed || false,
+          emoji: child.emoji,
+          done: child.done,
+          settings: child.settings,
         });
-      }
+        newNode.children = child.children?.length
+          ? parseChildren(child, newNode)
+          : [];
+        return newNode;
+      });
     }
   }
 
   parseTreeData(treeData) {
     if (!treeData) return;
-    let self = this;
+    const self = this;
     this._root.name = treeData.name ? treeData.name : "root";
     this._root.children = [];
     this._lastNode = this._root;

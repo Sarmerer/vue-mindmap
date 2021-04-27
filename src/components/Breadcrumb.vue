@@ -1,12 +1,12 @@
 <template>
-  <div class="breadcrumb">
+  <div class="breadcrumb-query">
     <span>
       <span v-for="(q, index) in query" :key="index">
         <a href="#" @click="popStack(index)">{{ q }}</a>
         <b-icon
           v-if="index + 1 < queryLen"
           icon="chevron-right"
-          shift-v="-2"
+          shift-v="-1"
           shift-h="1"
         ></b-icon>
       </span>
@@ -34,11 +34,15 @@ export default {
 };
 </script>
 <style lang="scss">
-.breadcrumb {
+.breadcrumb-query {
   position: absolute;
   bottom: 1rem;
   left: 1rem;
   user-select: none;
   z-index: 10;
+
+  a {
+    color: black;
+  }
 }
 </style>

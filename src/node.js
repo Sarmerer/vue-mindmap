@@ -90,6 +90,47 @@ export class Node {
     this.setSetting(key, !this._settings[key]);
   }
 
+  trimName() {
+    this._name = this._name.trim();
+  }
+
+  export() {
+    return parse(this);
+    function parse(data) {
+      const node = {
+        name: data.name,
+        children: data.getChildren()?.length
+          ? data.getChildren().map((c) => {
+              if (c.getChildren().length) {
+                return parse(c);
+              } else {
+                const child = {
+                  name: c.name,
+                };
+                assign(child, c);
+                return child;
+              }
+            })
+          : [],
+      };
+      assign(node, data);
+      return node;
+    }
+    function assign(node, data) {
+      if (data.collapsed) node.collapsed = true;
+      if (data.done) node.done = true;
+      if (data.emoji?.length) node.emoji = data.emoji;
+      if (
+        JSON.stringify(data.settings) !== JSON.stringify(NodeDefaultSettings)
+      ) {
+        node.settings = {};
+        Object.entries(data.settings).forEach(([k, v]) => {
+          if (v !== NodeDefaultSettings[k]) node.settings[k] = v;
+        });
+      }
+    }
+  }
+
   get id() {
     return this._id;
   }
@@ -214,7 +255,7 @@ export class Node {
 
   set editing(value) {
     this._editing = value;
-    this._firstEdit = false;
+    if (this._firstEdit && value === false) this._firstEdit = false;
   }
 
   set collapsed(value) {

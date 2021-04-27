@@ -10,11 +10,11 @@
             @mousewheel.stop
           />
           <span class="input-icon">
-            <b-icon icon="search"></b-icon>
+            <b-icon shift-v="4" icon="search"></b-icon>
           </span>
         </div>
         <button @click="close">
-          <b-icon icon="x"></b-icon>
+          <b-icon shift-v="4" icon="x"></b-icon>
         </button>
       </div>
       <div class="favorites-list" v-if="favorites.length">
@@ -156,7 +156,7 @@ export default {
   max-width: 20rem;
   z-index: 999;
   overflow: auto;
-  max-height: 100%;
+  height: 100%;
   background-color: white;
   user-select: none;
   overflow-x: hidden;
@@ -185,7 +185,7 @@ export default {
         width: 100%;
         &:focus {
           // border: 2px solid var(--secondary-clr);
-          box-shadow: inset 1px 1px 4px 0px rgba(0, 0, 0, 0.75);
+          box-shadow: inset 1px 1px 4px -2px rgba(0, 0, 0, 0.75);
         }
       }
 

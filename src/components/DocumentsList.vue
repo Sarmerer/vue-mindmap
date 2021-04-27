@@ -6,24 +6,11 @@
     width="30%"
     @before-close="beforeClose"
   >
-    <export-JSON
-      @return="switchTab('docs')"
-      v-if="currTab === 'export'"
-    ></export-JSON>
-    <div v-else-if="currTab === 'import'">import</div>
-    <div v-else class="doc-menu">
+    <div class="doc-menu">
       <div class="buttons">
         <button class="doc-new" @click="createNewDocument">
           <b-icon icon="file-earmark-plus"></b-icon>
         </button>
-        <div class="import-export">
-          <button class="doc-export" @click="exportJSON">
-            <b-icon icon="upload"></b-icon>
-          </button>
-          <!-- <button class="doc-import" @click="switchTab('import')">
-            <b-icon icon="download"></b-icon>
-          </button> -->
-        </div>
       </div>
       <div class="doc-list">
         <div
@@ -78,7 +65,6 @@
 import { mapActions } from "vuex";
 import { store } from "@/store";
 import { tree } from "@/tree";
-import ExportJSON from "@/components/ExportJSON";
 
 export default {
   name: "DocumentsList",
@@ -90,7 +76,7 @@ export default {
       currTab: "",
     };
   },
-  components: { ExportJSON },
+
   computed: {
     documents() {
       return store.state.documents;
@@ -132,24 +118,6 @@ export default {
     activeDoc(id) {
       return id === store.state.settings.lastDocument;
     },
-    switchTab(tabName) {
-      this.currTab =
-        tabName === "export" || tabName === "import" ? tabName : "";
-    },
-    exportJSON() {
-      var text = JSON.stringify(tree.exportToStore(), null, "\t"),
-        blob = new Blob([text], { type: "text/json" }),
-        anchor = document.createElement("a");
-
-      anchor.download = "tree-data.json";
-      anchor.href = (window.webkitURL || window.URL).createObjectURL(blob);
-      anchor.dataset.downloadurl = [
-        "text/plain",
-        anchor.download,
-        anchor.href,
-      ].join(":");
-      anchor.click();
-    },
 
     beforeClose() {
       this.newDocName = "";
@@ -181,11 +149,6 @@ export default {
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: space-between;
-
-  .import-export {
-    display: flex;
-    gap: 0.5rem;
-  }
 }
 
 .doc-list {
@@ -232,7 +195,7 @@ export default {
         width: 100%;
         &:focus {
           // border: 2px solid var(--secondary-clr);
-          box-shadow: inset 1px 1px 4px 0px rgba(0, 0, 0, 0.75);
+          box-shadow: inset 1px 1px 4px -2px rgba(0, 0, 0, 0.75);
         }
       }
     }

@@ -14,8 +14,9 @@
         </table>
       </div>
     </modal>
-    <breadcrumb></breadcrumb>
+
     <documents-list></documents-list>
+    <import-export-modal :tab="'f'"></import-export-modal>
     <div class="toolbar">
       <div class="left-buttons">
         <div
@@ -32,13 +33,27 @@
         </div>
       </div>
       <div class="right-buttons">
-        <button @click.stop="toggleDocMenu">
+        <button
+          class="doc-export"
+          @click="toggleImportExportModal('export')"
+          title="Export"
+        >
+          <b-icon icon="upload"></b-icon>
+        </button>
+        <button
+          class="doc-import"
+          @click="toggleImportExportModal('import')"
+          title="Import"
+        >
+          <b-icon icon="download"></b-icon>
+        </button>
+        <button @click.stop="toggleDocMenu" title="Documents">
           <b-icon icon="file-earmark-text"></b-icon>
         </button>
-        <button @click="toggleEmojiBar">
+        <button @click="toggleEmojiBar" title="Emoji">
           <b-icon icon="emoji-smile"></b-icon>
         </button>
-        <button @click="$modal.show('info-modal')">
+        <button @click="$modal.show('info-modal')" title="Help">
           <b-icon icon="question"></b-icon>
         </button>
       </div>
@@ -47,8 +62,8 @@
   </div>
 </template>
 <script>
+import ImportExportModal from "@/components/ImportExportModal";
 import DocumentsList from "@/components/DocumentsList";
-import Breadcrumb from "@/components/Breadcrumb";
 import EmojiBar from "@/components/EmojiBar";
 
 import { tree } from "@/tree";
@@ -58,8 +73,9 @@ export default {
   name: "Toolbar",
   components: {
     DocumentsList,
-    Breadcrumb,
+
     EmojiBar,
+    ImportExportModal,
   },
   data() {
     return {
@@ -135,7 +151,10 @@ export default {
       this.$refs?.emojiBar?.toggle();
     },
     toggleDocMenu() {
-    this.$modal.show("docs-modal")
+      this.$modal.show("docs-modal");
+    },
+    toggleImportExportModal(tab) {
+      this.$modal.show("import-export-modal", tab);
     },
   },
 };
@@ -177,7 +196,7 @@ export default {
 
   .right-buttons {
     display: flex;
-    gap: 1rem;
+    gap: 0.8rem;
   }
 }
 

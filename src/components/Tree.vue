@@ -64,6 +64,7 @@
       </template>
     </context-menu>
     <toolbar></toolbar>
+
     <div
       class="tree-container"
       ref="container"
@@ -153,16 +154,21 @@
                 v-if="node.data.editing"
                 v-model="node.data._name"
                 :ref="`node-#${node.data._gid}`"
-                @keydown.esc="cancelNodeEdit"
+                @keydown.esc="quitNodeEditor"
+                @keydown.enter.prevent="quitNodeEditor($event, { save: true })"
+                @keydown.tab.prevent="
+                  quitNodeEditor($event, { save: true, callback: addChild })
+                "
+                @keydown.exact.stop
                 @blur="blurLastNode(node.data)"
                 @mousewheel.stop
               ></textarea>
               <!-- <button v-if="node.data.editing">Save</button> -->
               <div class="controls">
-                <button class="add-child" @click.stop="addSibling()">
+                <button class="add-child" @click.stop="addSibling">
                   <b-icon icon="node-plus"></b-icon>
                 </button>
-                <button class="add-sibling" @click="addChild()">
+                <button class="add-sibling" @click="addChild">
                   <b-icon icon="diagram2"></b-icon>
                 </button>
               </div>
@@ -180,10 +186,12 @@
         </div>
       </div>
     </div>
+    <breadcrumb></breadcrumb>
   </div>
 </template>
 <script>
 import Toolbar from "@/components/Toolbar";
+import Breadcrumb from "@/components/Breadcrumb";
 import ContextMenu from "@/components/ContextMenu";
 
 import * as d3 from "d3";
@@ -249,7 +257,7 @@ export default {
       default: LinkStyle.CURVE,
     },
   },
-  components: { Toolbar, ContextMenu },
+  components: { Toolbar, ContextMenu, Breadcrumb },
   data() {
     return {
       d3,
@@ -293,7 +301,7 @@ export default {
     eventBus.$on("tree-node-toggle-done", this.toggleDone);
     eventBus.$on("tree-node-toggle-emoji", this.toggleEmoji);
     eventBus.$on("tree-node-collapse", this.collapseLastNode);
-    eventBus.$on("tree-node-edit", (e) => this.editLastNode(e));
+    eventBus.$on("tree-node-edit", this.editLastNode);
     eventBus.$on("tree-node-do-all-children", this.doAllChildren);
     eventBus.$on("tree-node-undo-all-children", this.undoAllChildren);
 
@@ -378,12 +386,12 @@ export default {
     addSibling() {
       tree.addSibling();
       this.focusInput(`node-#${tree.lastNode._gid}`);
-      this.saveDocument();
+      // this.saveDocument();
     },
     addChild() {
       tree.addChild();
       this.focusInput(`node-#${tree.lastNode._gid}`);
-      this.saveDocument();
+      // this.saveDocument();
     },
     toggleDone() {
       tree.lastNode.toggleDoneState();
@@ -410,11 +418,10 @@ export default {
       tree.lastNode = node;
       this.$refs?.contextMenu?.close();
     },
-    editLastNode(e) {
-      if (!tree.lastNode.editing) e?.preventDefault();
-      tree.editLastNode();
+    editLastNode() {
+      tree.lastNode.editing = true;
       this.focusInput(`node-#${tree.lastNode._gid}`);
-      this.saveDocument();
+      // this.saveDocument();
     },
     blurLastNode(triggerNode) {
       tree.blurLastNode(triggerNode);
@@ -424,12 +431,17 @@ export default {
     },
     deleteLastNode() {
       tree.deleteLastNode();
-      this.saveDocument();
+      // this.saveDocument();
     },
-    cancelNodeEdit() {
-      tree.lastNode.firstEdit
-        ? tree.deleteLastNode({ force: true })
-        : (tree.lastNode.editing = false);
+    quitNodeEditor(e, options = { save: false, callback: null }) {
+      if (e.shiftKey) return (tree.lastNode._name += "\n");
+      if (tree.lastNode.firstEdit && !options.save) {
+        tree.deleteLastNode({ force: true });
+      } else {
+        tree.lastNode.editing = false;
+        tree.lastNode.trimName();
+      }
+      if (typeof options.callback === "function") options.callback();
     },
 
     goUp() {
@@ -459,7 +471,7 @@ export default {
       });
     },
     saveDocument() {
-      this.saveDocumentAction(tree.exportToStore());
+      this.saveDocumentAction(tree.export());
     },
 
     handleZoom(e) {
@@ -712,6 +724,7 @@ export default {
       immediate: true,
       handler() {
         this.draw();
+        this.saveDocument();
       },
     },
   },
