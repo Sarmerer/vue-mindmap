@@ -126,7 +126,7 @@ export default {
     position: absolute;
     display: none;
     left: 100%;
-    top: -1.3rem;
+    top: -0.4rem;
     padding: 0.4rem 0;
     // border-radius: 0 0.2rem 0.2rem 0;
     background-color: var(--context-menu-bg-clr);
@@ -139,7 +139,7 @@ export default {
       color: rgba(255, 255, 255, 0.87);
       text-align: start;
       margin: 0;
-      padding: 0;
+      padding: 0 0.4rem;
       border: none;
       outline: none;
       height: 1.8rem;

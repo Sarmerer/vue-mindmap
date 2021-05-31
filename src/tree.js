@@ -268,6 +268,7 @@ class Tree {
           collapsed: data.collapsed || false,
           emoji: data.emoji,
           done: data.done,
+          weight: data.weight || 1,
           settings: data.settings,
         }
       );
@@ -285,6 +286,7 @@ class Tree {
           collapsed: child.collapsed || false,
           emoji: child.emoji,
           done: child.done,
+          weight: child.weight || 1,
           settings: child.settings,
         });
         newNode.children = child.children?.length

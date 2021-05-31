@@ -17,7 +17,7 @@
         <button
           class="context-menu-item"
           @click="pushRootToQuery"
-          v-if="tree.lastNode._children.length && !tree.lastNode.isRoot"
+          v-if="!tree.lastNode.isRoot"
         >
           <b-icon icon="arrow-bar-down"></b-icon>
           Drill down
@@ -37,6 +37,20 @@
         <button class="context-menu-item" @click="editLastNode">
           <b-icon icon="pencil"></b-icon>
           Edit
+        </button>
+        <button class="context-menu-selector">
+          <b-icon icon="kanban"></b-icon>
+          Weight: {{ tree.lastNode.weight || 1 }}
+          <ul>
+            <li
+              v-for="(value, key) in ['Default', 10, 5, 1, -1, -5, -10]"
+              :key="key"
+              @click="tree.lastNode.addWeight(value)"
+            >
+              {{ value >= 0 ? `+${value}` : value }}
+            </li>
+          </ul>
+          <b-icon icon="chevron-right" class="arrow"></b-icon>
         </button>
         <button class="context-menu-selector">
           <b-icon icon="gear"></b-icon>
@@ -377,8 +391,7 @@ export default {
       tree.spliceRootsQuery(n);
     },
     pushRootToQuery() {
-      if (tree.lastNode && tree.lastNode.getChildren().length)
-        tree.pushRootToQuery(tree.lastNode);
+      if (tree.lastNode) tree.pushRootToQuery(tree.lastNode);
     },
     sortTree(by, direction) {
       tree.sortLastNode(by, direction);
@@ -764,7 +777,7 @@ export default {
       bottom: 0;
       height: 0.4rem;
       background-color: rgb(44, 189, 44);
-      border-bottom-left-radius: 0.5rem;
+      border-bottom-left-radius: 0.7rem;
       font-size: 0.8rem;
       color: white;
       transition: width 1s ease;
@@ -773,7 +786,7 @@ export default {
       }
 
       &.round-right {
-        border-bottom-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.7rem;
       }
     }
     &.dragover {

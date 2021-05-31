@@ -16,6 +16,7 @@ export class Node {
       emoji: [],
       done: false,
       isRoot: false,
+      weight: 1,
       settings: {
         displayProgress: true,
         deepProgress: true,
@@ -33,6 +34,7 @@ export class Node {
     this._firstEdit = override.firstEdit;
     this._emoji = override.emoji || [];
     this._done = override.done;
+    this._weight = override.weight || 1;
 
     this.isRoot = override?.isRoot === true ? true : false;
     this.size = [250, 250];
@@ -120,6 +122,7 @@ export class Node {
       if (data.collapsed) node.collapsed = true;
       if (data.done) node.done = true;
       if (data.emoji?.length) node.emoji = data.emoji;
+      if (data.weight > 1) node.weight = data.weight;
       if (
         JSON.stringify(data.settings) !== JSON.stringify(NodeDefaultSettings)
       ) {
@@ -128,6 +131,15 @@ export class Node {
           if (v !== NodeDefaultSettings[k]) node.settings[k] = v;
         });
       }
+    }
+  }
+
+  addWeight(weight) {
+    if (typeof weight === "number") {
+      if (this._weight + weight > 0) this._weight += weight;
+      else this._weight = 1;
+    } else {
+      this._weight = 1;
     }
   }
 
@@ -184,19 +196,22 @@ export class Node {
   get deepProgress() {
     if (this._children.length) {
       let sum = 0;
-      let totalNodes = this._children.length;
+      let totalWeight = this._children.reduce(
+        (a, c) => (a += c.weight || 1),
+        0
+      );
       this._children.forEach((c) => {
-        sum += c.done ? 1 : 0;
+        sum += c.done ? c.weight || 1 : 0;
         if (c._children.length) {
           let { sum: cSum, totalNodes: cTN } = c.deepProgress;
           sum += cSum;
-          totalNodes += cTN;
+          totalWeight += cTN;
         }
       });
       return {
         sum,
-        totalNodes,
-        percentage: ((sum / totalNodes) * 100).toFixed(0),
+        totalNodes: totalWeight,
+        percentage: ((sum / totalWeight) * 100).toFixed(0),
       };
     }
     return { sum: 0, totalNodes: 0, percentage: 0 };
@@ -205,12 +220,15 @@ export class Node {
   get shallowProgress() {
     if (this._children.length) {
       let sum = 0;
-      let totalNodes = this._children.length;
-      this._children.forEach((c) => (sum += c.done ? 1 : 0));
+      let totalWeight = this._children.reduce(
+        (a, c) => (a += c.weight || 1),
+        0
+      );
+      this._children.forEach((c) => (sum += c.done ? c.weight || 1 : 0));
       return {
         sum,
-        totalNodes,
-        percentage: ((sum / totalNodes) * 100).toFixed(0),
+        totalNodes: totalWeight,
+        percentage: ((sum / totalWeight) * 100).toFixed(0),
       };
     }
     return { sum: 0, totalNodes: 0, percentage: 0 };
@@ -244,6 +262,10 @@ export class Node {
     return !this.isRoot;
   }
 
+  get weight() {
+    return this._weight;
+  }
+
   set id(value) {
     this._id = value;
   }
@@ -272,5 +294,9 @@ export class Node {
 
   set done(value) {
     this._done = value ? true : false;
+  }
+
+  set weight(value) {
+    if (typeof value === "number") this._weight = value;
   }
 }
