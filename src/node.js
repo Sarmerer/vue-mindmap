@@ -17,6 +17,8 @@ export class Node {
       done: false,
       isRoot: false,
       weight: 1,
+      virtualChildren: 0,
+      virtualFinishedChildren: 0,
       settings: {
         displayProgress: true,
         deepProgress: true,
@@ -35,6 +37,9 @@ export class Node {
     this._emoji = override.emoji || [];
     this._done = override.done;
     this._weight = override.weight || 1;
+
+    this._virtualChildrenAmount = override.virtualChildren || 0;
+    this._virtualFinishedChildrenAmount = override.virtualFinishedChildren || 0;
 
     this.isRoot = override?.isRoot === true ? true : false;
     this.size = [250, 250];
@@ -92,8 +97,27 @@ export class Node {
     this.setSetting(key, !this._settings[key]);
   }
 
-  trimName() {
+  parseName() {
     this._name = this._name.trim();
+    const weight = this._name.match(/\s\d+$/gm);
+    const pseudoChildrenProgress = this._name.match(/\s\d+\/\d+/gm);
+    if (weight?.length) {
+      this._weight = parseInt(weight[0]);
+      // this._name = this._name.slice(0, -weight[0].length);
+      this._virtualChildrenAmount = 0;
+      this._virtualFinishedChildrenAmount = 0;
+    } else if (pseudoChildrenProgress?.length) {
+      const spl = pseudoChildrenProgress[0].split("/");
+      if (spl.length === 2) {
+        const finished = parseInt(spl[0]);
+        const total = parseInt(spl[1]);
+        if (finished <= total) {
+          this._virtualFinishedChildrenAmount = finished;
+          this._virtualChildrenAmount = total;
+        }
+      }
+      this._name = this._name.slice(0, -pseudoChildrenProgress[0].length);
+    }
   }
 
   export() {
@@ -123,6 +147,10 @@ export class Node {
       if (data.done) node.done = true;
       if (data.emoji?.length) node.emoji = data.emoji;
       if (data.weight > 1) node.weight = data.weight;
+      if (data._virtualChildrenAmount > 0)
+        node.virtualChildren = data._virtualChildrenAmount;
+      if (data._virtualFinishedChildrenAmount > 0)
+        node.virtualFinishedChildren = data._virtualFinishedChildrenAmount;
       if (
         JSON.stringify(data.settings) !== JSON.stringify(NodeDefaultSettings)
       ) {
@@ -173,6 +201,41 @@ export class Node {
     return this._children.length;
   }
 
+  get totalChildrenTasks() {
+    if (this._virtualChildrenAmount > 0) {
+      return this._virtualChildrenAmount;
+    }
+    let sum = 0;
+    this._children.forEach((c) => {
+      sum += 1;
+      if (c._virtualChildrenAmount > 0) {
+        sum += c._virtualChildrenAmount;
+      } else if (c._children.length) {
+        sum += c.totalChildrenTasks;
+      }
+    });
+    return sum;
+  }
+
+  get finishedChildrenTasks() {
+    if (this._virtualFinishedChildrenAmount > 0) {
+      return this._virtualFinishedChildrenAmount;
+    }
+    if (this._children.length) {
+      let sum = 0;
+      this._children.forEach((c) => {
+        sum += c.done ? 1 : 0;
+        if (c._virtualFinishedChildrenAmount > 0) {
+          sum += c._virtualFinishedChildrenAmount;
+        } else if (c._children.length) {
+          sum += c.finishedChildrenTasks;
+        }
+      });
+      return sum;
+    }
+    return 0;
+  }
+
   get firstEdit() {
     return this._firstEdit;
   }
@@ -194,15 +257,24 @@ export class Node {
   }
 
   get deepProgress() {
-    if (this._children.length) {
+    if (this._virtualFinishedChildrenAmount > 0) {
+      const sum = this._virtualFinishedChildrenAmount;
+      const totalNodes = this._virtualChildrenAmount;
+      const percentage = ((sum / totalNodes) * 100).toFixed(0);
+      return { sum, totalNodes, percentage };
+    } else if (this._children.length) {
       let sum = 0;
       let totalWeight = this._children.reduce(
         (a, c) => (a += c.weight || 1),
         0
       );
+
       this._children.forEach((c) => {
         sum += c.done ? c.weight || 1 : 0;
-        if (c._children.length) {
+        if (c._virtualChildrenAmount > 0) {
+          sum += c._virtualFinishedChildrenAmount;
+          totalWeight += c._virtualChildrenAmount;
+        } else if (c._children.length) {
           let { sum: cSum, totalNodes: cTN } = c.deepProgress;
           sum += cSum;
           totalWeight += cTN;
@@ -218,7 +290,12 @@ export class Node {
   }
 
   get shallowProgress() {
-    if (this._children.length) {
+    if (this._virtualFinishedChildrenAmount > 0) {
+      const sum = this._virtualFinishedChildrenAmount;
+      const totalNodes = this._virtualChildrenAmount;
+      const percentage = ((sum / totalNodes) * 100).toFixed(0);
+      return { sum, totalNodes, percentage };
+    } else if (this._children.length) {
       let sum = 0;
       let totalWeight = this._children.reduce(
         (a, c) => (a += c.weight || 1),

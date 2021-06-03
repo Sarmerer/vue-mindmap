@@ -121,10 +121,10 @@
               class="node"
               :class="{
                 dragover: isDraggedOver(node.data),
-
                 highlighted: node.data._gid === tree.lastNode._gid,
                 stack: node.data.childrenLength && node.data.collapsed,
                 done: node.data.done,
+                editing: node.data.editing,
               }"
               :style="{
                 'max-width': formatDimension(config.nodeMaxWidth),
@@ -178,14 +178,14 @@
                 @mousewheel.stop
               ></textarea>
               <!-- <button v-if="node.data.editing">Save</button> -->
-              <div class="controls">
-                <button class="add-child" @click.stop="addSibling">
-                  <b-icon icon="node-plus"></b-icon>
-                </button>
-                <button class="add-sibling" @click="addChild">
-                  <b-icon icon="diagram2"></b-icon>
-                </button>
-              </div>
+
+              <sub
+                v-if="!node.data.editing && node.data.totalChildrenTasks > 0"
+                class="completeness"
+                >{{
+                  `${node.data.finishedChildrenTasks}/${node.data.totalChildrenTasks}`
+                }}</sub
+              >
               <div
                 v-if="shouldDisplayProgress(node.data)"
                 class="progress"
@@ -195,18 +195,31 @@
               >
                 <!-- <span>{{ node.data.progress }}%</span> -->
               </div>
+              <div
+                class="controls"
+                v-if="node.data._gid === tree.lastNode._gid"
+              >
+                <button class="add-child" @click.stop="addSibling">
+                  <b-icon icon="node-plus"></b-icon>
+                </button>
+                <button class="add-sibling" @click="addChild">
+                  <b-icon icon="diagram2"></b-icon>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <breadcrumb></breadcrumb>
+    <cards></cards>
   </div>
 </template>
 <script>
 import Toolbar from "@/components/Toolbar";
 import Breadcrumb from "@/components/Breadcrumb";
 import ContextMenu from "@/components/ContextMenu";
+import Cards from "@/components/Cards";
 
 import * as d3 from "d3";
 import { flextree } from "d3-flextree";
@@ -271,7 +284,7 @@ export default {
       default: LinkStyle.CURVE,
     },
   },
-  components: { Toolbar, ContextMenu, Breadcrumb },
+  components: { Toolbar, ContextMenu, Breadcrumb, Cards },
   data() {
     return {
       d3,
@@ -452,7 +465,7 @@ export default {
         tree.deleteLastNode({ force: true });
       } else {
         tree.lastNode.editing = false;
-        tree.lastNode.trimName();
+        tree.lastNode.parseName();
       }
       if (typeof options.callback === "function") options.callback();
     },
@@ -748,115 +761,129 @@ export default {
   width: 100%;
   height: 100%;
 }
-</style>
-<style lang="scss">
 .tree-container {
   width: 100%;
   height: 100%;
-  .node {
-    border-radius: 0.6rem;
-    box-sizing: border-box;
-    border: 1px solid grey;
-    background-color: var(--node-bg-clr);
-    color: black;
-    user-select: none;
-    height: fit-content;
+}
+</style>
+<style lang="scss">
+.node {
+  border-radius: 0.6rem;
+  box-sizing: border-box;
+  border: 1px solid grey;
+  background-color: var(--node-bg-clr);
+  color: black;
+  user-select: none;
+  height: fit-content;
+  position: relative;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+
+  &.editing {
+    padding: 0.5rem;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
     position: relative;
-
-    .content {
-      display: flex;
-      flex-direction: row;
-      gap: 0.5rem;
-      margin: 1rem;
-      position: relative;
-    }
-
-    .progress {
-      position: absolute;
-      overflow: hidden;
-      bottom: 0;
-      height: 0.4rem;
-      background-color: rgb(44, 189, 44);
-      border-bottom-left-radius: 0.7rem;
-      font-size: 0.8rem;
-      color: white;
-      transition: width 1s ease;
-      span {
-        margin-left: 0.4rem;
-      }
-
-      &.round-right {
-        border-bottom-right-radius: 0.7rem;
-      }
-    }
-    &.dragover {
-      border: 0.2rem solid var(--secondary-clr);
-      opacity: 1;
-    }
-    &.done {
-      background-color: var(--primary-clr);
-    }
-    &.done pre {
-      text-decoration: line-through;
-    }
-    pre {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-height: 150px;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      height: fit-content;
-      font-family: var(--font-family);
-      white-space: pre-line;
-      word-wrap: break-word;
-      overflow: auto;
-    }
-    .drill-up {
-      align-self: center;
-    }
-    textarea {
-      margin: 0.5rem;
-      height: 4rem;
-      width: calc(100% - 1.5rem);
-      font-size: 1rem;
-      font-family: var(--font-family);
-      resize: vertical;
-      max-height: 150px;
-    }
-    &:not(.highlighted) .controls {
-      display: none;
-    }
-    button {
-      cursor: pointer;
-      outline: none;
-      border: 1px solid var(--secondary-clr);
-      border-radius: 0.4rem;
-      box-sizing: border-box;
-      background-color: white;
-    }
-    button:active {
-      border: 1px solid white;
-    }
-    .add-sibling {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      left: calc(100% + 1rem);
-    }
-    .add-child {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: calc(100% + 0.5rem);
-    }
+    align-self: center;
   }
 
-  .link {
-    stroke-width: 2px !important;
-    fill: transparent !important;
-    stroke: var(--node-link-clr) !important;
+  .completeness {
+    margin: 0.5rem -0.5rem 0 0;
+    align-self: flex-end;
+    min-width: 4rem;
+    text-align: end;
+    color: rgba($color: #000000, $alpha: 0.4);
   }
+
+  .progress {
+    position: absolute;
+    overflow: hidden;
+    margin: 0 -1rem;
+    bottom: 0;
+    height: 0.4rem;
+    background-color: rgb(44, 189, 44);
+    border-bottom-left-radius: 0.7rem;
+    font-size: 0.8rem;
+    color: white;
+    transition: width 1s ease;
+    span {
+      margin-left: 0.4rem;
+    }
+
+    &.round-right {
+      border-bottom-right-radius: 0.7rem;
+    }
+  }
+  &.dragover {
+    border: 0.2rem solid var(--secondary-clr);
+    opacity: 1;
+  }
+  &.done {
+    background-color: var(--primary-clr);
+  }
+  &.done pre {
+    text-decoration: line-through;
+  }
+  pre {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 150px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    height: fit-content;
+    font-family: var(--font-family);
+    white-space: pre-line;
+    word-wrap: break-word;
+    overflow: auto;
+  }
+
+  .drill-up {
+    align-self: center;
+  }
+  textarea {
+    height: 4rem;
+    width: 100%;
+    font-size: 1rem;
+    font-family: var(--font-family);
+    resize: vertical;
+    max-height: 150px;
+    min-height: 30px;
+  }
+  button {
+    cursor: pointer;
+    outline: none;
+    border: 1px solid var(--secondary-clr);
+    border-radius: 0.4rem;
+    box-sizing: border-box;
+    background-color: white;
+  }
+  button:active {
+    border: 1px solid white;
+  }
+  .add-sibling {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: calc(100% + 1rem);
+  }
+  .add-child {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(100% + 0.5rem);
+  }
+}
+
+.link {
+  stroke-width: 2px !important;
+  fill: transparent !important;
+  stroke: var(--node-link-clr) !important;
 }
 
 .tree-container.dragging .link {

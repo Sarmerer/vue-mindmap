@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import createPersistedState from "vuex-persistedstate";
+import { Card } from "./card";
 
 Vue.use(Vuex);
 
@@ -18,10 +19,14 @@ export const store = new Vuex.Store({
     settings: {
       lastDocument: "",
     },
+    cards: [],
     documents: {},
   },
   plugins: [createPersistedState()],
   mutations: {
+    /* -------------------------------------------------------------------------- */
+    /*                               emoji mutatuins                              */
+    /* -------------------------------------------------------------------------- */
     addFavoriteEmoji: function (state, emoji) {
       return state.favoriteEmojis.push(emoji);
     },
@@ -32,6 +37,10 @@ export const store = new Vuex.Store({
       );
     },
 
+    /* -------------------------------------------------------------------------- */
+    /*                             document mutations                             */
+    /* -------------------------------------------------------------------------- */
+
     setDocument: function (state, uuid) {
       if (uuid) state.settings.lastDocument = uuid;
     },
@@ -40,6 +49,20 @@ export const store = new Vuex.Store({
     },
     addDocument: (state, { uuid, document }) => {
       state.documents[uuid] = document;
+    },
+
+    /* -------------------------------------------------------------------------- */
+    /*                               card mutatuions                              */
+    /* -------------------------------------------------------------------------- */
+
+    addCard: function (state, card) {
+      if (!(card instanceof Card)) return;
+      state.cards.push(card);
+    },
+    deleteCard: function (state, id) {
+      const index = state.cards.findIndex((c) => c.id === id);
+      if (index < 0) return;
+      state.cards.splice(index, 1);
     },
   },
   actions: {

@@ -29,6 +29,7 @@ export const events = [
     icon: "pencil",
     event: "tree-node-edit",
     hotkey: "e",
+    options: { prevent: true },
   },
 
   {

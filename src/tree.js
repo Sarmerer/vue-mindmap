@@ -160,14 +160,13 @@ class Tree {
   cloneNode(node, destination, position) {
     const self = this;
     function deepClone(node, parent) {
-      const newNode = new Node(self.counter, node.id, parent, node.depth, {
-        name: node.name,
-        collapsed: false,
-        firstEdit: node.firstEdit,
-        children: [],
-        done: node.done,
-        settings: node.settings,
-      });
+      const newNode = new Node(
+        self.counter,
+        node.id,
+        parent,
+        node.depth,
+        assign(node)
+      );
       newNode.children = node.getChildren().map((n) => deepClone(n, newNode));
       return newNode;
     }
@@ -211,14 +210,7 @@ class Tree {
         parent.children.length,
         parent,
         parent.depth + 1 || 0,
-        {
-          name: data.name,
-          firstEdit: false,
-          collapsed: data.collapsed || false,
-          emoji: data.emoji,
-          done: data.done,
-          settings: data.settings,
-        }
+        assign(data)
       );
       newNode.children = data.children?.length
         ? parseChildren(data, newNode)
@@ -228,14 +220,13 @@ class Tree {
 
     function parseChildren(data, parent) {
       return data?.children?.map((child, index) => {
-        let newNode = new Node(self.counter, index, parent, parent.depth + 1, {
-          name: child.name,
-          firstEdit: false,
-          collapsed: child.collapsed || false,
-          emoji: child.emoji,
-          done: child.done,
-          settings: child.settings,
-        });
+        let newNode = new Node(
+          self.counter,
+          index,
+          parent,
+          parent.depth + 1,
+          assign(child)
+        );
         newNode.children = child.children?.length
           ? parseChildren(child, newNode)
           : [];
@@ -262,15 +253,7 @@ class Tree {
         parent.children.length,
         parent,
         parent.depth + 1 || 0,
-        {
-          name: data.name,
-          firstEdit: false,
-          collapsed: data.collapsed || false,
-          emoji: data.emoji,
-          done: data.done,
-          weight: data.weight || 1,
-          settings: data.settings,
-        }
+        assign(data)
       );
       newNode.children = data.children?.length
         ? parseChildren(data, newNode)
@@ -280,15 +263,13 @@ class Tree {
 
     function parseChildren(data, parent) {
       return data?.children?.map((child, index) => {
-        let newNode = new Node(self.counter, index, parent, parent.depth + 1, {
-          name: child.name,
-          firstEdit: false,
-          collapsed: child.collapsed || false,
-          emoji: child.emoji,
-          done: child.done,
-          weight: child.weight || 1,
-          settings: child.settings,
-        });
+        let newNode = new Node(
+          self.counter,
+          index,
+          parent,
+          parent.depth + 1,
+          assign(child)
+        );
         newNode.children = child.children?.length
           ? parseChildren(child, newNode)
           : [];
@@ -360,6 +341,23 @@ class Tree {
     if (this?._lastNode?.editing) this._lastNode.editing = false;
     this._lastNode = node;
   }
+}
+
+function assign(data) {
+  return Object.assign(
+    {},
+    {
+      name: data.name,
+      firstEdit: data.firstEdit || false,
+      collapsed: data.collapsed || false,
+      emoji: data.emoji,
+      done: data.done,
+      weight: data.weight || 1,
+      virtualChildren: data.virtualChildren,
+      virtualFinishedChildren: data.virtualFinishedChildren,
+      settings: data.settings,
+    }
+  );
 }
 
 export const tree = new Tree();

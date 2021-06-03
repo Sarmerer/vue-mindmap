@@ -33,6 +33,9 @@
         </div>
       </div>
       <div class="right-buttons">
+        <button @click="spawnCard('export')" title="New Card">
+          <b-icon icon="file-post"></b-icon>
+        </button>
         <button
           class="doc-export"
           @click="toggleImportExportModal('export')"
@@ -66,8 +69,10 @@ import ImportExportModal from "@/components/ImportExportModal";
 import DocumentsList from "@/components/DocumentsList";
 import EmojiBar from "@/components/EmojiBar";
 
+import { mapMutations } from "vuex";
 import { tree } from "@/tree";
 import { eventBus, events } from "@/hotkeys";
+import { Card } from "@/card";
 
 export default {
   name: "Toolbar",
@@ -134,6 +139,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["addCard"]),
     emitEvent(event) {
       if (!event) return;
       eventBus.$emit(event);
@@ -155,6 +161,9 @@ export default {
     },
     toggleImportExportModal(tab) {
       this.$modal.show("import-export-modal", tab);
+    },
+    spawnCard() {
+      this.addCard(new Card("", "", { editing: true, x: 100, y: 100 }));
     },
   },
 };
