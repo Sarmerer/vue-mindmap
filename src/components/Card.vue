@@ -119,8 +119,8 @@ export default {
   box-shadow: 0px 0px 20px rgba($color: #000000, $alpha: 0.1),
               0px 0px 5px rgba($color: #000000, $alpha: 0.5);
 
-  width: 170px;
-  height: 250px;
+  width: 120px;
+  height: 170px;
   background-color: white;
 
   .text {
