@@ -212,14 +212,14 @@
       </div>
     </div>
     <breadcrumb></breadcrumb>
-    <cards></cards>
+    <cards-wrapper></cards-wrapper>
   </div>
 </template>
 <script>
 import Toolbar from "@/components/Toolbar";
 import Breadcrumb from "@/components/Breadcrumb";
 import ContextMenu from "@/components/ContextMenu";
-import Cards from "@/components/Cards";
+import CardsWrapper from "@/components/cards/CardsWrapper";
 
 import * as d3 from "d3";
 import { flextree } from "d3-flextree";
@@ -227,7 +227,7 @@ const layout = flextree();
 
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
-import { store } from "@/store";
+import { store } from "@/store/index";
 import { mapActions } from "vuex";
 import emojis from "node-emoji";
 
@@ -284,7 +284,7 @@ export default {
       default: LinkStyle.CURVE,
     },
   },
-  components: { Toolbar, ContextMenu, Breadcrumb, Cards },
+  components: { Toolbar, ContextMenu, Breadcrumb, CardsWrapper },
   data() {
     return {
       d3,

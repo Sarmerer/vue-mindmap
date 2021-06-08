@@ -33,7 +33,10 @@
         </div>
       </div>
       <div class="right-buttons">
-        <button @click="spawnCard('export')" title="New Card">
+        <button @click="deleteAllCards" title="Delete All Cards">
+          <b-icon icon="x"></b-icon>
+        </button>
+        <button @click="spawnCard" title="New Card">
           <b-icon icon="file-post"></b-icon>
         </button>
         <button
@@ -138,8 +141,9 @@ export default {
       ],
     };
   },
+
   methods: {
-    ...mapMutations(["addCard"]),
+    ...mapMutations(["addCard", "deleteAllCards"]),
     emitEvent(event) {
       if (!event) return;
       eventBus.$emit(event);

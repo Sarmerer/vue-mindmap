@@ -63,7 +63,7 @@
 </template>
 <script>
 import { mapActions } from "vuex";
-import { store } from "@/store";
+import { store } from "@/store/index";
 import { tree } from "@/tree";
 
 export default {

@@ -1,7 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import createPersistedState from "vuex-persistedstate";
-import { Card } from "./card";
+import { Card } from "../card";
+import { uuidv4 } from "../utils";
 
 Vue.use(Vuex);
 
@@ -19,7 +20,8 @@ export const store = new Vuex.Store({
     settings: {
       lastDocument: "",
     },
-    cards: [],
+    _cards: [],
+    cardGroups: [],
     documents: {},
   },
   plugins: [createPersistedState()],
@@ -57,12 +59,44 @@ export const store = new Vuex.Store({
 
     addCard: function (state, card) {
       if (!(card instanceof Card)) return;
-      state.cards.push(card);
+      state._cards.push(card);
+    },
+    updateCards: function (state, value) {
+      state._cards = value;
     },
     deleteCard: function (state, id) {
-      const index = state.cards.findIndex((c) => c.id === id);
+      const index = state._cards.findIndex((c) => c.id === id);
       if (index < 0) return;
-      state.cards.splice(index, 1);
+      state._cards.splice(index, 1);
+    },
+    deleteCardsInGroup: function (state, groupID) {
+      const indexes = state._cards.map((c) => c.group === groupID);
+      if (!indexes.length) return;
+      indexes.sort((a, b) => b - a);
+      for (var i = indexes.length - 1; i >= 0; i--)
+        state._cards.splice([indexes[i]], 1);
+    },
+    deleteAllCards: function (state) {
+      state.cardGroups = [];
+      state._cards = [];
+    },
+
+    /* -------------------------------------------------------------------------- */
+    /*                            card groups mutatuins                           */
+    /* -------------------------------------------------------------------------- */
+
+    createGroup: function (state, group) {
+      state.cardGroups.push(group);
+    },
+    setCardProperty: function (state, [cardID, key, value]) {
+      const index = state._cards.findIndex((c) => c.id === cardID);
+      if (index < 0) return;
+      state._cards[index][key] = value;
+    },
+    deleteGroup: function (state, id) {
+      const index = state.cardGroups.findIndex((g) => g.id === id);
+      if (index < 0) return;
+      state.cardGroups.splice(index, 1);
     },
   },
   actions: {
@@ -108,6 +142,10 @@ export const store = new Vuex.Store({
         return state.documents[keys[0]].data;
       }
     },
+    deleteGroup: ({ commit }, id) => {
+      commit("deleteGroup", id);
+      commit("deleteCardsInGroup", id);
+    },
   },
   getters: {
     documents: (state) => state.documents,
@@ -119,15 +157,12 @@ export const store = new Vuex.Store({
         return {};
       return state.documents[state.settings.lastDocument].data;
     },
+    cards: (state) => state._cards.filter((c) => !c.group),
+    groups: (_, getters) => [
+      ...new Set(getters.groupedCards.map((c) => c.group)),
+    ],
+    groupedCards: (state) =>
+      state._cards.filter((c) => typeof c.group === "string"),
     lastDocExists: (state) => !!state.documents[state.settings.lastDocument],
   },
 });
-
-function uuidv4() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-    (
-      c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-    ).toString(16)
-  );
-}
