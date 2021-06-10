@@ -20,7 +20,7 @@ export const store = new Vuex.Store({
     settings: {
       lastDocument: "",
     },
-    _cards: [],
+    cards: [],
     cardGroups: [],
     documents: {},
   },
@@ -59,42 +59,42 @@ export const store = new Vuex.Store({
 
     addCard: function (state, card) {
       if (!(card instanceof Card)) return;
-      state._cards.push(card);
+      state.cards.push(card);
     },
     addCardToGroup: function (state, [cardID, groupID]) {
-      const cardIndex = state._cards.findIndex((c) => c.id === cardID);
+      const cardIndex = state.cards.findIndex((c) => c.id === cardID);
       if (cardIndex < 0) return;
-      state._cards[cardIndex].group = groupID;
+      state.cards[cardIndex].group = groupID;
       const groupCardsAmount =
-        state._cards.filter((c) => c.group === groupID) || [];
-      state._cards[cardIndex].orderInGroup =
+        state.cards.filter((c) => c.group === groupID) || [];
+      state.cards[cardIndex].orderInGroup =
         groupCardsAmount > 0 ? groupCardsAmount + 1 : 0;
     },
     setCardOrder: function (state, [cardID, newOrder]) {
-      const cardIndex = state._cards.findIndex((c) => c.id === cardID);
+      const cardIndex = state.cards.findIndex((c) => c.id === cardID);
       if (cardIndex < 0) return;
-      state._cards[cardIndex].orderInGroup = newOrder;
+      state.cards[cardIndex].orderInGroup = newOrder;
     },
     updateCards: function (state, value) {
-      state._cards = value;
+      state.cards = value;
     },
     deleteCard: function (state, id) {
-      const index = state._cards.findIndex((c) => c.id === id);
+      const index = state.cards.findIndex((c) => c.id === id);
       if (index < 0) return;
-      state._cards.splice(index, 1);
+      state.cards.splice(index, 1);
     },
     deleteCardsInGroup: function (state, groupID) {
-      const indexes = state._cards
+      const indexes = state.cards
         .map((c, i) => (c.group === groupID ? i : undefined))
         .filter((x) => x !== undefined);
 
       if (!indexes.length) return;
       for (var i = indexes.length - 1; i >= 0; i--)
-        state._cards.splice([indexes[i]], 1);
+        state.cards.splice([indexes[i]], 1);
     },
     deleteAllCards: function (state) {
       state.cardGroups = [];
-      state._cards = [];
+      state.cards = [];
     },
 
     /* -------------------------------------------------------------------------- */
@@ -105,12 +105,12 @@ export const store = new Vuex.Store({
       state.cardGroups.push(group);
     },
     setCardProperty: function (state, [cardID, key, value]) {
-      const index = state._cards.findIndex((c) => c.id === cardID);
+      const index = state.cards.findIndex((c) => c.id === cardID);
       if (index < 0) return;
-      state._cards[index][key] = value;
+      state.cards[index][key] = value;
     },
     reorderGroup: function (state, [group, priorityIndex, priorityID]) {
-      const cards = state._cards
+      const cards = state.cards
         .filter((c) => c.group === group)
         .sort((a, b) => a.orderInGroup - b.orderInGroup);
       const targetCardIndex = cards.findIndex((c) => c.id === priorityID);
@@ -193,12 +193,12 @@ export const store = new Vuex.Store({
         return {};
       return state.documents[state.settings.lastDocument].data;
     },
-    cards: (state) => state._cards.filter((c) => !c.group),
+    cards: (state) => state.cards.filter((c) => !c.group),
     groups: (_, getters) => [
       ...new Set(getters.groupedCards.map((c) => c.group)),
     ],
     groupedCards: (state) =>
-      state._cards.filter((c) => typeof c.group === "string"),
+      state.cards.filter((c) => typeof c.group === "string"),
     lastDocExists: (state) => !!state.documents[state.settings.lastDocument],
   },
 });

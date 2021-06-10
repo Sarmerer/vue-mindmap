@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     ...mapGetters(["cards"]),
-    ...mapState(["_cards", "cardGroups"]),
+    ...mapState(["cardGroups"]),
   },
   data() {
     return {
@@ -78,9 +78,7 @@ export default {
       this.target = null;
     },
     emojiPick(emoji) {
-      const index = this._cards.findIndex((c) => c.id === this.target);
-      if (index < 0) return;
-      this._cards[index].icon = emoji.emoji;
+      this.setCardProperty([this.target, "icon", emoji.emoji]);
     },
   },
 };
