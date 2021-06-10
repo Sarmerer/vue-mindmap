@@ -60,7 +60,7 @@
   </div>
 </template>
 <script>
-import { mapMutations } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 import { mixin as clickaway } from "vue-clickaway2";
 import { CardGroup } from "@/card-group";
 
@@ -113,6 +113,7 @@ export default {
       "createGroup",
       "deleteCard",
     ]),
+    ...mapActions(["addCardToGroup"]),
     dragStart(e) {
       const rect = this.$refs.card.getBoundingClientRect();
       this.shift.x = e.clientX - rect.left;
@@ -141,7 +142,8 @@ export default {
     dragEnd() {
       if (!this.dragging) return;
       if (this.targetGroup) {
-        this.$set(this.card, "group", this.targetGroup);
+        this.addCardToGroup([this.card.id, this.targetGroup]);
+        // this.$set(this.card, "group", this.targetGroup);
       }
       this.dragging = false;
       this.card.noPointerEvents = false;
@@ -170,7 +172,7 @@ export default {
     group() {
       const group = new CardGroup(this.card.x, this.card.y, [this.card.id]);
       this.createGroup(group);
-      this.$set(this.card, "group", group.id);
+      this.addCardToGroup([this.card.id, group.id]);
     },
     ungroup() {
       this.$set(this.card, "group", null);

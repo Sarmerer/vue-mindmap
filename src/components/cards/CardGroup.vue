@@ -8,13 +8,13 @@
     <div class="container">
       <div class="controls">
         <div><b-icon icon="x" @click="deleteGroup(group.id)"></b-icon></div>
-        <!-- <div
+        <div
           v-if="cards.length > 1"
           @click="orderMode = !orderMode"
           :class="{ active: orderMode }"
         >
           <b-icon icon="arrow-left-right"></b-icon>
-        </div> -->
+        </div>
         <div @mousedown="dragStart" :class="{ active: dragging }">
           <b-icon icon="arrows-move"></b-icon>
         </div>
@@ -25,33 +25,35 @@
         handle=".handle"
         @start="ordering = true"
         @end="ordering = false"
+        @change="change"
         animation="200"
+        class="cards"
+        :class="{ target: isTarget }"
       >
-        <transition-group
+        <!-- <transition-group
           type="transition"
           :name="!ordering ? 'flip-list' : null"
-          class="cards"
-          :class="{ target: isTarget }"
-        >
-          <div class="card-wrapper" v-for="card in cards" :key="card.id">
-            <div v-if="orderMode" class="handle">
-              <b-icon icon="grip-horizontal" scale="1"></b-icon>
-            </div>
-            <card
-              :card="card"
-              :targetGroup="targetGroup"
-              @open-picker="openPicker"
-              @close-picker="closePicker"
-              @set-dragging-card="$emit('set-dragging-card', $event)"
-            ></card>
+         
+        > -->
+        <div class="card-wrapper" v-for="card in cards" :key="card.id">
+          <div v-if="orderMode" class="handle">
+            <b-icon icon="grip-horizontal" scale="1"></b-icon>
           </div>
-        </transition-group>
+          <card
+            :card="card"
+            :targetGroup="targetGroup"
+            @open-picker="openPicker"
+            @close-picker="closePicker"
+            @set-dragging-card="$emit('set-dragging-card', $event)"
+          ></card>
+        </div>
+        <!-- </transition-group> -->
       </draggable>
     </div>
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import Card from "./Card";
 import draggable from "vuedraggable";
 
@@ -71,18 +73,17 @@ export default {
 
     cards: {
       get() {
-        const cards = this.groupedCards.filter(
-          (c) => this.group.id === c.group
-        );
+        this.trigger;
+        const cards = this.groupedCards
+          .filter((c) => this.group.id === c.group)
+          .sort((a, b) => a.orderInGroup - b.orderInGroup);
         if (!cards.length) {
           this.deleteGroup(this.group.id);
-          return;
+          return [];
         }
         return cards;
       },
-      set(value) {
-        this.updateCards(value);
-      },
+      set() {},
     },
     isTarget() {
       return this.draggingCard && this.targetGroup === this.group.id;
@@ -99,6 +100,12 @@ export default {
       if (newY >= 0 && newY <= bounds.height) this.group.y = newY;
       this.oldBounds = bounds;
     },
+    groupedCards: {
+      deep: true,
+      handler() {
+        this.trigger++;
+      },
+    },
   },
   data() {
     return {
@@ -107,6 +114,7 @@ export default {
       oldBounds: null,
       ordering: false,
       orderMode: false,
+      trigger: 0,
     };
   },
   mounted() {
@@ -114,9 +122,13 @@ export default {
     window.addEventListener("mouseup", this.dragStop);
   },
   methods: {
-    ...mapMutations(["updateCards", "setCardProperty"]),
-    ...mapActions(["deleteGroup"]),
-
+    ...mapActions(["changeCardPosition", "deleteGroup"]),
+    change(e) {
+      const card = e?.moved?.element;
+      if (card) {
+        this.changeCardPosition([card.id, card.group, e.moved.newIndex]);
+      }
+    },
     hover() {
       if (!this.draggingCard) return;
       this.$emit("set-target-group", this.group.id);

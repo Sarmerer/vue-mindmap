@@ -61,6 +61,20 @@ export const store = new Vuex.Store({
       if (!(card instanceof Card)) return;
       state._cards.push(card);
     },
+    addCardToGroup: function (state, [cardID, groupID]) {
+      const cardIndex = state._cards.findIndex((c) => c.id === cardID);
+      if (cardIndex < 0) return;
+      state._cards[cardIndex].group = groupID;
+      const groupCardsAmount =
+        state._cards.filter((c) => c.group === groupID) || [];
+      state._cards[cardIndex].orderInGroup =
+        groupCardsAmount > 0 ? groupCardsAmount + 1 : 0;
+    },
+    setCardOrder: function (state, [cardID, newOrder]) {
+      const cardIndex = state._cards.findIndex((c) => c.id === cardID);
+      if (cardIndex < 0) return;
+      state._cards[cardIndex].orderInGroup = newOrder;
+    },
     updateCards: function (state, value) {
       state._cards = value;
     },
@@ -70,9 +84,11 @@ export const store = new Vuex.Store({
       state._cards.splice(index, 1);
     },
     deleteCardsInGroup: function (state, groupID) {
-      const indexes = state._cards.map((c) => c.group === groupID);
+      const indexes = state._cards
+        .map((c, i) => (c.group === groupID ? i : undefined))
+        .filter((x) => x !== undefined);
+
       if (!indexes.length) return;
-      indexes.sort((a, b) => b - a);
       for (var i = indexes.length - 1; i >= 0; i--)
         state._cards.splice([indexes[i]], 1);
     },
@@ -92,6 +108,18 @@ export const store = new Vuex.Store({
       const index = state._cards.findIndex((c) => c.id === cardID);
       if (index < 0) return;
       state._cards[index][key] = value;
+    },
+    reorderGroup: function (state, [group, priorityIndex, priorityID]) {
+      const cards = state._cards
+        .filter((c) => c.group === group)
+        .sort((a, b) => a.orderInGroup - b.orderInGroup);
+      const targetCardIndex = cards.findIndex((c) => c.id === priorityID);
+      if (targetCardIndex < 0) return;
+      cards.splice(priorityIndex, 0, cards.splice(targetCardIndex, 1)[0]);
+      for (let i = 0; i < cards.length; i++) {
+        if (i === priorityIndex && cards[i].id === priorityID) continue;
+        cards[i].orderInGroup = i;
+      }
     },
     deleteGroup: function (state, id) {
       const index = state.cardGroups.findIndex((g) => g.id === id);
@@ -145,6 +173,14 @@ export const store = new Vuex.Store({
     deleteGroup: ({ commit }, id) => {
       commit("deleteGroup", id);
       commit("deleteCardsInGroup", id);
+    },
+    changeCardPosition: ({ commit }, [cardID, groupID, newIndex]) => {
+      commit("setCardOrder", [cardID, newIndex]);
+      commit("reorderGroup", [groupID, newIndex, cardID]);
+    },
+    addCardToGroup: ({ commit }, [cardID, groupID]) => {
+      commit("addCardToGroup", [cardID, groupID]);
+      commit("reorderGroup", [groupID]);
     },
   },
   getters: {
