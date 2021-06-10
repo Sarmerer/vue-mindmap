@@ -78,7 +78,11 @@ export default {
       this.target = null;
     },
     emojiPick(emoji) {
-      this.setCardProperty([this.target, "icon", emoji.emoji]);
+      this.setCardProperty({
+        cardID: this.target,
+        key: "icon",
+        value: emoji.emoji,
+      });
     },
   },
 };

@@ -166,8 +166,15 @@ export default {
     toggleImportExportModal(tab) {
       this.$modal.show("import-export-modal", tab);
     },
-    spawnCard() {
-      this.addCard(new Card("", "", { editing: true, x: 100, y: 100 }));
+    spawnCard(e) {
+      this.addCard(
+        new Card("", "", {
+          editing: true,
+          x: e.clientX,
+          y: e.clientY,
+          dragging: true,
+        })
+      );
     },
   },
 };

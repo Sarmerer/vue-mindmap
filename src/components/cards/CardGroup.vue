@@ -23,18 +23,11 @@
       <draggable
         v-model="cards"
         handle=".handle"
-        @start="ordering = true"
-        @end="ordering = false"
         @change="change"
         animation="200"
         class="cards"
         :class="{ target: isTarget }"
       >
-        <!-- <transition-group
-          type="transition"
-          :name="!ordering ? 'flip-list' : null"
-         
-        > -->
         <div class="card-wrapper" v-for="card in cards" :key="card.id">
           <div v-if="orderMode" class="handle">
             <b-icon icon="grip-horizontal" scale="1"></b-icon>
@@ -47,7 +40,6 @@
             @set-dragging-card="$emit('set-dragging-card', $event)"
           ></card>
         </div>
-        <!-- </transition-group> -->
       </draggable>
     </div>
   </div>
@@ -73,7 +65,6 @@ export default {
 
     cards: {
       get() {
-        this.trigger;
         const cards = this.groupedCards
           .filter((c) => this.group.id === c.group)
           .sort((a, b) => a.orderInGroup - b.orderInGroup);
@@ -100,21 +91,13 @@ export default {
       if (newY >= 0 && newY <= bounds.height) this.group.y = newY;
       this.oldBounds = bounds;
     },
-    groupedCards: {
-      deep: true,
-      handler() {
-        this.trigger++;
-      },
-    },
   },
   data() {
     return {
       dragging: false,
       shift: { x: 0, y: 0 },
       oldBounds: null,
-      ordering: false,
       orderMode: false,
-      trigger: 0,
     };
   },
   mounted() {
@@ -126,7 +109,11 @@ export default {
     change(e) {
       const card = e?.moved?.element;
       if (card) {
-        this.changeCardPosition([card.id, card.group, e.moved.newIndex]);
+        this.changeCardPosition({
+          cardID: card.id,
+          groupID: card.group,
+          newIndex: e.moved.newIndex,
+        });
       }
     },
     hover() {
@@ -222,9 +209,5 @@ export default {
   &.target {
     border: 1px dashed black;
   }
-}
-
-.flip-list-move {
-  transition: transform 0.5s;
 }
 </style>

@@ -29,6 +29,7 @@ export const store = new Vuex.Store({
     /* -------------------------------------------------------------------------- */
     /*                               emoji mutatuins                              */
     /* -------------------------------------------------------------------------- */
+
     addFavoriteEmoji: function (state, emoji) {
       return state.favoriteEmojis.push(emoji);
     },
@@ -61,7 +62,7 @@ export const store = new Vuex.Store({
       if (!(card instanceof Card)) return;
       state.cards.push(card);
     },
-    addCardToGroup: function (state, [cardID, groupID]) {
+    addCardToGroup: function (state, { cardID, groupID }) {
       const cardIndex = state.cards.findIndex((c) => c.id === cardID);
       if (cardIndex < 0) return;
       state.cards[cardIndex].group = groupID;
@@ -70,10 +71,10 @@ export const store = new Vuex.Store({
       state.cards[cardIndex].orderInGroup =
         groupCardsAmount > 0 ? groupCardsAmount + 1 : 0;
     },
-    setCardOrder: function (state, [cardID, newOrder]) {
+    setCardOrder: function (state, { cardID, newIndex }) {
       const cardIndex = state.cards.findIndex((c) => c.id === cardID);
       if (cardIndex < 0) return;
-      state.cards[cardIndex].orderInGroup = newOrder;
+      state.cards[cardIndex].orderInGroup = newIndex;
     },
     updateCards: function (state, value) {
       state.cards = value;
@@ -98,20 +99,28 @@ export const store = new Vuex.Store({
     },
 
     /* -------------------------------------------------------------------------- */
-    /*                            card groups mutatuins                           */
+    /*                            card group mutatuins                           */
     /* -------------------------------------------------------------------------- */
 
     createGroup: function (state, group) {
       state.cardGroups.push(group);
     },
-    setCardProperty: function (state, [cardID, key, value]) {
+    setCardProperty: function (state, { cardID, key, value, keyValues }) {
       const index = state.cards.findIndex((c) => c.id === cardID);
       if (index < 0) return;
       state.cards[index][key] = value;
+      if (!keyValues || !Array.isArray(keyValues)) return;
+      for (let kv of keyValues) {
+        if (typeof kv !== "object" || notDefined(kv.key)) continue;
+        state.cards[index][kv.key] === kv.value;
+      }
+      function notDefined(v) {
+        return v === undefined || v === null;
+      }
     },
-    reorderGroup: function (state, [group, priorityIndex, priorityID]) {
+    reorderGroup: function (state, { groupID, priorityIndex, priorityID }) {
       const cards = state.cards
-        .filter((c) => c.group === group)
+        .filter((c) => c.group === groupID)
         .sort((a, b) => a.orderInGroup - b.orderInGroup);
       const targetCardIndex = cards.findIndex((c) => c.id === priorityID);
       if (targetCardIndex < 0) return;
@@ -137,17 +146,11 @@ export const store = new Vuex.Store({
       }
       return state.documents[state.settings.lastDocument].data;
     },
-    setDocument: ({ commit, state }, uuid) => {
-      if (uuid) commit("setDocument", uuid);
-      return state.documents[uuid].data;
-    },
-    saveDocument: ({ commit, state, getters }, data) => {
-      if (!getters.lastDocExists) return;
-      commit("updateDocument", {
-        uuid: state.settings.lastDocument,
-        data: { lastEdit: Date.now(), data: data },
-      });
-    },
+
+    /* -------------------------------------------------------------------------- */
+    /*                              document actions                              */
+    /* -------------------------------------------------------------------------- */
+
     createDocument: (
       { commit, state },
       data = { name: "document", data: {} }
@@ -160,6 +163,18 @@ export const store = new Vuex.Store({
       commit("setDocument", uuid);
       return state.documents[uuid].data;
     },
+    setDocument: ({ commit, state }, uuid) => {
+      if (uuid) commit("setDocument", uuid);
+      return state.documents[uuid].data;
+    },
+    saveDocument: ({ commit, state, getters }, data) => {
+      if (!getters.lastDocExists) return;
+      commit("updateDocument", {
+        uuid: state.settings.lastDocument,
+        data: { lastEdit: Date.now(), data: data },
+      });
+    },
+
     deleteDocument: ({ commit, state, dispatch }, uuid) => {
       Vue.delete(state.documents, uuid);
       const keys = Object.keys(state.documents);
@@ -170,17 +185,31 @@ export const store = new Vuex.Store({
         return state.documents[keys[0]].data;
       }
     },
+
+    /* -------------------------------------------------------------------------- */
+    /*                                card actions                                */
+    /* -------------------------------------------------------------------------- */
+
+    changeCardPosition: ({ commit }, { cardID, groupID, newIndex }) => {
+      commit("setCardOrder", { cardID, newIndex });
+      commit("reorderGroup", {
+        groupID,
+        priorityIndex: newIndex,
+        priorityID: cardID,
+      });
+    },
+
+    /* -------------------------------------------------------------------------- */
+    /*                             card group actions                             */
+    /* -------------------------------------------------------------------------- */
+
+    addCardToGroup: ({ commit }, { cardID, groupID }) => {
+      commit("addCardToGroup", { cardID, groupID });
+      commit("reorderGroup", { groupID });
+    },
     deleteGroup: ({ commit }, id) => {
       commit("deleteGroup", id);
       commit("deleteCardsInGroup", id);
-    },
-    changeCardPosition: ({ commit }, [cardID, groupID, newIndex]) => {
-      commit("setCardOrder", [cardID, newIndex]);
-      commit("reorderGroup", [groupID, newIndex, cardID]);
-    },
-    addCardToGroup: ({ commit }, [cardID, groupID]) => {
-      commit("addCardToGroup", [cardID, groupID]);
-      commit("reorderGroup", [groupID]);
     },
   },
   getters: {

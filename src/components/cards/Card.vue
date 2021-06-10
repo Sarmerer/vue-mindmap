@@ -142,7 +142,10 @@ export default {
     dragEnd() {
       if (!this.dragging) return;
       if (this.targetGroup) {
-        this.addCardToGroup([this.card.id, this.targetGroup]);
+        this.addCardToGroup({
+          cardID: this.card.id,
+          groupID: this.targetGroup,
+        });
         // this.$set(this.card, "group", this.targetGroup);
       }
       this.dragging = false;
@@ -172,7 +175,7 @@ export default {
     group() {
       const group = new CardGroup(this.card.x, this.card.y, [this.card.id]);
       this.createGroup(group);
-      this.addCardToGroup([this.card.id, group.id]);
+      this.addCardToGroup({ cardID: this.card.id, groupID: group.id });
     },
     ungroup() {
       this.$set(this.card, "group", null);
