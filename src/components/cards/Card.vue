@@ -129,8 +129,8 @@ export default {
       const x = e.clientX - this.shift.x;
       const y = e.clientY - this.shift.y;
       if (
-        (this.isChild && Math.abs(this.origin.x - x) > 100) ||
-        Math.abs(this.origin.y - y) > 100
+        this.isChild &&
+        (Math.abs(this.origin.x - x) > 100 || Math.abs(this.origin.y - y) > 100)
       ) {
         this.ungroup();
       }
