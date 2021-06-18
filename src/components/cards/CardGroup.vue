@@ -104,7 +104,8 @@ export default {
       return this.draggingCard && this.targetGroup === this.group.id;
     },
     snap() {
-      return this.group.snap || {};
+      if (!this.group.snap) this.setSnap();
+      return this.group.snap;
     },
     isSnapped() {
       return Object.values(this.snap).some((s) => s === true);
@@ -191,9 +192,17 @@ export default {
     closePicker(e) {
       this.$emit("close-picker", e);
     },
+    setSnap() {
+      this.$set(this.group, "snap", {
+        top: false,
+        right: false,
+        bottom: false,
+        left: false,
+      });
+    },
     snapTo(side) {
       if (this.group.snap === null || typeof this.group.snap !== "object") {
-        this.group.snap = {};
+        this.setSnap()
       }
       this.group.snap[side] = !this.group.snap[side];
       this.group.snap[oppoziteSide(side)] = false;
