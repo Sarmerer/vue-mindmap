@@ -17,6 +17,7 @@
     "vue-clickaway2": "^2.3.2",
     "vue-js-modal": "*",
     "vuedraggable": "^2.24.3",
+    "vuex": "^4.1.0",
     "vuex-persistedstate": "*"
   },
   "devDependencies": {

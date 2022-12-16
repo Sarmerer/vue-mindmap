@@ -1,5 +1,5 @@
 module.exports = {
   outputDir: "docs",
   publicPath:
-    process.env.NODE_ENV === "production" ? "/node-tree-editor/" : "/",
+    process.env.NODE_ENV === "production" ? "/vue-mindmap/" : "/",
 };
