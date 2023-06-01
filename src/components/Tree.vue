@@ -229,7 +229,7 @@ import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
 import { store } from "@/store/index";
 import { mapActions } from "vuex";
-import emojis from "node-emoji";
+import * as emojis from "node-emoji";
 
 const MATCH_TRANSLATE_REGEX = /translate\((-?\d+)px, ?(-?\d+)px\)/i;
 const MATCH_SCALE_REGEX = /scale\((\S*)\)/i;

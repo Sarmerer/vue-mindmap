@@ -85,7 +85,7 @@
   </transition>
 </template>
 <script>
-import emojis from "node-emoji";
+import * as emojis from "node-emoji";
 import { store } from "@/store/index";
 import { eventBus } from "@/hotkeys";
 import { tree } from "@/tree";

@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import emojis from "node-emoji";
+import * as emojis from "node-emoji";
 
 export default {
   data() {

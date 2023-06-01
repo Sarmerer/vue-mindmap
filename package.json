@@ -1,58 +1,30 @@
 {
-  "name": "node-tree-editor",
+  "name": "vue-mindmap",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "bootstrap-vue": "^2.21.2",
-    "core-js": "^3.6.5",
-    "d3": "^6.6.2",
-    "d3-flextree": "^2.1.1",
-    "node-emoji": "^1.10.0",
-    "vue": "^2.6.11",
+    "bootstrap-vue": "^2.23.1",
+    "d3": "^7.8.4",
+    "d3-flextree": "^2.1.2",
+    "node-emoji": "^2.0.2",
+    "vue": "^2.7.0-beta.8",
     "vue-clickaway2": "^2.3.2",
-    "vue-js-modal": "*",
+    "vue-js-modal": "^2.0.1",
     "vuedraggable": "^2.24.3",
-    "vuex": "^4.1.0",
-    "vuex-persistedstate": "*"
+    "vuex": "^3.6.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/eslint-config-prettier": "^6.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-vue": "^6.2.2",
-    "prettier": "^2.2.1",
-    "sass": "^1.26.5",
-    "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11",
-    "webpack": "^4.46.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended",
-      "@vue/prettier"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "@vitejs/plugin-vue": "^4.1.0",
+    "@vitejs/plugin-vue2": "^2.2.0",
+    "sass": "^1.62.1",
+    "vite": "^4.3.9",
+    "vite-plugin-vue2": "^2.0.3"
+  }
 }

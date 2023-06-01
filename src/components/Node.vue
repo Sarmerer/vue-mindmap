@@ -103,7 +103,7 @@
 </template>
 <script>
 import { tree } from "@/tree";
-import emojis from "node-emoji";
+import * as emojis from "node-emoji";
 
 export default {
   props: {
