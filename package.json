@@ -12,7 +12,7 @@
     "bootstrap-vue": "^2.23.1",
     "d3": "^7.8.4",
     "d3-flextree": "^2.1.2",
-    "node-emoji": "^2.0.2",
+    "node-emoji": "^1.10.0",
     "vue": "^2.7.0-beta.8",
     "vue-clickaway2": "^2.3.2",
     "vue-js-modal": "^2.0.1",
