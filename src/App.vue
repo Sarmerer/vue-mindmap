@@ -29,7 +29,7 @@ export default {
   --primary-clr: #eef2f5;
   --secondary-clr: #a03bc3;
   --node-bg-clr: white;
-  --node-link-clr: #a03bc3;
+  --node-link-clr: black;
   --node-bg-secondary-clr: #282c34;
   --context-menu-bg-clr: #293845;
   --context-menu-item-hover-clr: #a03bc3;

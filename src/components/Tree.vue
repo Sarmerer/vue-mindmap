@@ -156,6 +156,11 @@
                   v-text="node.data.name"
                   @mousewheel.stop
                 ></pre>
+                <sub
+                class="completeness"
+                v-if="!node.data.editing && node.data.totalChildrenTasks > 0"
+                v-text="`${node.data.finishedChildrenTasks}/${node.data.totalChildrenTasks}`"
+                ></sub>
                 <button
                   class="drill-up"
                   v-if="node.data.isRoot && tree.hasQuery"
@@ -163,6 +168,18 @@
                 >
                   <b-icon icon="arrow-bar-up"></b-icon>
                 </button>
+
+                <div class="progress-wrapper">
+                  <div
+                    v-if="shouldDisplayProgress(node.data)"
+                      class="progress"
+                      :class="{ 'round-right': node.data.progress == 100 }"
+                      :style="{ width: `${node.data.progress}%` }"
+                      :title="`${node.data.progress}%`"
+                  >
+                      <!-- <span>{{ node.data.progress }}%</span> -->
+                  </div>
+                </div>
               </div>
               <textarea
                 v-if="node.data.editing"
@@ -178,23 +195,6 @@
                 @mousewheel.stop
               ></textarea>
               <!-- <button v-if="node.data.editing">Save</button> -->
-
-              <sub
-                v-if="!node.data.editing && node.data.totalChildrenTasks > 0"
-                class="completeness"
-                >{{
-                  `${node.data.finishedChildrenTasks}/${node.data.totalChildrenTasks}`
-                }}</sub
-              >
-              <div
-                v-if="shouldDisplayProgress(node.data)"
-                class="progress"
-                :class="{ 'round-right': node.data.progress == 100 }"
-                :style="{ width: `${node.data.progress}%` }"
-                :title="`${node.data.progress}%`"
-              >
-                <!-- <span>{{ node.data.progress }}%</span> -->
-              </div>
               <div
                 class="controls"
                 v-if="node.data._gid === tree.lastNode._gid"
@@ -215,6 +215,7 @@
     <cards-wrapper></cards-wrapper>
   </div>
 </template>
+
 <script>
 import Toolbar from "@/components/Toolbar";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -223,7 +224,6 @@ import CardsWrapper from "@/components/cards/CardsWrapper";
 
 import * as d3 from "d3";
 import { flextree } from "d3-flextree";
-const layout = flextree();
 
 import { tree } from "@/tree";
 import { events, eventBus } from "@/hotkeys";
@@ -239,7 +239,7 @@ const LinkStyle = {
   STRAIGHT: "straight",
 };
 
-const DEFAULT_NODE_WIDTH = 200;
+const DEFAULT_NODE_WIDTH = 400;
 const DEFAULT_NODE_HEIGHT = 100;
 const DEFAULT_LEVEL_HEIGHT = 200;
 
@@ -264,6 +264,13 @@ function rotatePoint({ x, y }) {
   };
 }
 
+const layout = flextree({
+  nodeSize: (node) => {
+    return [DEFAULT_LEVEL_HEIGHT, DEFAULT_NODE_WIDTH];
+  },
+  spacing: (nodeA, nodeB) => nodeA.path(nodeB).length - 150,
+});
+
 export default {
   name: "Tree",
   props: {
@@ -273,7 +280,7 @@ export default {
         return {
           nodeWidth: DEFAULT_NODE_WIDTH,
           nodeHeight: DEFAULT_NODE_HEIGHT,
-          nodeMaxWidth: 150,
+          nodeMaxWidth: DEFAULT_NODE_WIDTH,
           nodeMaxHeight: 200,
           levelHeight: DEFAULT_LEVEL_HEIGHT,
         };
@@ -291,7 +298,6 @@ export default {
       events,
       store,
       tree,
-      colors: "568FE1",
       nodeDataList: [],
       linkDataList: [],
       initTransformX: 0,
@@ -662,9 +668,7 @@ export default {
       this.nodeDataList = nodeDataList;
     },
     buildTree(rootNode) {
-      const treeBuilder = this.d3
-        .tree()
-        .nodeSize([this.config.nodeWidth, this.config.levelHeight]);
+      const treeBuilder = this.d3.tree();
       const tree = treeBuilder(this.d3.hierarchy(rootNode));
       layout(tree);
       return [tree.descendants(), tree.links()];
@@ -756,6 +760,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .wrapper {
   width: 100%;
@@ -767,12 +772,11 @@ export default {
   z-index: 1;
 }
 </style>
+
 <style lang="scss">
 .node {
   border-radius: 0.6rem;
   box-sizing: border-box;
-  border: 1px solid grey;
-  background-color: var(--node-bg-clr);
   color: black;
   user-select: none;
   height: fit-content;
@@ -786,6 +790,7 @@ export default {
   }
 
   .content {
+    top: -10px;
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
@@ -794,30 +799,31 @@ export default {
   }
 
   .completeness {
-    margin: 0.5rem -0.5rem 0 0;
+    top: -10px;
     align-self: flex-end;
     min-width: 4rem;
-    text-align: end;
     color: rgba($color: #000000, $alpha: 0.4);
   }
 
-  .progress {
+  .progress-wrapper {
     position: absolute;
+    width: 80%;
+    bottom: -10px;
+    border: 1px solid black;
+    background-color: black;
+    border-radius: 0.7rem;
+  }
+
+  .progress {
     overflow: hidden;
-    margin: 0 -1rem;
-    bottom: 0;
-    height: 0.4rem;
+    height: 0.2rem;
     background-color: rgb(44, 189, 44);
-    border-bottom-left-radius: 0.7rem;
+    border-radius: 0.7rem;
     font-size: 0.8rem;
     color: white;
     transition: width 1s ease;
     span {
       margin-left: 0.4rem;
-    }
-
-    &.round-right {
-      border-bottom-right-radius: 0.7rem;
     }
   }
   &.dragover {
@@ -825,7 +831,7 @@ export default {
     opacity: 1;
   }
   &.done {
-    background-color: var(--primary-clr);
+    color: var(--primary-clr);
   }
   &.done pre {
     text-decoration: line-through;
@@ -839,7 +845,7 @@ export default {
     text-align: center;
     height: fit-content;
     font-family: var(--font-family);
-    white-space: pre-line;
+    white-space: break-spaces;
     word-wrap: break-word;
     overflow: auto;
   }
@@ -882,7 +888,7 @@ export default {
 }
 
 .link {
-  stroke-width: 2px !important;
+  stroke-width: 1px !important;
   fill: transparent !important;
   stroke: var(--node-link-clr) !important;
 }
@@ -985,10 +991,6 @@ export default {
   }
 }
 
-.highlighted {
-  border: 2px solid var(--secondary-clr);
-}
-
 .stack {
   position: relative;
 }
@@ -1023,3 +1025,4 @@ export default {
   z-index: -2;
 }
 </style>
+
