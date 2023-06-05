@@ -103,7 +103,9 @@ export default {
   },
   computed: {
     favorites() {
-      return  this.favoritesRaw.filter(e => typeof e == 'string').map((e) => emojis.find(e));
+      return this.favoritesRaw
+        .filter((e) => typeof e == "string")
+        .map((e) => emojis.find(e));
     },
     currentNodeEmoji() {
       return this.tree.lastNode?.emoji?.map((e) => emojis.find(e)) || [];

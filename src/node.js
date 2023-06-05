@@ -28,6 +28,7 @@ export class Node {
     this._gid = globalID;
     this._id = id;
     this._name = override.name;
+    this.nameWidth = -1;
     this._parentNode = parentNode;
     this._children = override.children;
     this._collapsed = override?.collapsed === true ? true : false;
@@ -171,6 +172,17 @@ export class Node {
     }
   }
 
+  measure() {
+    const textElement = document.createElement("span");
+    textElement.style.visibility = "hidden";
+    textElement.style.position = "absolute";
+    textElement.style.whiteSpace = "nowrap";
+    textElement.textContent = this._name || `node #${this._gid}`;
+    document.body.appendChild(textElement);
+    this.nameWidth = textElement.offsetWidth;
+    document.body.removeChild(textElement);
+  }
+
   get id() {
     return this._id;
   }
@@ -186,7 +198,9 @@ export class Node {
   }
 
   get name() {
-    return this._name || `node #${this._gid}`;
+    const name = this._name || `node #${this._gid}`;
+    this.measure();
+    return name;
   }
 
   get editing() {

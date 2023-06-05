@@ -100,7 +100,9 @@
           :style="{
             left: formatDimension(node.y),
             top: formatDimension(node.x),
-            width: formatDimension(config.nodeWidth),
+            width: formatDimension(
+              Math.max(config.nodeWidth, node.data.nameWidth)
+            ),
             height: formatDimension(config.nodeHeight),
           }"
           @dragover.stop="mouseOverNode($event, node)"
@@ -157,9 +159,11 @@
                   @mousewheel.stop
                 ></pre>
                 <sub
-                class="completeness"
-                v-if="!node.data.editing && node.data.totalChildrenTasks > 0"
-                v-text="`${node.data.finishedChildrenTasks}/${node.data.totalChildrenTasks}`"
+                  class="completeness"
+                  v-if="!node.data.editing && node.data.totalChildrenTasks > 0"
+                  v-text="
+                    `${node.data.finishedChildrenTasks}/${node.data.totalChildrenTasks}`
+                  "
                 ></sub>
                 <button
                   class="drill-up"
@@ -172,12 +176,12 @@
                 <div class="progress-wrapper">
                   <div
                     v-if="shouldDisplayProgress(node.data)"
-                      class="progress"
-                      :class="{ 'round-right': node.data.progress == 100 }"
-                      :style="{ width: `${node.data.progress}%` }"
-                      :title="`${node.data.progress}%`"
+                    class="progress"
+                    :class="{ 'round-right': node.data.progress == 100 }"
+                    :style="{ width: `${node.data.progress}%` }"
+                    :title="`${node.data.progress}%`"
                   >
-                      <!-- <span>{{ node.data.progress }}%</span> -->
+                    <!-- <span>{{ node.data.progress }}%</span> -->
                   </div>
                 </div>
               </div>
@@ -185,6 +189,7 @@
                 v-if="node.data.editing"
                 v-model="node.data._name"
                 :ref="`node-#${node.data._gid}`"
+                :id="`node-#${node.data._gid}`"
                 @keydown.esc="quitNodeEditor"
                 @keydown.enter.prevent="quitNodeEditor($event, { save: true })"
                 @keydown.tab.prevent="
@@ -194,18 +199,6 @@
                 @blur="blurLastNode(node.data)"
                 @mousewheel.stop
               ></textarea>
-              <!-- <button v-if="node.data.editing">Save</button> -->
-              <div
-                class="controls"
-                v-if="node.data._gid === tree.lastNode._gid"
-              >
-                <button class="add-child" @click.stop="addSibling">
-                  <b-icon icon="node-plus"></b-icon>
-                </button>
-                <button class="add-sibling" @click="addChild">
-                  <b-icon icon="diagram2"></b-icon>
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -239,7 +232,7 @@ const LinkStyle = {
   STRAIGHT: "straight",
 };
 
-const DEFAULT_NODE_WIDTH = 400;
+const DEFAULT_NODE_WIDTH = 300;
 const DEFAULT_NODE_HEIGHT = 100;
 const DEFAULT_LEVEL_HEIGHT = 200;
 
@@ -263,13 +256,6 @@ function rotatePoint({ x, y }) {
     y: x,
   };
 }
-
-const layout = flextree({
-  nodeSize: (node) => {
-    return [DEFAULT_LEVEL_HEIGHT, DEFAULT_NODE_WIDTH];
-  },
-  spacing: (nodeA, nodeB) => nodeA.path(nodeB).length - 150,
-});
 
 export default {
   name: "Tree",
@@ -584,29 +570,20 @@ export default {
     },
     generateLinkPath(d) {
       if (this.linkStyle === LinkStyle.CURVE) {
-        const linkPath = d3.linkHorizontal();
-        linkPath
-          .x(function (d) {
-            return d.x;
-          })
-          .y(function (d) {
-            return d.y;
-          })
-          .source(function (d) {
-            const sourcePoint = {
-              x: d.source.x,
-              y: d.source.y,
-            };
-            return rotatePoint(sourcePoint);
-          })
-          .target(function (d) {
-            const targetPoint = {
-              x: d.target.x,
-              y: d.target.y,
-            };
-            return rotatePoint(targetPoint);
-          });
-        return linkPath(d);
+        const linkGenerator = d3
+          .linkHorizontal()
+          .x((d) => d.y)
+          .y((d) => d.x);
+
+        const sourceWidth = d.source.data.nameWidth;
+        const targetWidth = d.target.data.nameWidth;
+        const sourceY = d.source.y + sourceWidth / 2;
+        const targetY = d.target.y - targetWidth / 2;
+
+        return linkGenerator({
+          source: { x: d.source.x, y: sourceY },
+          target: { x: d.target.x, y: targetY },
+        });
       }
       if (this.linkStyle === LinkStyle.STRAIGHT) {
         // the link path is: source -> secondPoint -> thirdPoint -> target
@@ -667,10 +644,21 @@ export default {
 
       this.nodeDataList = nodeDataList;
     },
+    layout(tree) {
+      flextree({
+        nodeSize: (node) => {
+          return [
+            DEFAULT_LEVEL_HEIGHT,
+            Math.max(node.data.nameWidth, DEFAULT_NODE_WIDTH),
+          ];
+        },
+        spacing: (nodeA, nodeB) => nodeA.path(nodeB).length - 150,
+      })(tree);
+    },
     buildTree(rootNode) {
       const treeBuilder = this.d3.tree();
       const tree = treeBuilder(this.d3.hierarchy(rootNode));
-      layout(tree);
+      this.layout(tree);
       return [tree.descendants(), tree.links()];
     },
     enableDrag() {
@@ -837,7 +825,6 @@ export default {
     text-decoration: line-through;
   }
   pre {
-    overflow: hidden;
     text-overflow: ellipsis;
     max-height: 150px;
     margin: 0;
@@ -845,9 +832,6 @@ export default {
     text-align: center;
     height: fit-content;
     font-family: var(--font-family);
-    white-space: break-spaces;
-    word-wrap: break-word;
-    overflow: auto;
   }
 
   .drill-up {
@@ -991,6 +975,10 @@ export default {
   }
 }
 
+.highlighted {
+  border: 1px solid gray;
+}
+
 .stack {
   position: relative;
 }
@@ -1025,4 +1013,3 @@ export default {
   z-index: -2;
 }
 </style>
-
