@@ -400,7 +400,9 @@ export default {
     blurLastNode(triggerNode) {
       tree.blurLastNode(triggerNode);
     },
-
+    collapseLastNode() {
+      tree.collapseLastNode();
+    },
     deleteLastNode() {
       tree.deleteLastNode();
       // this.saveDocument();
@@ -727,19 +729,18 @@ export default {
 
   .progress-wrapper {
     position: absolute;
-    bottom: -20px;
+    bottom: -11px;
     left: 0;
-    border: 1px solid black;
-    border-radius: 0.7rem;
+    border-radius: 0 0 4px 4px;
     background-color: black;
     width: 100%;
   }
 
   .progress {
     transition: width 1s ease;
-    border-radius: 0.7rem;
+    border-radius: 0 0 4px 4px;
     background-color: rgb(44, 189, 44);
-    height: 0.2rem;
+    height: 3px;
     overflow: hidden;
     color: white;
     font-size: 0.8rem;
