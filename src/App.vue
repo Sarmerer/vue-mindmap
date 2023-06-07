@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <tree v-if="tree.loaded"></tree>
+    <!-- <Mindmap /> -->
   </div>
 </template>
 
@@ -8,11 +9,16 @@
 import Tree from "@/components/Tree";
 import { tree } from "@/tree";
 
+import Mindmap from "./components/Mindmap.vue";
+
 export default {
   name: "App",
+
   components: {
+    Mindmap,
     Tree,
   },
+
   data() {
     return {
       tree,
@@ -44,20 +50,20 @@ export default {
 html,
 body {
   margin: 0;
+  background-color: var(--body-bg-clr);
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--body-bg-clr);
 }
 
 #app {
-  font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  position: relative;
   width: 100%;
   height: 100%;
-  position: relative;
   overflow: hidden;
+  color: #2c3e50;
+  font-family: var(--font-family);
 }
 </style>

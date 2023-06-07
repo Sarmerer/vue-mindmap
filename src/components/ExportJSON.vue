@@ -54,8 +54,8 @@
 </template>
 <script>
 import { tree } from "@/tree";
-import Tabs from "@/components/common/Tabs";
-import Tab from "@/components/common/Tab";
+import Tabs from "@/components/base/Tabs";
+import Tab from "@/components/base/Tab";
 
 export default {
   name: "ExportJSON",
