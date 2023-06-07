@@ -28,7 +28,10 @@ export class Node {
     this._gid = globalID;
     this._id = id;
     this._name = override.name;
-    this.nameWidth = -1;
+    this.x = 0;
+    this.y = 0;
+    this.width = 100;
+    this.height = 100;
     this._parentNode = parentNode;
     this._children = override.children;
     this._collapsed = override?.collapsed === true ? true : false;
@@ -43,7 +46,6 @@ export class Node {
     this._virtualFinishedChildrenAmount = override.virtualFinishedChildren || 0;
 
     this.isRoot = override?.isRoot === true ? true : false;
-    this.size = [250, 250];
     this._settings = {
       displayProgress:
         override.settings?.displayProgress === false ? false : true,
@@ -173,14 +175,12 @@ export class Node {
   }
 
   measure() {
-    const textElement = document.createElement("span");
-    textElement.style.visibility = "hidden";
-    textElement.style.position = "absolute";
-    textElement.style.whiteSpace = "nowrap";
-    textElement.textContent = this._name || `node #${this._gid}`;
-    document.body.appendChild(textElement);
-    this.nameWidth = textElement.offsetWidth;
-    document.body.removeChild(textElement);
+    const element = document.getElementById(`node-${this._gid}`);
+    if (!element) return;
+
+    const { width, height } = element.getBoundingClientRect();
+    this.width = width;
+    this.height = height;
   }
 
   get id() {

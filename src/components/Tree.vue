@@ -100,10 +100,6 @@
           :style="{
             left: formatDimension(node.y),
             top: formatDimension(node.x),
-            width: formatDimension(
-              Math.max(config.nodeWidth, node.data.nameWidth)
-            ),
-            height: formatDimension(config.nodeHeight),
           }"
           @dragover.stop="mouseOverNode($event, node)"
           @dragend="onDrop($event, node)"
@@ -120,6 +116,8 @@
             }"
           >
             <div
+              :ref="`node-${node.data._gid}`"
+              :id="`node-${node.data._gid}`"
               class="node"
               :class="{
                 dragover: isDraggedOver(node.data),
@@ -127,10 +125,6 @@
                 stack: node.data.childrenLength && node.data.collapsed,
                 done: node.data.done,
                 editing: node.data.editing,
-              }"
-              :style="{
-                'max-width': formatDimension(config.nodeMaxWidth),
-                'max-height': formatDimension(config.nodeMaxHeight),
               }"
               @mousedown.stop
               @click="setLastNode(node.data, $event)"
@@ -158,13 +152,13 @@
                   v-text="node.data.name"
                   @mousewheel.stop
                 ></pre>
-                <sub
+                <small
                   class="completeness"
                   v-if="!node.data.editing && node.data.totalChildrenTasks > 0"
                   v-text="
                     `${node.data.finishedChildrenTasks}/${node.data.totalChildrenTasks}`
                   "
-                ></sub>
+                ></small>
                 <button
                   class="drill-up"
                   v-if="node.data.isRoot && tree.hasQuery"
@@ -189,7 +183,6 @@
                 v-if="node.data.editing"
                 v-model="node.data._name"
                 :ref="`node-#${node.data._gid}`"
-                :id="`node-#${node.data._gid}`"
                 @keydown.esc="quitNodeEditor"
                 @keydown.enter.prevent="quitNodeEditor($event, { save: true })"
                 @keydown.tab.prevent="
@@ -227,17 +220,6 @@ import * as emojis from "node-emoji";
 const MATCH_TRANSLATE_REGEX = /translate\((-?\d+)px, ?(-?\d+)px\)/i;
 const MATCH_SCALE_REGEX = /scale\((\S*)\)/i;
 
-const LinkStyle = {
-  CURVE: "curve",
-  STRAIGHT: "straight",
-};
-
-const DEFAULT_NODE_WIDTH = 300;
-const DEFAULT_NODE_HEIGHT = 100;
-const DEFAULT_LEVEL_HEIGHT = 200;
-
-const ANIMATION_DURATION = 0;
-
 function uuid() {
   const s = [];
   const hexDigits = "0123456789abcdef";
@@ -250,33 +232,8 @@ function uuid() {
   return s.join("");
 }
 
-function rotatePoint({ x, y }) {
-  return {
-    x: y,
-    y: x,
-  };
-}
-
 export default {
   name: "Tree",
-  props: {
-    config: {
-      type: Object,
-      default: () => {
-        return {
-          nodeWidth: DEFAULT_NODE_WIDTH,
-          nodeHeight: DEFAULT_NODE_HEIGHT,
-          nodeMaxWidth: DEFAULT_NODE_WIDTH,
-          nodeMaxHeight: 200,
-          levelHeight: DEFAULT_LEVEL_HEIGHT,
-        };
-      },
-    },
-    linkStyle: {
-      type: String,
-      default: LinkStyle.CURVE,
-    },
-  },
   components: { Toolbar, ContextMenu, Breadcrumb, CardsWrapper },
   data() {
     return {
@@ -308,7 +265,6 @@ export default {
   },
   created() {
     this.addUniqueKey(this.tree.root);
-    window.addEventListener("unload", this.beforeUnload);
 
     eventBus.$on("tree-push-root", this.pushRootToQuery);
     eventBus.$on("tree-pop-root", this.spliceRootsQuery);
@@ -334,6 +290,10 @@ export default {
   },
   mounted() {
     this.init();
+  },
+
+  beforeDestroy() {
+    this.saveDocument();
   },
 
   methods: {
@@ -388,10 +348,6 @@ export default {
       if (node.data._gid !== this.nodeDrag?.target?.data._gid) return;
       this.nodeDrag.target = null;
     },
-    beforeUnload() {
-      this.saveDocument();
-      window.removeEventListener("unload", this.beforeUnload);
-    },
     spliceRootsQuery(n = 1) {
       tree.spliceRootsQuery(n);
     },
@@ -444,9 +400,7 @@ export default {
     blurLastNode(triggerNode) {
       tree.blurLastNode(triggerNode);
     },
-    collapseLastNode() {
-      tree.collapseLastNode();
-    },
+
     deleteLastNode() {
       tree.deleteLastNode();
       // this.saveDocument();
@@ -565,47 +519,45 @@ export default {
     },
     initTransform() {
       const containerHeight = this.$refs.container.offsetHeight;
-      this.initTransformX = Math.floor(this.config.nodeWidth);
+      this.initTransformX = 300;
       this.initTransformY = Math.floor(containerHeight / 2);
     },
     generateLinkPath(d) {
-      if (this.linkStyle === LinkStyle.CURVE) {
-        const linkGenerator = d3
-          .linkHorizontal()
-          .x((d) => d.y)
-          .y((d) => d.x);
+      const source = d.source.data;
+      const target = d.target.data;
 
-        const sourceWidth = d.source.data.nameWidth;
-        const targetWidth = d.target.data.nameWidth;
-        const sourceY = d.source.y + sourceWidth / 2;
-        const targetY = d.target.y - targetWidth / 2;
+      const sourceRight = source.x + source.width;
+      const sourceBottom = source.y + source.height;
+      const targetRight = target.x + target.width;
+      const targetBottom = target.y + target.height;
 
-        return linkGenerator({
-          source: { x: d.source.x, y: sourceY },
-          target: { x: d.target.x, y: targetY },
-        });
+      let base = source.isRoot
+        ? `M${source.x},${sourceBottom}L${sourceRight},${sourceBottom}`
+        : "";
+
+      const steps = [];
+
+      if (source.isRoot) {
+        steps.push(
+          `M${source.x},${sourceBottom}`,
+          `L${sourceRight},${sourceBottom}`
+        );
       }
-      if (this.linkStyle === LinkStyle.STRAIGHT) {
-        // the link path is: source -> secondPoint -> thirdPoint -> target
-        const linkPath = d3.path();
-        let sourcePoint = { x: d.source.x, y: d.source.y };
-        let targetPoint = { x: d.target.x, y: d.target.y };
-        sourcePoint = rotatePoint(sourcePoint);
-        targetPoint = rotatePoint(targetPoint);
-        const xOffset = targetPoint.x - sourcePoint.x;
-        const secondPoint = {
-          x: sourcePoint.x + xOffset / 2,
-          y: sourcePoint.y,
-        };
-        const thirdPoint = { x: sourcePoint.x + xOffset / 2, y: targetPoint.y };
-        linkPath.moveTo(sourcePoint.x, sourcePoint.y);
-        linkPath.lineTo(secondPoint.x, secondPoint.y);
-        linkPath.lineTo(thirdPoint.x, thirdPoint.y);
-        linkPath.lineTo(targetPoint.x, targetPoint.y);
-        return linkPath.toString();
-      }
+
+      steps.push(
+        `M${sourceRight},${sourceBottom}`,
+        `C${sourceRight + 35},${sourceBottom}`,
+        `${target.x - 35},${targetBottom}`,
+        `${target.x},${targetBottom}`,
+        `L${targetRight},${targetBottom}`
+      );
+
+      return steps.join(" ");
     },
     draw() {
+      this.$nextTick(this.draw_);
+    },
+    draw_() {
       const [nodeDataList, linkDataList] = this.buildTree(this.tree.root);
       this.linkDataList = linkDataList;
       this.svg = this.d3.select(this.$refs.svg);
@@ -616,49 +568,32 @@ export default {
       });
 
       links
-        .enter()
-        .append("path")
-        // .style("opacity", 0)
-        // .transition()
-        // .duration(ANIMATION_DURATION)
-        // .ease(d3.easeCubicInOut)
-        // .style("opacity", 1)
+        .join("path")
         .attr("class", "link")
-        .attr("d", function (d) {
-          return self.generateLinkPath(d);
-        });
-      links
-        .transition()
-        .duration(ANIMATION_DURATION)
-        .ease(d3.easeCubicInOut)
-        .attr("d", function (d) {
-          return self.generateLinkPath(d);
-        });
-      links
-        .exit()
-        .transition()
-        .duration(ANIMATION_DURATION / 2)
-        .ease(d3.easeCubicInOut)
-        .style("opacity", 0)
-        .remove();
+        .attr("d", (d) => self.generateLinkPath(d));
 
       this.nodeDataList = nodeDataList;
     },
     layout(tree) {
       flextree({
         nodeSize: (node) => {
-          return [
-            DEFAULT_LEVEL_HEIGHT,
-            Math.max(node.data.nameWidth, DEFAULT_NODE_WIDTH),
-          ];
+          node.data.measure();
+          return [node.data.height, node.data.width + 50];
         },
-        spacing: (nodeA, nodeB) => nodeA.path(nodeB).length - 150,
+
+        spacing: (nodeA, nodeB) => nodeA.path(nodeB).length + 20,
       })(tree);
     },
     buildTree(rootNode) {
       const treeBuilder = this.d3.tree();
       const tree = treeBuilder(this.d3.hierarchy(rootNode));
       this.layout(tree);
+
+      for (const node of tree.descendants()) {
+        node.data.x = node.y;
+        node.data.y = node.x;
+      }
+
       return [tree.descendants(), tree.links()];
     },
     enableDrag() {
@@ -755,68 +690,66 @@ export default {
   height: 100%;
 }
 .tree-container {
+  z-index: 1;
   width: 100%;
   height: 100%;
-  z-index: 1;
 }
 </style>
 
 <style lang="scss">
 .node {
-  border-radius: 0.6rem;
+  display: flex;
+  position: relative;
+  flex-direction: column;
   box-sizing: border-box;
+  border-radius: 0.6rem;
+  padding: 8px;
+  height: fit-content;
   color: black;
   user-select: none;
-  height: fit-content;
-  position: relative;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
 
   &.editing {
     padding: 0.5rem;
   }
 
   .content {
-    top: -10px;
     display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
     position: relative;
-    align-self: center;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 0.5rem;
   }
 
   .completeness {
-    top: -10px;
-    align-self: flex-end;
-    min-width: 4rem;
     color: rgba($color: #000000, $alpha: 0.4);
+    font-size: 12px;
   }
 
   .progress-wrapper {
     position: absolute;
-    width: 80%;
-    bottom: -10px;
+    bottom: -20px;
+    left: 0;
     border: 1px solid black;
-    background-color: black;
     border-radius: 0.7rem;
+    background-color: black;
+    width: 100%;
   }
 
   .progress {
-    overflow: hidden;
-    height: 0.2rem;
-    background-color: rgb(44, 189, 44);
-    border-radius: 0.7rem;
-    font-size: 0.8rem;
-    color: white;
     transition: width 1s ease;
+    border-radius: 0.7rem;
+    background-color: rgb(44, 189, 44);
+    height: 0.2rem;
+    overflow: hidden;
+    color: white;
+    font-size: 0.8rem;
     span {
       margin-left: 0.4rem;
     }
   }
   &.dragover {
-    border: 0.2rem solid var(--secondary-clr);
     opacity: 1;
+    border: 0.2rem solid var(--secondary-clr);
   }
   &.done {
     color: var(--primary-clr);
@@ -825,33 +758,33 @@ export default {
     text-decoration: line-through;
   }
   pre {
-    text-overflow: ellipsis;
-    max-height: 150px;
     margin: 0;
     padding: 0;
-    text-align: center;
     height: fit-content;
+    max-height: 150px;
     font-family: var(--font-family);
+    text-align: center;
+    text-overflow: ellipsis;
   }
 
   .drill-up {
     align-self: center;
   }
   textarea {
-    height: 4rem;
     width: 100%;
+    height: 4rem;
+    min-height: 30px;
+    max-height: 150px;
+    resize: vertical;
     font-size: 1rem;
     font-family: var(--font-family);
-    resize: vertical;
-    max-height: 150px;
-    min-height: 30px;
   }
   button {
     cursor: pointer;
+    box-sizing: border-box;
     outline: none;
     border: 1px solid var(--secondary-clr);
     border-radius: 0.4rem;
-    box-sizing: border-box;
     background-color: white;
   }
   button:active {
@@ -860,14 +793,14 @@ export default {
   .add-sibling {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
     left: calc(100% + 1rem);
+    transform: translateY(-50%);
   }
   .add-child {
     position: absolute;
+    top: calc(100% + 0.5rem);
     left: 50%;
     transform: translateX(-50%);
-    top: calc(100% + 0.5rem);
   }
 }
 
@@ -893,13 +826,13 @@ export default {
 
   > svg,
   .dom-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 50%;
     width: 100%;
     height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
     overflow: visible;
-    transform-origin: 0 50%;
   }
 
   .dom-container {
@@ -913,64 +846,63 @@ export default {
 }
 
 .node-slot {
-  cursor: pointer;
-  position: absolute;
-  background-color: transparent;
-  box-sizing: border-box;
-  transform: translate(-50%, -50%);
   display: flex;
-  align-items: center;
+  position: absolute;
   justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-sizing: border-box;
   box-sizing: content-box;
+  background-color: transparent;
 
   .node-slot-overlay {
     position: relative;
 
     // top
     &.node-top::before {
-      content: "";
       display: inline-block;
-      width: 15px;
-      height: 15px;
-      margin-right: 5px;
       position: absolute;
       bottom: calc(100% + 0.5rem);
-      width: 100%;
-      height: 3rem;
-      text-align: center;
-      background-color: white;
+      margin-right: 5px;
       border-radius: 1rem;
+      background-color: white;
+      width: 15px;
+      width: 100%;
+      height: 15px;
+      height: 3rem;
+      content: "";
+      text-align: center;
     }
 
     // bottom
     &.node-bottom::before {
-      content: "";
       display: inline-block;
-      width: 15px;
-      height: 15px;
-      margin-right: 5px;
       position: absolute;
       top: calc(100% + 0.5rem);
-      width: 100%;
-      height: 3rem;
-      text-align: center;
-      background-color: white;
+      margin-right: 5px;
       border-radius: 1rem;
+      background-color: white;
+      width: 15px;
+      width: 100%;
+      height: 15px;
+      height: 3rem;
+      content: "";
+      text-align: center;
     }
 
     // right
     &.node-right::before {
-      content: "";
-      width: 15px;
-      height: 15px;
-      margin-right: 5px;
       position: absolute;
       left: calc(100% + 0.5rem);
-      width: 50%;
-      height: 3rem;
-      text-align: center;
-      background-color: white;
+      margin-right: 5px;
       border-radius: 1rem;
+      background-color: white;
+      width: 15px;
+      width: 50%;
+      height: 15px;
+      height: 3rem;
+      content: "";
+      text-align: center;
     }
   }
 }
@@ -991,25 +923,25 @@ export default {
 
 .stack::before,
 .stack::after {
-  content: "";
   position: absolute;
+  border-radius: 1rem;
+  background-color: white;
   width: 100%;
   height: 100%;
-  background-color: white;
-  border-radius: 1rem;
+  content: "";
 }
 
 /* Second sheet of stack */
 .stack::before {
-  left: 4px;
   top: 4px;
+  left: 4px;
   z-index: -1;
 }
 
 /* Third sheet of stack */
 .stack::after {
-  left: 8px;
   top: 8px;
+  left: 8px;
   z-index: -2;
 }
 </style>
