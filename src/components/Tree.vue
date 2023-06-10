@@ -104,7 +104,6 @@
           @dragover.stop="mouseOverNode($event, node)"
           @dragend="onDrop($event, node)"
         >
-          <!-- @dragleave="mouseLeaveNode($event, node)" -->
           <div
             class="node-slot-overlay"
             :class="{
@@ -180,7 +179,7 @@
                 </div>
               </div>
               <textarea
-                v-if="node.data.editing"
+                v-if="isNodeEditing(node.data)"
                 v-model="node.data._name"
                 :ref="`node-#${node.data._gid}`"
                 @keydown.esc="quitNodeEditor"
@@ -436,6 +435,15 @@ export default {
     clickedNode(node) {
       this.setLastNode(node);
       tree.collapseLastNode();
+    },
+    isNodeEditing(node) {
+      const editing = node.editing;
+
+      if (editing) {
+        this.$nextTick(() => this.focusInput(`node-#${node._gid}`));
+      }
+
+      return editing;
     },
     focusInput(ref) {
       if (!ref) return;
@@ -750,7 +758,6 @@ export default {
   }
   &.dragover {
     opacity: 1;
-    border: 0.2rem solid var(--secondary-clr);
   }
   &.done {
     color: var(--primary-clr);
@@ -772,6 +779,7 @@ export default {
     align-self: center;
   }
   textarea {
+    min-width: 100px;
     width: 100%;
     height: 4rem;
     min-height: 30px;
@@ -858,52 +866,18 @@ export default {
 
   .node-slot-overlay {
     position: relative;
+    border-radius: 0.6rem;
 
-    // top
-    &.node-top::before {
-      display: inline-block;
-      position: absolute;
-      bottom: calc(100% + 0.5rem);
-      margin-right: 5px;
-      border-radius: 1rem;
-      background-color: white;
-      width: 15px;
-      width: 100%;
-      height: 15px;
-      height: 3rem;
-      content: "";
-      text-align: center;
+    &.node-top {
+      border-top: 3px solid var(--secondary-clr);
     }
 
-    // bottom
-    &.node-bottom::before {
-      display: inline-block;
-      position: absolute;
-      top: calc(100% + 0.5rem);
-      margin-right: 5px;
-      border-radius: 1rem;
-      background-color: white;
-      width: 15px;
-      width: 100%;
-      height: 15px;
-      height: 3rem;
-      content: "";
-      text-align: center;
+    &.node-bottom {
+      border-bottom: 3px solid var(--secondary-clr);
     }
 
-    // right
-    &.node-right::before {
-      position: absolute;
-      left: calc(100% + 0.5rem);
-      margin-right: 5px;
-      border-radius: 1rem;
-      background-color: white;
-      width: 15px;
-      width: 50%;
-      height: 15px;
-      height: 3rem;
-      content: "";
-      text-align: center;
+    &.node-right {
+      border-right: 3px solid var(--secondary-clr);
     }
   }
 }
