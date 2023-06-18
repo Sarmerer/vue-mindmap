@@ -16,7 +16,7 @@ import ImportJSON from "@/components/ImportJSON";
 import ExportJSON from "@/components/ExportJSON";
 
 export default {
-  name: "ImportExportModal",
+  name: "ImportExport",
   components: {
     ImportJSON,
     ExportJSON,

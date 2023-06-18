@@ -1,19 +1,6 @@
 <template>
   <div>
-    <modal name="info-modal" :adaptive="true" height="auto" width="500px">
-      <div id="modal">
-        <table class="info-table">
-          <tr v-for="(e, index) in events" :key="index" class="info-row">
-            <td class="info-col-action">
-              {{ e.title }}
-            </td>
-            <td class="info-col-hotkey">
-              {{ e.hotkey.join(" / ") }}
-            </td>
-          </tr>
-        </table>
-      </div>
-    </modal>
+    <HotkeysModal />
 
     <documents-list></documents-list>
     <import-export-modal :tab="'f'"></import-export-modal>
@@ -68,8 +55,9 @@
   </div>
 </template>
 <script>
-import ImportExportModal from "@/components/ImportExportModal";
-import DocumentsList from "@/components/DocumentsList";
+import ImportExportModal from "./modals/ImportExport.vue";
+import DocumentsList from "@/components/modals/DocumentsList";
+import HotkeysModal from "./modals/Hotkeys.vue";
 import EmojiBar from "@/components/EmojiBar";
 
 import { mapMutations } from "vuex";
@@ -80,9 +68,9 @@ import { Card } from "@/card";
 export default {
   name: "Toolbar",
   components: {
-    DocumentsList,
-
     EmojiBar,
+    HotkeysModal,
+    DocumentsList,
     ImportExportModal,
   },
   data() {
@@ -181,21 +169,20 @@ export default {
 </script>
 <style lang="scss" scoped>
 .toolbar {
-  overflow: hidden;
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: fit-content;
-
-  display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 0.5rem;
   z-index: 10;
-  background-color: white;
   box-sizing: border-box;
   box-shadow: 0px -2px 5px 0px black;
+  background-color: white;
+  padding: 0.5rem;
+  width: 100%;
+  height: fit-content;
+  overflow: hidden;
 
   .left-buttons {
     display: flex;
@@ -204,13 +191,14 @@ export default {
     max-width: 50%;
 
     button {
-      padding: 0;
-      border-radius: 0;
-      height: 1.7rem;
-      width: 1.7rem;
+      -radius: 0;
       box-shadow: none;
-      // box-shadow: 0 0 2px 0px black;
       border: 0.5px solid var(--secondary-clr);
+      border-radius: 0;
+      padding: 0;
+      width: 1.7rem;
+      height: 1.7rem;
+      height: 1.7rem;
     }
   }
 
@@ -225,59 +213,24 @@ export default {
 }
 
 ::v-deep button {
-  padding: 0.5rem;
-  border-radius: 0.4rem;
-  border: none;
   z-index: 1;
-  color: black;
-  background-color: var(--node-bg-clr);
   box-shadow: 0px 0px 5px -2px black;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: var(--node-bg-clr);
+  padding: 0.5rem;
+  color: black;
 }
 
 ::v-deep button:active {
   top: 1.07rem;
-  background-color: var(--primary-clr);
   box-shadow: 0px 0px 4px -2px black;
   border: none;
+  background-color: var(--primary-clr);
 }
 
 ::v-deep button:focus {
-  background-color: var(--primary-clr);
   outline: none;
-}
-</style>
-<style lang="scss" scoped>
-#modal {
-  padding: 1rem;
-  user-select: none;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.info-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.info-row:nth-child(odd) {
-  background-color: rgba(167, 167, 167, 0.408);
-}
-
-.info-row > td {
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
-  border: 1px solid black;
-}
-
-.info-col-action {
-  width: 50%;
-  padding-right: 1rem;
-  text-align: right;
-}
-
-.info-col-hotkey {
-  width: 50%;
-  padding-left: 1rem;
-  text-align: left;
+  background-color: var(--primary-clr);
 }
 </style>
