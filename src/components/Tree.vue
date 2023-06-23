@@ -121,7 +121,7 @@
               :class="{
                 dragover: isDraggedOver(node.data),
                 highlighted: node.data._gid === tree.lastNode._gid,
-                stack: node.data.childrenLength && node.data.collapsed,
+                collapsed: node.data.childrenLength && node.data.collapsed,
                 done: node.data.done,
                 editing: node.data.editing,
               }"
@@ -166,7 +166,10 @@
                   <b-icon icon="arrow-bar-up"></b-icon>
                 </button>
 
-                <div class="progress-wrapper">
+                <div
+                  v-if="!node.data.editing && node.data.totalChildrenTasks > 0"
+                  class="progress-wrapper"
+                >
                   <div
                     v-if="shouldDisplayProgress(node.data)"
                     class="progress"
@@ -178,7 +181,7 @@
                   </div>
                 </div>
               </div>
-              <textarea
+              <input
                 v-if="isNodeEditing(node.data)"
                 v-model="node.data._name"
                 :ref="`node-#${node.data._gid}`"
@@ -189,8 +192,7 @@
                 "
                 @keydown.exact.stop
                 @blur="blurLastNode(node.data)"
-                @mousewheel.stop
-              ></textarea>
+              />
             </div>
           </div>
         </div>
@@ -541,10 +543,6 @@ export default {
       const targetRight = target.x + target.width;
       const targetBottom = target.y + target.height;
 
-      let base = source.isRoot
-        ? `M${source.x},${sourceBottom}L${sourceRight},${sourceBottom}`
-        : "";
-
       const steps = [];
 
       if (source.isRoot) {
@@ -556,8 +554,8 @@ export default {
 
       steps.push(
         `M${sourceRight},${sourceBottom}`,
-        `C${sourceRight + 35},${sourceBottom}`,
-        `${target.x - 35},${targetBottom}`,
+        `C${sourceRight + 25},${sourceBottom}`,
+        `${target.x - 25},${targetBottom}`,
         `${target.x},${targetBottom}`,
         `L${targetRight},${targetBottom}`
       );
@@ -588,10 +586,10 @@ export default {
       flextree({
         nodeSize: (node) => {
           node.data.measure();
-          return [node.data.height, node.data.width + 50];
+          return [node.data.height, node.data.width + 30];
         },
 
-        spacing: (nodeA, nodeB) => nodeA.path(nodeB).length + 20,
+        spacing: (nodeA, nodeB) => nodeA.path(nodeB).length,
       })(tree);
     },
     buildTree(rootNode) {
@@ -712,8 +710,9 @@ export default {
   position: relative;
   flex-direction: column;
   box-sizing: border-box;
-  border-radius: 0.6rem;
-  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 4px 4px 0 4px;
   height: fit-content;
   color: black;
   user-select: none;
@@ -732,12 +731,12 @@ export default {
 
   .completeness {
     color: rgba($color: #000000, $alpha: 0.4);
-    font-size: 12px;
+    font-size: 10px;
   }
 
   .progress-wrapper {
     position: absolute;
-    bottom: -11px;
+    bottom: -3px;
     left: 0;
     border-radius: 0 0 4px 4px;
     background-color: black;
@@ -770,6 +769,7 @@ export default {
     padding: 0;
     height: fit-content;
     max-height: 150px;
+    font-size: 14px;
     font-family: var(--font-family);
     text-align: center;
     text-overflow: ellipsis;
@@ -777,16 +777,6 @@ export default {
 
   .drill-up {
     align-self: center;
-  }
-  textarea {
-    min-width: 100px;
-    width: 100%;
-    height: 4rem;
-    min-height: 30px;
-    max-height: 150px;
-    resize: vertical;
-    font-size: 1rem;
-    font-family: var(--font-family);
   }
   button {
     cursor: pointer;
@@ -814,7 +804,7 @@ export default {
 }
 
 .link {
-  stroke-width: 1px !important;
+  stroke-width: 0.5px !important;
   fill: transparent !important;
   stroke: var(--node-link-clr) !important;
 }
@@ -868,55 +858,25 @@ export default {
     position: relative;
     border-radius: 0.6rem;
 
-    &.node-top {
-      border-top: 3px solid var(--secondary-clr);
+    &.node-top .node {
+      box-shadow: inset 0 10px 10px -10px rgb(0, 0, 0);
     }
 
-    &.node-bottom {
-      border-bottom: 3px solid var(--secondary-clr);
+    &.node-bottom .node {
+      box-shadow: inset 0 -10px 10px -10px rgb(0, 0, 0);
     }
 
-    &.node-right {
-      border-right: 3px solid var(--secondary-clr);
+    &.node-right .node {
+      box-shadow: inset -10px 0 10px -10px rgb(0, 0, 0);
     }
   }
 }
 
 .highlighted {
-  border: 1px solid gray;
+  background-color: rgba(128, 128, 128, 0.3);
 }
 
-.stack {
-  position: relative;
-}
-
-.stack,
-.stack::before,
-.stack::after {
-  box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.15);
-}
-
-.stack::before,
-.stack::after {
-  position: absolute;
-  border-radius: 1rem;
-  background-color: white;
-  width: 100%;
-  height: 100%;
-  content: "";
-}
-
-/* Second sheet of stack */
-.stack::before {
-  top: 4px;
-  left: 4px;
-  z-index: -1;
-}
-
-/* Third sheet of stack */
-.stack::after {
-  top: 8px;
-  left: 8px;
-  z-index: -2;
+.collapsed {
+  border: 1px solid black;
 }
 </style>
