@@ -724,7 +724,7 @@ export default {
   user-select: none;
 
   &.editing {
-    padding: 0.5rem;
+    padding: 0;
   }
 
   .content {
@@ -779,6 +779,9 @@ export default {
     font-family: var(--font-family);
     text-align: center;
     text-overflow: ellipsis;
+  }
+  input {
+    font-size: 14px;
   }
 
   .drill-up {
