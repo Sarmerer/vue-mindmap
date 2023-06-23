@@ -283,6 +283,7 @@ export default {
 
     eventBus.$on("tree-delete-last-node", this.deleteLastNode);
 
+    eventBus.$on("tree-back-to-center", this.backToCenter);
     eventBus.$on("tree-go-up", this.goUp);
     eventBus.$on("tree-go-down", this.goDown);
     eventBus.$on("tree-go-left", this.goLeft);
@@ -419,6 +420,11 @@ export default {
       if (typeof options.callback === "function") options.callback();
     },
 
+    backToCenter() {
+      this.currentScale = 1;
+      this.$refs.svg.style.transform = `scale(1) translate(${this.initTransformX}px, ${this.initTransformY}px)`;
+      this.$refs.domContainer.style.transform = `scale(1) translate(${this.initTransformX}px, ${this.initTransformY}px)`;
+    },
     goUp() {
       tree.goUp();
     },

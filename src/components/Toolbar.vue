@@ -20,6 +20,9 @@
         </div>
       </div>
       <div class="right-buttons">
+        <button @click="backToCenter" title="Back To Center">
+          <b-icon icon="compass"></b-icon>
+        </button>
         <button @click="deleteAllCards" title="Delete All Cards">
           <b-icon icon="x"></b-icon>
         </button>
@@ -163,6 +166,9 @@ export default {
           dragging: true,
         })
       );
+    },
+    backToCenter() {
+      eventBus.$emit("tree-back-to-center");
     },
   },
 };
