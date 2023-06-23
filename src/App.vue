@@ -31,7 +31,6 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
 :root {
-  --body-bg-clr: #eef2f5;
   --primary-clr: #eef2f5;
   --secondary-clr: #a03bc3;
   --node-bg-clr: white;
@@ -43,14 +42,11 @@ export default {
   --max-height: calc(100vh - 1.5rem);
   --text-primary: rgba(255, 255, 255, 0.6);
   --text-secondary: rgba(255, 255, 255, 0.87);
-
-  --font-family: "Roboto", sans-serif;
 }
 
 html,
 body {
   margin: 0;
-  background-color: var(--body-bg-clr);
   padding: 0;
   width: 100%;
   height: 100%;
@@ -64,6 +60,5 @@ body {
   height: 100%;
   overflow: hidden;
   color: #2c3e50;
-  font-family: var(--font-family);
 }
 </style>

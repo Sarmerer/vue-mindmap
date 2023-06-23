@@ -152,6 +152,10 @@
                   @mousewheel.stop
                 ></pre>
                 <small
+                  v-if="node.data.childrenLength && node.data.collapsed"
+                  v-text="'...'"
+                ></small>
+                <small
                   class="completeness"
                   v-if="!node.data.editing && node.data.totalChildrenTasks > 0"
                   v-text="
@@ -775,13 +779,13 @@ export default {
     padding: 0;
     height: fit-content;
     max-height: 150px;
-    font-size: 14px;
-    font-family: var(--font-family);
+    font-size: 13px;
+    font-family: sans-serif;
     text-align: center;
     text-overflow: ellipsis;
   }
   input {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .drill-up {
@@ -883,9 +887,5 @@ export default {
 
 .highlighted {
   background-color: rgba(128, 128, 128, 0.3);
-}
-
-.collapsed {
-  border: 1px solid black;
 }
 </style>
