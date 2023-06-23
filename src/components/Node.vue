@@ -30,11 +30,12 @@
     </div>
 
     <div v-else class="node__editor">
-      <textarea
+      <input
+        class="node__editor__input"
         ref="labelTextarea"
         @focusout="node.isEditing.set(false)"
         @keydown.prevent.stop.enter="setLabel"
-      ></textarea>
+      />
     </div>
   </div>
 </template>
@@ -51,12 +52,15 @@ export default {
   },
 
   watch: {
-    "node.isEditing.state"(val) {
-      if (val) {
-        this.$nextTick(() => {
-          this.$refs.labelTextarea.focus();
-        });
-      }
+    "node.isEditing.state": {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          this.$nextTick(() => {
+            this.$refs.labelTextarea.focus();
+          });
+        }
+      },
     },
   },
 
@@ -99,16 +103,14 @@ export default {
   border: 1px solid transparent;
   border-radius: 4px;
   background-color: transparent;
-  padding: 8px;
+  padding: 0 4px;
   user-select: none;
 }
 
 .node.active {
   z-index: 1;
   cursor: grab;
-  box-shadow: 0 0 0 2px var(--secondary-clr);
-  border: 1px solid #ccc;
-  background-color: #f0f0f0;
+  background-color: rgba(128, 128, 128, 0.3);
   user-select: auto;
 }
 
@@ -126,7 +128,7 @@ export default {
   color: #333;
   font-weight: 500;
 
-  font-size: 16px;
+  font-size: 14px;
   text-align: center;
   white-space: break-spaces;
 }
@@ -137,22 +139,26 @@ export default {
 
 .node__progress__text {
   user-select: none;
+  font-size: 10px;
 }
 
 .node__progress__bar {
   position: absolute;
-  bottom: -10px;
+  bottom: -4px;
   left: 0;
-  border: 1px solid black;
-  border-radius: 4px;
+  border-radius: 0 0 4px 4px;
   background-color: black;
   width: 100%;
-  height: 6px;
+  height: 3px;
 }
 
 .node__progress__fill {
   transition: width 1s ease;
   background-color: #2cbd2c;
   height: 100%;
+}
+
+.node__editor__input {
+  font-size: 14px;
 }
 </style>

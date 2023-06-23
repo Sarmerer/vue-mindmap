@@ -25,10 +25,10 @@ export class Renderer {
     const layoutFactory = flextree({
       nodeSize: (node) => {
         node.data.measure();
-        return [node.data.height, node.data.width + 50];
+        return [node.data.height, node.data.width + 30];
       },
 
-      spacing: (nodeA, nodeB) => nodeA.path(nodeB).length + 20,
+      spacing: (nodeA, nodeB) => nodeA.path(nodeB).length,
     });
 
     const layout = layoutFactory(tree);
@@ -64,10 +64,7 @@ export class Renderer {
     const sourceBottom = source.y + source.height;
     const targetRight = target.x + target.width;
     const targetBottom = target.y + target.height;
-
-    let base = source.isRoot
-      ? `M${source.x},${sourceBottom}L${sourceRight},${sourceBottom}`
-      : "";
+    const curviness = 25;
 
     const steps = [];
 
@@ -80,8 +77,8 @@ export class Renderer {
 
     steps.push(
       `M${sourceRight},${sourceBottom}`,
-      `C${sourceRight + 35},${sourceBottom}`,
-      `${target.x - 35},${targetBottom}`,
+      `C${sourceRight + curviness},${sourceBottom}`,
+      `${target.x - curviness},${targetBottom}`,
       `${target.x},${targetBottom}`,
       `L${targetRight},${targetBottom}`
     );

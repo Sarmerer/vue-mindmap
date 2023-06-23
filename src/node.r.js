@@ -70,21 +70,25 @@ export class Node {
     return Array.from(this.children.values());
   }
 
-  getChildrenCount() {
-    let count = 0;
-    for (const child of this.children.values()) {
-      count += 1 + child.getChildrenCount();
+  getChildrenCount(deep = false) {
+    let count = this.children.size;
+
+    if (deep) {
+      for (const child of this.children.values()) {
+        count += child.getChildrenCount(true);
+      }
     }
 
     return count;
   }
 
-  getCompletedChildrenCount() {
+  getCompletedChildrenCount(deep = false) {
     let count = 0;
-    for (const child of this.children.values()) {
-      if (!child.isCompleted.get()) continue;
 
-      count += 1 + child.getCompletedChildrenCount();
+    for (const child of this.children.values()) {
+      if (child.isCompleted.get()) count++;
+
+      if (deep) count += child.getCompletedChildrenCount(true);
     }
 
     return count;
@@ -109,6 +113,4 @@ export class Node {
       isCompleted: this.isCompleted.get(),
     };
   }
-
-  dispose() {}
 }

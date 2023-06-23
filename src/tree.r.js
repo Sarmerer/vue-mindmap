@@ -1,4 +1,5 @@
 import { Renderer } from "./renderer";
+import { ActionsManager } from "./types/actions-manager";
 
 export class Tree {
   constructor() {
@@ -8,6 +9,7 @@ export class Tree {
     this.links = [];
 
     this.renderer = new Renderer(this);
+    this.actionsManager = new ActionsManager(this);
   }
 
   getRoots() {
