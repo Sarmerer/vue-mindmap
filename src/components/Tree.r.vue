@@ -1,14 +1,12 @@
 <template>
   <Canvas id="tree" ref="tree">
-    <svg id="lines-container">
-      <g class="links">
-        <path
-          v-for="link in tree.links"
-          :key="link.id"
-          class="link"
-          :d="link.d"
-        ></path>
-      </g>
+    <svg id="links-container">
+      <path
+        v-for="link in tree.links"
+        :key="link.id"
+        class="link"
+        :d="link.d"
+      ></path>
     </svg>
 
     <div id="nodes-container">
@@ -43,10 +41,11 @@ export default {
 </script>
 
 <style scoped>
-#lines-container {
+#links-container {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: -1;
   width: 100%;
   height: 100%;
   overflow: visible;
@@ -60,7 +59,7 @@ export default {
 
 #nodes-container {
   position: relative;
-  width: fit-content;
-  height: fit-content;
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -1,8 +1,16 @@
 <template>
-  <div class="canvas" @mousedown="panStart" @wheel="zoom">
+  <div
+    class="canvas"
+    @mousedown.stop="panStart"
+    @wheel.prevent.stop="zoom"
+    @auxclick.prevent.stop="reset"
+  >
     <div
       class="canvas__content"
-      :style="{ translate: `${x}px ${y}px`, scale: `${scale}px` }"
+      :style="{
+        translate: `${x}px ${y}px`,
+        scale: `${scale}`,
+      }"
     >
       <slot></slot>
     </div>
@@ -16,42 +24,62 @@ export default {
       x: 0,
       y: 0,
       scale: 1,
+
+      initialX: 0,
+      initialY: 0,
+      cursorX: 0,
+      cursorY: 0,
     };
+  },
+
+  mounted() {
+    window.addEventListener("mousemove", this.updateCursorPosition);
+  },
+
+  beforeDestroy() {
+    window.removeEventListener("mousemove", this.updateCursorPosition);
   },
 
   methods: {
     panStart(e) {
-      const { clientX, clientY } = e;
-      const { x, y } = this;
+      this.initialX = e.clientX;
+      this.initialY = e.clientY;
 
-      const mousemove = (e) => {
-        const { clientX: x2, clientY: y2 } = e;
-        this.x = x + x2 - clientX;
-        this.y = y + y2 - clientY;
-      };
-
-      const mouseup = () => {
-        window.removeEventListener("mousemove", mousemove);
-        window.removeEventListener("mouseup", mouseup);
-      };
-
-      window.addEventListener("mousemove", mousemove);
-      window.addEventListener("mouseup", mouseup);
+      window.addEventListener("mousemove", this.pan);
+      window.addEventListener("mouseup", this.panEnd, { once: true });
     },
 
-    pan(e) {
-      const { clientX, clientY } = e;
-      const { x, y } = this;
+    pan() {
+      let diffX = this.cursorX - this.initialX;
+      let diffY = this.cursorY - this.initialY;
+      this.initialX = this.cursorX;
+      this.initialY = this.cursorY;
+      this.x += diffX;
+      this.y += diffY;
+    },
 
-      this.x = x + clientX;
-      this.y = y + clientY;
+    panEnd() {
+      window.removeEventListener("mousemove", this.pan);
     },
 
     zoom(e) {
-      const { deltaY } = e;
-      const { scale } = this;
+      const deltaScale = Math.pow(1.1, e.deltaY * -0.01);
+      this.scale *= deltaScale;
+      const deltaOffsetX = (this.cursorX - this.x) * (deltaScale - 1);
+      const deltaOffsetY = (this.cursorY - this.y) * (deltaScale - 1);
+      this.x -= deltaOffsetX;
+      this.y -= deltaOffsetY;
+    },
 
-      this.scale = scale + deltaY / 1000;
+    updateCursorPosition(e) {
+      this.cursorX = e.clientX;
+      this.cursorY = e.clientY;
+    },
+
+    reset() {
+      this.x = 0;
+      this.y = 0;
+      this.scale = 1;
     },
   },
 };
@@ -62,11 +90,11 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .canvas__content {
-  transform-origin: top left;
+  transform-origin: center;
   width: 100%;
   height: 100%;
 }
