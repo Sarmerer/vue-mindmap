@@ -26,12 +26,161 @@ export default {
   },
 
   mounted() {
-    const n = new Node(this.tree);
-    n.addChild();
-    n.addChild();
-    const c = n.addChild();
-    c.addSibling().addChild().addSibling().addChild();
-    this.tree.addNode(n);
+    const limit = 100;
+    let counter = 0;
+
+    function subtree(node) {
+      if (counter++ > limit) return;
+
+      for (let i = 0; i < 5; i++) {
+        const child = node.addChild();
+        if (Math.random() < 0.1) {
+          subtree(child);
+        }
+      }
+    }
+
+    const root = new Node(this.tree);
+    subtree(root);
+    this.tree.addNode(root);
+
+    this.tree.actionsManager.addActions(
+      {
+        id: "add-child",
+        toolbarGroupId: "left",
+        label: "Add child",
+        icon: "diagram2",
+        hotkeys: ["tab"],
+        when: (tree) => tree.activeNode,
+        run(tree) {
+          const node = this.tree.activeNode.addChild();
+          node.isEditing = true;
+          tree.setActiveNode(node);
+        },
+      },
+      {
+        id: "add-sibling",
+        toolbarGroupId: "left",
+        label: "Add sibling",
+        icon: "node-plus",
+        hotkeys: ["enter"],
+        when: (tree) => tree.activeNode && tree.activeNode.parent,
+        run(tree) {
+          const node = this.tree.activeNode.addSibling();
+          node.isEditing = true;
+          tree.setActiveNode(node);
+        },
+      },
+
+      {
+        id: "collapse",
+        toolbarGroupId: "left",
+        label: "Collapse",
+        icon: "arrows-collapse",
+        hotkeys: ["c"],
+        when: (tree) =>
+          tree.activeNode?.children.size > 0 && !tree.activeNode?.isCollapsed,
+        run(tree) {
+          tree.activeNode.isCollapsed = true;
+        },
+      },
+      {
+        id: "expand",
+        toolbarGroupId: "left",
+        label: "Expand",
+        icon: "arrows-expand",
+        hotkeys: ["c"],
+        when: (tree) => tree.activeNode?.isCollapsed,
+        run(tree) {
+          tree.activeNode.isCollapsed = false;
+        },
+      },
+
+      {
+        id: "edit",
+        toolbarGroupId: "left",
+        label: "Edit",
+        icon: "pencil",
+        hotkeys: ["e"],
+        when: (tree) => tree.activeNode,
+        run(tree) {
+          tree.activeNode.isEditing = true;
+        },
+      },
+      {
+        id: "done",
+        toolbarGroupId: "left",
+        label: "Done",
+        icon: "check",
+        hotkeys: ["d"],
+        when: (tree) => tree.activeNode && !tree.activeNode.isCompleted,
+        run(tree) {
+          tree.activeNode.isCompleted = true;
+        },
+      },
+      {
+        id: "undone",
+        toolbarGroupId: "left",
+        label: "Undo",
+        icon: "x",
+        hotkeys: ["d"],
+        when: (tree) => tree.activeNode && tree.activeNode.isCompleted,
+        run(tree) {
+          tree.activeNode.isCompleted = false;
+        },
+      },
+      {
+        id: "drill-down",
+        toolbarGroupId: "left",
+        label: "Drill down",
+        icon: "arrow-down",
+        when: (tree) => tree.activeNode,
+        run(tree) {
+          console.log("drill down");
+        },
+      },
+
+      {
+        id: "go-left",
+        label: "Go left",
+        icon: "arrow-left",
+        hotkeys: ["arrowleft"],
+        when: (tree) => tree.activeNode,
+        run(tree) {
+          console.log("go left");
+        },
+      },
+      {
+        id: "go-right",
+        label: "Go right",
+        icon: "arrow-right",
+        hotkeys: ["arrowright"],
+        when: (tree) => tree.activeNode,
+        run(tree) {
+          console.log("go right");
+        },
+      },
+      {
+        id: "go-up",
+        label: "Go up",
+        icon: "arrow-up",
+        hotkeys: ["arrowup"],
+        when: (tree) => tree.activeNode,
+        run(tree) {
+          console.log("go up");
+        },
+      },
+      {
+        id: "go-down",
+        label: "Go down",
+        icon: "arrow-down",
+        hotkeys: ["arrowdown"],
+        when: (tree) => tree.activeNode,
+        run(tree) {
+          console.log("go down");
+        },
+      }
+    );
 
     this.$nextTick(() => {
       const r = new Renderer(this.tree);
