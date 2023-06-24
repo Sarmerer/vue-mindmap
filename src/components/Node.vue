@@ -3,15 +3,15 @@
     :id="node.id"
     class="node"
     :class="{
-      active: node.isActive.state,
-      completed,
+      active: node.isActive,
+      completed: node.isCompleted,
     }"
     :style="{ translate: `${node.x}px ${node.y}px` }"
     @contextmenu.stop.prevent="openContextMenu($event)"
     @click.stop.prevent="node.setActive()"
-    @dblclick.stop.prevent="node.isEditing.set(true)"
+    @dblclick.stop.prevent="node.isEditing = true"
   >
-    <div v-if="!node.isEditing.state" class="node__content">
+    <div v-if="!node.isEditing" class="node__content">
       <p class="node__label" v-text="node.label"></p>
 
       <div v-if="childrenCount > 0" class="node__progress">
@@ -33,7 +33,7 @@
       <input
         class="node__editor__input"
         ref="labelTextarea"
-        @focusout="node.isEditing.set(false)"
+        @focusout="node.isEditing = false"
         @keydown.prevent.stop.enter="setLabel"
       />
     </div>
@@ -52,7 +52,7 @@ export default {
   },
 
   watch: {
-    "node.isEditing.state": {
+    "node.isEditing": {
       immediate: true,
       handler(val) {
         if (val) {
@@ -76,15 +76,11 @@ export default {
     progress() {
       return (this.completedChildrenCount / this.childrenCount) * 100;
     },
-
-    completed() {
-      return this.node.isCompleted.state;
-    },
   },
 
   methods: {
     setLabel(e) {
-      this.node.isEditing.set(false);
+      this.node.isEditing = false;
       this.node.setLabel(e.target.value);
     },
 
@@ -138,8 +134,8 @@ export default {
 }
 
 .node__progress__text {
-  user-select: none;
   font-size: 10px;
+  user-select: none;
 }
 
 .node__progress__bar {

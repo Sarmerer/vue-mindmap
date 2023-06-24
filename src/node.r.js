@@ -1,4 +1,3 @@
-import { Stateful, StatefulRecursive } from "./stateful";
 import { uuidv4 } from "./utils";
 
 export class Node {
@@ -14,15 +13,13 @@ export class Node {
     this.width = 100;
     this.height = 100;
 
-    this.label =
-      Math.random().toString(36).substring(2, 15) +
-      Math.random().toString(36).substring(2, 15);
+    this.label = Math.random().toString(36).substring(2, 15);
     this.weight = 1;
 
-    this.isActive = new Stateful();
-    this.isEditing = new Stateful();
-    this.isCollapsed = new Stateful();
-    this.isCompleted = new StatefulRecursive(this, "isCompleted");
+    this.isActive = false;
+    this.isEditing = false;
+    this.isCollapsed = false;
+    this.isCompleted = false;
   }
 
   get isRoot() {
@@ -65,7 +62,7 @@ export class Node {
   }
 
   getChildren() {
-    if (this.isCollapsed.get()) return [];
+    if (this.isCollapsed) return [];
 
     return Array.from(this.children.values());
   }
@@ -86,7 +83,7 @@ export class Node {
     let count = 0;
 
     for (const child of this.children.values()) {
-      if (child.isCompleted.get()) count++;
+      if (child.isCompleted) count++;
 
       if (deep) count += child.getCompletedChildrenCount(true);
     }
@@ -98,9 +95,8 @@ export class Node {
     const el = document.getElementById(this.id);
     if (!el) return;
 
-    const { width, height } = el.getBoundingClientRect();
-    this.width = width;
-    this.height = height;
+    this.width = el.offsetWidth;
+    this.height = el.offsetHeight;
   }
 
   serialize() {
@@ -109,8 +105,8 @@ export class Node {
       parent: this.parent?.id ?? null,
       label: this.label,
       weight: this.weight,
-      isCollapsed: this.isCollapsed.get(),
-      isCompleted: this.isCompleted.get(),
+      isCollapsed: this.isCollapsed,
+      isCompleted: this.isCompleted,
     };
   }
 }

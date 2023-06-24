@@ -17,7 +17,7 @@ export class Tree {
   }
 
   getNodes() {
-    return this.nodes.filter((node) => !node.isCollapsed.get(true));
+    return this.nodes.filter((node) => !node.isCollapsed);
   }
 
   addNode(node) {
@@ -32,13 +32,13 @@ export class Tree {
 
   setActiveNode(node) {
     if (this.activeNode) {
-      this.activeNode.isActive.set(false);
+      this.activeNode.isActive = false;
     }
 
     this.activeNode = node;
 
     if (this.activeNode) {
-      this.activeNode.isActive.set(true);
+      this.activeNode.isActive = true;
     }
   }
 
