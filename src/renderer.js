@@ -12,7 +12,7 @@ export class Renderer {
   }
 
   render() {
-    setTimeout(this.#render.bind(this), 0);
+    window.requestAnimationFrame(this.#render.bind(this));
   }
 
   #render() {
@@ -32,20 +32,15 @@ export class Renderer {
     });
 
     const layout = layoutFactory(tree);
-
-    layout.each((node) => {
-      node.x = node.x + 200;
-      node.y = node.y + 100;
-    });
-
+    const screenHalfHeight = window.innerHeight / 2;
     for (const node of layout.descendants()) {
       const matchingNode = this.tree.nodes.find(
         ({ id }) => id === node.data.id
       );
       if (!matchingNode) continue;
 
-      matchingNode.x = node.y;
-      matchingNode.y = node.x;
+      matchingNode.x = node.y + 100;
+      matchingNode.y = node.x + screenHalfHeight;
     }
 
     this.tree.links = layout.links().map((link) => ({
@@ -84,7 +79,5 @@ export class Renderer {
     );
 
     return steps.join(" ");
-
-    // return `${base}M${sourceRight},${sourceBottom}L${target.x},${targetBottom}L${targetRight},${targetBottom}`;
   }
 }
