@@ -105,8 +105,6 @@ export default {
   border: 1px solid transparent;
   border-radius: 4px;
   background-color: transparent;
-  padding: 0 4px;
-  user-select: none;
 }
 
 .node.active {
@@ -116,21 +114,27 @@ export default {
   user-select: auto;
 }
 
+.node:has(.node__progress__bar) {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 .node__content {
   display: flex;
   align-items: flex-end;
   gap: 8px;
+  padding: 0 4px;
 }
 
 .node__label {
   word-wrap: break-word;
   cursor: text;
   margin: 0;
-  overflow: visible;
   color: #333;
   font-weight: 500;
 
   font-size: 14px;
+  user-select: none;
   text-align: center;
   white-space: break-spaces;
 }
@@ -152,6 +156,7 @@ export default {
   background-color: black;
   width: 100%;
   height: 3px;
+  overflow: hidden;
 }
 
 .node__progress__fill {
@@ -161,6 +166,6 @@ export default {
 }
 
 .node__editor__input {
-  font-size: 14px;
+  width: 100%;
 }
 </style>

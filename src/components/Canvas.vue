@@ -3,7 +3,7 @@
     class="canvas"
     @mousedown.stop="panStart"
     @wheel.prevent.stop="zoom"
-    @auxclick.prevent.stop="reset"
+    @mousedown.middle.prevent.stop="reset"
   >
     <div
       class="canvas__content"
