@@ -9,10 +9,16 @@ export class Renderer {
    */
   constructor(tree) {
     this.tree = tree;
+    this.isQueued = false;
   }
 
   render() {
-    window.requestAnimationFrame(this.#render.bind(this));
+    if (this.isQueued) return;
+
+    window.requestAnimationFrame(() => {
+      this.#render();
+      this.isQueued = false;
+    });
   }
 
   #render() {
