@@ -49,6 +49,7 @@ export default {
       {
         id: "add-child",
         toolbarGroupId: "left",
+        contextMenuGroupId: "node",
         label: "Add child",
         icon: "diagram2",
         hotkeys: ["tab"],
@@ -62,6 +63,7 @@ export default {
       {
         id: "add-sibling",
         toolbarGroupId: "left",
+        contextMenuGroupId: "node",
         label: "Add sibling",
         icon: "node-plus",
         hotkeys: ["enter"],
@@ -76,41 +78,45 @@ export default {
       {
         id: "collapse",
         toolbarGroupId: "left",
+        contextMenuGroupId: "node",
         label: "Collapse",
         icon: "arrows-collapse",
         hotkeys: ["c"],
         when: (tree) =>
           tree.activeNode?.children.size > 0 && !tree.activeNode?.isCollapsed,
         run(tree) {
-          tree.activeNode.isCollapsed = true;
+          tree.activeNode.setCollapsed(true);
         },
       },
       {
         id: "expand",
         toolbarGroupId: "left",
+        contextMenuGroupId: "node",
         label: "Expand",
         icon: "arrows-expand",
         hotkeys: ["c"],
         when: (tree) => tree.activeNode?.isCollapsed,
         run(tree) {
-          tree.activeNode.isCollapsed = false;
+          tree.activeNode.setCollapsed(false);
         },
       },
 
       {
         id: "edit",
         toolbarGroupId: "left",
+        contextMenuGroupId: "node",
         label: "Edit",
         icon: "pencil",
         hotkeys: ["e"],
         when: (tree) => tree.activeNode,
         run(tree) {
-          tree.activeNode.isEditing = true;
+          tree.activeNode.setEditing(true);
         },
       },
       {
         id: "done",
         toolbarGroupId: "left",
+        contextMenuGroupId: "node",
         label: "Done",
         icon: "check",
         hotkeys: ["d"],
@@ -122,6 +128,7 @@ export default {
       {
         id: "undone",
         toolbarGroupId: "left",
+        contextMenuGroupId: "node",
         label: "Undo",
         icon: "x",
         hotkeys: ["d"],
@@ -133,6 +140,7 @@ export default {
       {
         id: "drill-down",
         toolbarGroupId: "left",
+        contextMenuGroupId: "node",
         label: "Drill down",
         icon: "arrow-down",
         when: (tree) => tree.activeNode,

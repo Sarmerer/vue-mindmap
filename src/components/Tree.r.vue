@@ -1,29 +1,35 @@
 <template>
-  <Canvas id="tree" ref="tree">
-    <svg id="links-container">
-      <path
-        v-for="link in tree.links"
-        :key="link.id"
-        class="link"
-        :d="link.d"
-      ></path>
-    </svg>
+  <div class="tree">
+    <NodeContextMenu v-bind="{ tree }" ref="nodeContextMenu" />
 
-    <div id="nodes-container">
-      <NodeRenderer
-        v-for="node of tree.getNodes()"
-        :key="node.id"
-        v-bind="{ node }"
-        @contextmenu="openNodeMenu(node, $event)"
-      />
-    </div>
-  </Canvas>
+    <Canvas>
+      <svg class="links-container">
+        <path
+          v-for="link in tree.links"
+          :key="link.id"
+          class="link"
+          :d="link.d"
+        ></path>
+      </svg>
+
+      <div class="nodes-container">
+        <NodeRenderer
+          v-for="node of tree.getNodes()"
+          :key="node.id"
+          v-bind="{ node }"
+          @contextmenu="showContextMenu"
+        />
+      </div>
+    </Canvas>
+  </div>
 </template>
 
 <script>
 import { Tree } from "../tree.r";
+
 import Canvas from "./Canvas.vue";
 import NodeRenderer from "./Node.vue";
+import NodeContextMenu from "./NodeContextMenu.vue";
 
 export default {
   props: {
@@ -34,14 +40,28 @@ export default {
   },
 
   components: {
+    NodeContextMenu,
     NodeRenderer,
     Canvas,
+  },
+
+  methods: {
+    showContextMenu(e) {
+      this.$refs.nodeContextMenu.show(e);
+    },
   },
 };
 </script>
 
 <style scoped>
-#links-container {
+.tree {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.links-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -52,12 +72,12 @@ export default {
 }
 
 .link {
-  stroke-width: 1px;
+  stroke-width: 0.5px;
   stroke: black;
   fill: transparent;
 }
 
-#nodes-container {
+.nodes-container {
   position: relative;
   width: 100%;
   height: 100%;

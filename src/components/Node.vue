@@ -7,7 +7,7 @@
       completed: node.isCompleted,
     }"
     :style="{ translate: `${node.x}px ${node.y}px` }"
-    @contextmenu.stop.prevent="openContextMenu($event)"
+    @contextmenu.stop.prevent="showContextMenu"
     @click.stop.prevent="node.setActive()"
     @dblclick.stop.prevent="node.isEditing = true"
   >
@@ -84,8 +84,9 @@ export default {
       this.node.setLabel(e.target.value);
     },
 
-    openContextMenu(event) {
-      this.$emit("contextmenu", event);
+    showContextMenu(e) {
+      this.node.setActive();
+      this.$emit("contextmenu", e, this.node);
     },
   },
 };
