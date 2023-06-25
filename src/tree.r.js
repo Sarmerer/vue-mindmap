@@ -17,7 +17,16 @@ export class Tree {
   }
 
   getNodes() {
-    return this.nodes.filter((node) => !node.isCollapsed);
+    return this.nodes.filter((node) => {
+      let parent = node.parent;
+      while (parent) {
+        if (parent.isCollapsed) return false;
+
+        parent = parent.parent;
+      }
+
+      return true;
+    });
   }
 
   addNode(node) {

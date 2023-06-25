@@ -14,6 +14,10 @@
     <div v-if="!node.isEditing" class="node__content">
       <p class="node__label" v-text="node.label"></p>
 
+      <span class="node__collapsed-indicator" v-show="node.isCollapsed">
+        ...
+      </span>
+
       <div v-if="childrenCount > 0" class="node__progress">
         <small
           class="node__progress__text"
