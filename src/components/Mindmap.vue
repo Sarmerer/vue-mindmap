@@ -9,6 +9,7 @@
 import { Node } from "../node.r";
 import { Tree } from "../tree.r";
 import { Renderer } from "../renderer";
+import { Navigator } from "../types/navigator";
 
 import Toolbar from "./Toolbar.r.vue";
 import TreeR from "./Tree.r.vue";
@@ -147,7 +148,8 @@ export default {
         hotkeys: ["arrowleft"],
         when: (tree) => tree.activeNode,
         run(tree) {
-          console.log("go left");
+          const navigator = new Navigator(tree);
+          navigator.left();
         },
       },
       {
@@ -157,7 +159,8 @@ export default {
         hotkeys: ["arrowright"],
         when: (tree) => tree.activeNode,
         run(tree) {
-          console.log("go right");
+          const navigator = new Navigator(tree);
+          navigator.right();
         },
       },
       {
@@ -167,7 +170,8 @@ export default {
         hotkeys: ["arrowup"],
         when: (tree) => tree.activeNode,
         run(tree) {
-          console.log("go up");
+          const navigator = new Navigator(tree);
+          navigator.up();
         },
       },
       {
@@ -177,7 +181,8 @@ export default {
         hotkeys: ["arrowdown"],
         when: (tree) => tree.activeNode,
         run(tree) {
-          console.log("go down");
+          const navigator = new Navigator(tree);
+          navigator.down();
         },
       }
     );
