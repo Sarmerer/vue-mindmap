@@ -26,6 +26,16 @@ export class Node {
     return this.parent === null;
   }
 
+  setEditing(isEditing) {
+    this.isEditing = isEditing;
+    this.tree.renderer.render();
+  }
+
+  setCollapsed(isCollapsed) {
+    this.isCollapsed = isCollapsed;
+    this.tree.renderer.render();
+  }
+
   addSibling() {
     const node = new Node(this.tree);
 
@@ -38,6 +48,9 @@ export class Node {
   }
 
   addChild() {
+    this.isCollapsed = false;
+    this.isEditing = false;
+
     const node = new Node(this.tree);
     node.setParent(this);
     this.tree.addNode(node);

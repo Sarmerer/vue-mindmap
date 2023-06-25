@@ -9,7 +9,7 @@
     :style="{ translate: `${node.x}px ${node.y}px` }"
     @contextmenu.stop.prevent="showContextMenu"
     @click.stop.prevent="node.setActive()"
-    @dblclick.stop.prevent="node.isEditing = true"
+    @dblclick.stop.prevent="node.setEditing(true)"
   >
     <div v-if="!node.isEditing" class="node__content">
       <p class="node__label" v-text="node.label"></p>
@@ -33,8 +33,9 @@
       <input
         class="node__editor__input"
         ref="labelTextarea"
-        @focusout="node.isEditing = false"
-        @keydown.prevent.stop.enter="setLabel"
+        :value="node.label"
+        @focusout="node.setEditing(false)"
+        @keydown.prevent.stop.enter="setLabel($event.target.value)"
       />
     </div>
   </div>
@@ -79,9 +80,9 @@ export default {
   },
 
   methods: {
-    setLabel(e) {
+    setLabel(value) {
       this.node.isEditing = false;
-      this.node.setLabel(e.target.value);
+      this.node.setLabel(value);
     },
 
     showContextMenu(e) {
