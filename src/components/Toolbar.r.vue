@@ -1,35 +1,33 @@
 <template>
-  <div>
-    <HotkeysModal />
-    <DocumentsListModal />
-    <ImportExportModal />
-    <emoji-bar class="emoji-bar" ref="emojiBar"></emoji-bar>
+  <div class="toolbar">
+    <div class="left-actions">
+      <button
+        v-for="action in actions.left"
+        :key="action.id"
+        :title="action.label"
+        class="action-button"
+        @click.stop="action.run()"
+      >
+        <b-icon :icon="action.icon"></b-icon>
+      </button>
+    </div>
 
-    <div class="toolbar">
-      <div class="left-buttons">
-        <div
-          v-for="action in actions.left"
-          :key="action.id"
-          :title="action.label"
-        >
-          <button @click.stop="action.run()">
-            <b-icon :icon="action.icon"></b-icon>
-          </button>
-        </div>
-      </div>
+    <div class="right-actions">
+      <button
+        v-for="action in actions.right"
+        :key="action.id"
+        :title="action.label"
+        class="action-button"
+        @click.stop="action.run()"
+      >
+        <b-icon :icon="action.icon"></b-icon>
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
-import { Card } from "@/card";
 import { Tree } from "../tree.r";
-
-import HotkeysModal from "./modals/Hotkeys.vue";
-import ImportExportModal from "./modals/ImportExport";
-import DocumentsListModal from "./modals/DocumentsList";
-import EmojiBar from "./EmojiBar";
 
 export default {
   name: "Toolbar",
@@ -39,13 +37,6 @@ export default {
       type: Tree,
       required: true,
     },
-  },
-
-  components: {
-    EmojiBar,
-    HotkeysModal,
-    ImportExportModal,
-    DocumentsListModal,
   },
 
   computed: {
@@ -64,91 +55,57 @@ export default {
       return actions;
     },
   },
-
-  methods: {
-    ...mapMutations(["addCard", "deleteAllCards"]),
-
-    toggleEmojiBar() {
-      this.$refs?.emojiBar?.toggle();
-    },
-
-    spawnCard(e) {
-      this.addCard(
-        new Card("", "", {
-          editing: true,
-          x: e.clientX,
-          y: e.clientY,
-          dragging: true,
-        })
-      );
-    },
-  },
 };
 </script>
-<style lang="scss" scoped>
+<style scoped>
 .toolbar {
   display: flex;
-  position: fixed;
+  position: absolute;
   top: 0;
+  right: 0;
   left: 0;
-  flex-wrap: wrap;
+
   justify-content: space-between;
-  z-index: 10;
-  box-sizing: border-box;
-  box-shadow: 0px -2px 5px 0px black;
-  background-color: white;
-  padding: 0.5rem;
-  width: 100%;
-  height: fit-content;
-  overflow: hidden;
-
-  .left-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1px;
-    max-width: 50%;
-
-    button {
-      -radius: 0;
-      box-shadow: none;
-      border: 0.5px solid var(--secondary-clr);
-      border-radius: 0;
-      padding: 0;
-      width: 1.7rem;
-      height: 1.7rem;
-      height: 1.7rem;
-    }
-  }
-
-  .right-buttons {
-    display: flex;
-    gap: 0.8rem;
-  }
-}
-
-.emoji-bar {
-  box-shadow: 2px -2px 5px 0px black;
-}
-
-::v-deep button {
+  align-items: center;
   z-index: 1;
-  box-shadow: 0px 0px 5px -2px black;
-  border: none;
-  border-radius: 0.4rem;
-  background-color: var(--node-bg-clr);
-  padding: 0.5rem;
-  color: black;
+
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  padding: 0 8px;
+  height: 48px;
 }
 
-::v-deep button:active {
-  top: 1.07rem;
-  box-shadow: 0px 0px 4px -2px black;
-  border: none;
-  background-color: var(--primary-clr);
+.left-actions,
+.right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-::v-deep button:focus {
+.action-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: none;
+  border: 2px solid #a03bc3;
+  border-radius: 4px;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.action-button:hover {
+  background-color: #a03bc3;
+}
+
+.action-button:focus,
+.action-button:active {
   outline: none;
-  background-color: var(--primary-clr);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  background-color: #a03bc3;
 }
 </style>
