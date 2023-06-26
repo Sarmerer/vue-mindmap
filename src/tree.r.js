@@ -16,7 +16,7 @@ export class Tree {
     this.actionsManager = new ActionsManager(this);
     this.reorder = new Reorder(this);
 
-    this.canvas = new Canvas(this);
+    this.canvas = new Canvas();
     this.renderer = new Renderer(this);
   }
 

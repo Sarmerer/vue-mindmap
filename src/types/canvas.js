@@ -1,10 +1,8 @@
 import { uuidv4 } from "../utils";
 
 export class Canvas {
-  constructor(tree) {
+  constructor() {
     this.id = uuidv4();
-
-    this.tree = tree;
 
     this.offsetX = 0;
     this.offsetY = 0;
