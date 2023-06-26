@@ -9,10 +9,9 @@
       [`highlight--${node.highlightedSide}`]: node.highlightedSide,
     }"
     :style="{ translate: `${node.x}px ${node.y}px` }"
-    @click.stop.prevent="node.setActive()"
     @dblclick.stop.prevent="node.setEditing(true)"
     @contextmenu.stop.prevent="showContextMenu"
-    @mousedown.stop.prevent="reorder"
+    @mousedown.stop.prevent="maybeReorder"
   >
     <div v-if="!node.isEditing" class="node__content">
       <p class="node__label" v-text="node.label"></p>
@@ -97,8 +96,8 @@ export default {
       this.$emit("contextmenu", e, this.node);
     },
 
-    reorder() {
-      this.node.tree.reorder.start(this.node);
+    maybeReorder() {
+      this.node.tree.reorder.maybeStart(this.node);
     },
   },
 };

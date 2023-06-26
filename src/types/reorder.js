@@ -19,6 +19,26 @@ export class Reorder {
     };
   }
 
+  maybeStart(node) {
+    node.setActive(true);
+
+    let initialX = this.tree.canvas.cursorX;
+    let initialY = this.tree.canvas.cursorY;
+
+    const maybeStart_ = () => {
+      const dx = Math.abs(this.tree.canvas.cursorX - initialX);
+      const dy = Math.abs(this.tree.canvas.cursorY - initialY);
+      if (dx < 15 && dy < 15) return;
+
+      this.start(node);
+    };
+
+    const cancel = () => window.removeEventListener("mousemove", maybeStart_);
+
+    window.addEventListener("mousemove", maybeStart_);
+    window.addEventListener("mouseup", cancel, { once: true });
+  }
+
   start(node) {
     if (this.activeNode) return;
     if (node.isRoot) return;
