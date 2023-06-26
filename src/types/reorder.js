@@ -46,10 +46,6 @@ export class Reorder {
   update() {
     if (!this.activeNode) return;
 
-    console.log(
-      this.tree.canvas.toScreenSpace(this.activeNode.x, this.activeNode.y)
-    );
-
     this.activeNode.x = this.tree.canvas.cursorX - this.grabOffsetX;
     this.activeNode.y = this.tree.canvas.cursorY - this.grabOffsetX;
 

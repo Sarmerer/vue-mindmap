@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { Tree } from "../tree.r";
+import { Tree } from "../types/tree";
 
 import Canvas from "./Canvas.vue";
 import NodeRenderer from "./Node.vue";

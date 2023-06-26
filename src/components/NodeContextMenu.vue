@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { Tree } from "../tree.r";
+import { Tree } from "../types/tree";
 
 import ContextMenuR from "./ContextMenu.r.vue";
 

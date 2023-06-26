@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import { Node } from "../node.r";
-import { Tree } from "../tree.r";
-import { Renderer } from "../renderer";
+import { Node } from "../types/node";
+import { Tree } from "../types/tree";
+import { Renderer } from "../types/renderer";
 import { Navigator } from "../types/navigator";
 
 import Toolbar from "./Toolbar.r.vue";

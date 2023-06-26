@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { Node } from "../node.r";
+import { Node } from "../types/node";
 
 export default {
   props: {

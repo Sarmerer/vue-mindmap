@@ -1,4 +1,4 @@
-import { Tree } from "./tree.r";
+import { Tree } from "./tree";
 
 import { flextree } from "d3-flextree";
 import * as d3 from "d3";

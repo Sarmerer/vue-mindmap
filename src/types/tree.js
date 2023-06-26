@@ -1,8 +1,8 @@
-import { ActionsManager } from "./types/actions-manager";
-import { Reorder } from "./types/reorder";
+import { ActionsManager } from "./actions-manager";
+import { Reorder } from "./reorder";
 import { Renderer } from "./renderer";
-import { Canvas } from "./types/canvas";
-import { uuidv4 } from "./utils";
+import { Canvas } from "./canvas";
+import { uuidv4 } from "../utils";
 
 export class Tree {
   constructor() {
