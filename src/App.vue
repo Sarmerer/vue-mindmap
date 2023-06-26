@@ -1,12 +1,10 @@
 <template>
   <div id="app">
-    <tree v-if="tree.loaded"></tree>
-    <!-- <Mindmap /> -->
+    <Mindmap />
   </div>
 </template>
 
 <script>
-import Tree from "@/components/Tree";
 import { tree } from "@/tree";
 
 import Mindmap from "./components/Mindmap.vue";
@@ -16,7 +14,6 @@ export default {
 
   components: {
     Mindmap,
-    Tree,
   },
 
   data() {
@@ -28,8 +25,6 @@ export default {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-
 :root {
   --primary-clr: #eef2f5;
   --secondary-clr: #a03bc3;
