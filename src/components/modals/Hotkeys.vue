@@ -1,60 +1,109 @@
 <template>
-  <modal name="info-modal" :adaptive="true" height="auto" width="500px">
-    <div id="hotkeys-modal">
-      <table class="info-table">
-        <tr v-for="(e, index) in events" :key="index" class="info-row">
-          <td class="info-col-action" v-text="e.title"></td>
-          <td class="info-col-hotkey" v-text="e.hotkey.join(' / ')"></td>
-        </tr>
-      </table>
-    </div>
-  </modal>
+  <!-- bootstrap vue modal listing all actions -->
+  <b-modal ref="modal" hide-header hide-footer>
+    <table class="hotkeys">
+      <tr v-for="(action, index) in actions" :key="index" class="row">
+        <td class="action" v-text="action.label"></td>
+        <kbd
+          v-for="(hotkey, index) in action.hotkeys"
+          :key="index"
+          class="hotkey"
+        >
+          {{ formatHotkey(hotkey) }}
+        </kbd>
+      </tr>
+    </table>
+  </b-modal>
 </template>
 
 <script>
-import { events } from "@/hotkeys";
+import { Tree } from "../../tree.r";
 
 export default {
-  data() {
-    return {
-      events,
-    };
+  props: {
+    tree: {
+      type: Tree,
+      required: true,
+    },
+  },
+
+  computed: {
+    actions() {
+      const actions = [];
+      for (const action of this.tree.actionsManager.actions) {
+        if (!action.hotkeys.length) continue;
+
+        actions.push(action);
+      }
+
+      return actions;
+    },
+  },
+
+  created() {
+    this.tree.actionsManager.addAction({
+      id: "help",
+      toolbarGroupId: "right",
+      label: "Show hotkeys",
+      icon: "question",
+      hotkeys: ["?"],
+      run: () => {
+        this.$refs.modal.show();
+      },
+    });
+  },
+
+  methods: {
+    formatHotkey(hotkey) {
+      const symbols = {
+        arrowup: "↑",
+        arrowright: "→",
+        arrowdown: "↓",
+        arrowleft: "←",
+      };
+
+      return hotkey
+        .split("+")
+        .map(
+          (key) =>
+            symbols[key.toLowerCase()] ||
+            [key[0].toUpperCase(), key.slice(1)].join("")
+        )
+        .join(" + ");
+    },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-#hotkeys-modal {
-  z-index: 1;
-  padding: 1rem;
-  pointer-events: none;
-  user-select: none;
-}
-
-.info-table {
-  border-collapse: collapse;
+<style scoped>
+.hotkeys {
   width: 100%;
+  height: 100%;
 }
 
-.info-row:nth-child(odd) {
-  background-color: rgba(167, 167, 167, 0.408);
+.hotkeys .row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #dee2e6;
+  padding: 4px 12px;
 }
 
-.info-row > td {
-  border: 1px solid black;
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
+.hotkeys .row:last-child {
+  border-bottom: none;
 }
 
-.info-col-action {
-  padding-right: 1rem;
-  width: 50%;
-  text-align: right;
+.hotkeys .action {
+  font-weight: bold;
 }
 
-.info-col-hotkey {
-  padding-left: 1rem;
-  width: 50%;
-  text-align: left;
+.hotkeys .hotkey {
+  margin-left: 4px;
+  border: 1px solid #e9ecef;
+  border-radius: 3px;
+  background-color: #f8f9fa;
+  padding: 2px 4px;
+  color: #212529;
+  font-size: 0.8rem;
+  font-family: monospace;
 }
 </style>

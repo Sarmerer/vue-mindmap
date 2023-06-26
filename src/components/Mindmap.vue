@@ -1,5 +1,7 @@
 <template>
   <div class="mindmap">
+    <HotkeysModal v-bind="{ tree }" />
+
     <Toolbar v-bind="{ tree }" />
     <TreeR v-bind="{ tree }" />
   </div>
@@ -12,12 +14,14 @@ import { Renderer } from "../renderer";
 import { Navigator } from "../types/navigator";
 
 import Toolbar from "./Toolbar.r.vue";
+import HotkeysModal from "./modals/Hotkeys.vue";
 import TreeR from "./Tree.r.vue";
 
 export default {
   components: {
-    TreeR,
+    HotkeysModal,
     Toolbar,
+    TreeR,
   },
 
   data() {
@@ -191,6 +195,18 @@ export default {
         run(tree) {
           const navigator = new Navigator(tree);
           navigator.down();
+        },
+      },
+
+      {
+        id: "reset-canvas",
+        toolbarGroupId: "right",
+        toolbarOrder: 0,
+        label: "Reset canvas",
+        icon: "compass",
+        hotkeys: ["alt+r"],
+        run(tree) {
+          tree.canvas.reset();
         },
       }
     );
