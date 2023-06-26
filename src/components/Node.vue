@@ -5,11 +5,14 @@
     :class="{
       active: node.isActive,
       completed: node.isCompleted,
+      reordering: node.isReordering,
+      [`highlight--${node.highlightedSide}`]: node.highlightedSide,
     }"
     :style="{ translate: `${node.x}px ${node.y}px` }"
-    @contextmenu.stop.prevent="showContextMenu"
     @click.stop.prevent="node.setActive()"
     @dblclick.stop.prevent="node.setEditing(true)"
+    @contextmenu.stop.prevent="showContextMenu"
+    @mousedown.stop.prevent="reorder"
   >
     <div v-if="!node.isEditing" class="node__content">
       <p class="node__label" v-text="node.label"></p>
@@ -93,6 +96,10 @@ export default {
       this.node.setActive();
       this.$emit("contextmenu", e, this.node);
     },
+
+    reorder() {
+      this.node.tree.reorder.start(this.node);
+    },
   },
 };
 </script>
@@ -114,9 +121,29 @@ export default {
   user-select: auto;
 }
 
+.node.reordering {
+  opacity: 0.3;
+}
+
+.node.reordering * {
+  cursor: grabbing;
+}
+
 .node:has(.node__progress__bar) {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
+}
+
+.node.highlight--top {
+  box-shadow: inset 0 10px 10px -10px rgb(0, 0, 0);
+}
+
+.node.highlight--bottom {
+  box-shadow: inset 0 -10px 10px -10px rgb(0, 0, 0);
+}
+
+.node.highlight--right {
+  box-shadow: inset -10px 0 10px -10px rgb(0, 0, 0);
 }
 
 .node__content {

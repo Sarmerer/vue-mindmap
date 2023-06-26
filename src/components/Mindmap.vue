@@ -83,7 +83,7 @@ export default {
         icon: "arrows-collapse",
         hotkeys: ["c"],
         when: (tree) =>
-          tree.activeNode?.children.size > 0 && !tree.activeNode?.isCollapsed,
+          tree.activeNode?.children.length > 0 && !tree.activeNode?.isCollapsed,
         run(tree) {
           tree.activeNode.setCollapsed(true);
         },

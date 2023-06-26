@@ -1,4 +1,5 @@
 import { ActionsManager } from "./types/actions-manager";
+import { Reorder } from "./types/reorder";
 import { Renderer } from "./renderer";
 import { Canvas } from "./types/canvas";
 import { uuidv4 } from "./utils";
@@ -6,12 +7,15 @@ import { uuidv4 } from "./utils";
 export class Tree {
   constructor() {
     this.id = uuidv4();
+
     this.activeNode = null;
 
     this.nodes = [];
     this.links = [];
 
     this.actionsManager = new ActionsManager(this);
+    this.reorder = new Reorder(this);
+
     this.canvas = new Canvas(this);
     this.renderer = new Renderer(this);
   }
