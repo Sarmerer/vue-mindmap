@@ -17,6 +17,7 @@ import { Tree } from "../tree.r";
  * @property {Condition} when
  * @property {Array<String>} hotkeys
  * @property {'left' | 'right' | null} toolbarGroupId
+ * @property {Number} toolbarOrder
  * @property {String} contextMenuGroupId
  * @property {Number} contextMenuOrder
  */
@@ -39,8 +40,9 @@ export class Action {
     this.when_ = actionLike.when;
 
     this.toolbarGroupId = actionLike.toolbarGroupId || null;
+    this.toolbarOrder = actionLike.toolbarOrder ?? 1;
     this.contextMenuGroupId = actionLike.contextMenuGroupId || null;
-    this.contextMenuOrder = actionLike.contextMenuOrder || 1;
+    this.contextMenuOrder = actionLike.contextMenuOrder ?? 1;
   }
 
   run() {

@@ -43,7 +43,14 @@ export default {
     actions() {
       const actions = { left: [], right: [] };
 
-      for (const action of this.tree.actionsManager.actions) {
+      const orderedActions = [...this.tree.actionsManager.actions].sort(
+        (a, b) => {
+          if (a.toolbarOrder === b.toolbarOrder) return 0;
+          return a.toolbarOrder > b.toolbarOrder ? 1 : -1;
+        }
+      );
+
+      for (const action of orderedActions) {
         if (!action.toolbarGroupId || !action.when()) continue;
 
         const group = actions[action.toolbarGroupId];
