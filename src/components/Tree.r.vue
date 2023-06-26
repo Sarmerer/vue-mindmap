@@ -2,7 +2,7 @@
   <div class="tree">
     <NodeContextMenu v-bind="{ tree }" ref="nodeContextMenu" />
 
-    <Canvas>
+    <Canvas :canvas="tree.canvas">
       <svg class="links-container">
         <path
           v-for="link in tree.links"
@@ -12,7 +12,7 @@
         ></path>
       </svg>
 
-      <div class="nodes-container">
+      <div :id="tree.id" class="nodes-container">
         <NodeRenderer
           v-for="node of tree.getNodes()"
           :key="node.id"

@@ -1,15 +1,19 @@
-import { Renderer } from "./renderer";
 import { ActionsManager } from "./types/actions-manager";
+import { Renderer } from "./renderer";
+import { Canvas } from "./types/canvas";
+import { uuidv4 } from "./utils";
 
 export class Tree {
   constructor() {
+    this.id = uuidv4();
     this.activeNode = null;
 
     this.nodes = [];
     this.links = [];
 
-    this.renderer = new Renderer(this);
     this.actionsManager = new ActionsManager(this);
+    this.canvas = new Canvas(this);
+    this.renderer = new Renderer(this);
   }
 
   getRoots() {
@@ -53,6 +57,7 @@ export class Tree {
 
   serialize() {
     return {
+      id: this.id,
       nodes: this.nodes.map((node) => node.serialize()),
     };
   }
