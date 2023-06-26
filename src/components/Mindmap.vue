@@ -49,6 +49,14 @@ export default {
     subtree(root);
     this.tree.addNode(root);
 
+    const activeNodeIsActionable = (tree) => {
+      return (
+        tree.activeNode &&
+        !tree.activeNode.isEditing &&
+        !tree.activeNode.isReordering
+      );
+    };
+
     this.tree.actionsManager.addActions(
       {
         id: "add-child",
@@ -57,7 +65,7 @@ export default {
         label: "Add child",
         icon: "diagram2",
         hotkeys: ["tab"],
-        when: (tree) => tree.activeNode,
+        when: activeNodeIsActionable,
         run(tree) {
           const node = this.tree.activeNode.addChild();
           node.isEditing = true;
@@ -71,7 +79,10 @@ export default {
         label: "Add sibling",
         icon: "node-plus",
         hotkeys: ["enter"],
-        when: (tree) => tree.activeNode && tree.activeNode.parent,
+        when: (tree) =>
+          tree.activeNode &&
+          tree.activeNode.parent &&
+          activeNodeIsActionable(tree),
         run(tree) {
           const node = this.tree.activeNode.addSibling();
           node.isEditing = true;
@@ -87,7 +98,9 @@ export default {
         icon: "arrows-collapse",
         hotkeys: ["c"],
         when: (tree) =>
-          tree.activeNode?.children.length > 0 && !tree.activeNode?.isCollapsed,
+          tree.activeNode?.children.length > 0 &&
+          !tree.activeNode?.isCollapsed &&
+          activeNodeIsActionable(tree),
         run(tree) {
           tree.activeNode.setCollapsed(true);
         },
@@ -99,7 +112,10 @@ export default {
         label: "Expand",
         icon: "arrows-expand",
         hotkeys: ["c"],
-        when: (tree) => tree.activeNode?.isCollapsed,
+        when: (tree) =>
+          tree.activeNode?.children.length > 0 &&
+          tree.activeNode?.isCollapsed &&
+          activeNodeIsActionable(tree),
         run(tree) {
           tree.activeNode.setCollapsed(false);
         },
@@ -112,7 +128,7 @@ export default {
         label: "Edit",
         icon: "pencil",
         hotkeys: ["e"],
-        when: (tree) => tree.activeNode,
+        when: activeNodeIsActionable,
         run(tree) {
           tree.activeNode.setEditing(true);
         },
@@ -124,7 +140,10 @@ export default {
         label: "Done",
         icon: "check",
         hotkeys: ["d"],
-        when: (tree) => tree.activeNode && !tree.activeNode.isCompleted,
+        when: (tree) =>
+          tree.activeNode &&
+          !tree.activeNode.isCompleted &&
+          activeNodeIsActionable(tree),
         run(tree) {
           tree.activeNode.isCompleted = true;
         },
@@ -136,7 +155,10 @@ export default {
         label: "Undo",
         icon: "x",
         hotkeys: ["d"],
-        when: (tree) => tree.activeNode && tree.activeNode.isCompleted,
+        when: (tree) =>
+          tree.activeNode &&
+          tree.activeNode.isCompleted &&
+          activeNodeIsActionable(tree),
         run(tree) {
           tree.activeNode.isCompleted = false;
         },
@@ -147,7 +169,7 @@ export default {
         contextMenuGroupId: "node",
         label: "Drill down",
         icon: "arrow-down",
-        when: (tree) => tree.activeNode,
+        when: activeNodeIsActionable,
         run(tree) {
           console.log("drill down");
         },
