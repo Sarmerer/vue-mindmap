@@ -25,7 +25,7 @@ export class Node {
   }
 
   get isRoot() {
-    return this.parent === null;
+    return this.parent === null || this.tree.rootsStack.at(-1) === this;
   }
 
   setEditing(isEditing) {

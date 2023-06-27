@@ -34,7 +34,7 @@ export class Renderer {
         return [node.data.height, node.data.width + 30];
       },
 
-      spacing: (nodeA, nodeB) => nodeA.path(nodeB).length,
+      spacing: (nodeA, nodeB) => nodeA.path(nodeB).length + 2,
     });
 
     const layout = layoutFactory(tree);

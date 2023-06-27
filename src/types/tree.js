@@ -34,7 +34,14 @@ export class Tree {
     const root = this.getRoot();
     if (!root) return [];
 
-    return [root, ...root.getChildren(true)];
+    const nodes = [root, ...root.getChildren(true)];
+
+    const reorderingNode = this.reorder.activeNode;
+    if (reorderingNode) {
+      nodes.push(reorderingNode);
+    }
+
+    return nodes;
   }
 
   addNode(node) {
