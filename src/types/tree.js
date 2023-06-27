@@ -18,26 +18,23 @@ export class Tree {
     this.actionsManager = new ActionsManager(this);
     this.emojiManager = new EmojiManager(this);
     this.reorder = new Reorder(this);
+    this.rootsStack = [];
 
     this.canvas = new Canvas();
     this.renderer = new Renderer(this);
   }
 
-  getRoots() {
-    return this.nodes.filter((node) => node.isRoot);
+  getRoot() {
+    if (this.rootsStack.length) return this.rootsStack.at(-1);
+
+    return this.nodes.find((node) => node.isRoot);
   }
 
   getNodes() {
-    return this.nodes.filter((node) => {
-      let parent = node.parent;
-      while (parent) {
-        if (parent.isCollapsed) return false;
+    const root = this.getRoot();
+    if (!root) return [];
 
-        parent = parent.parent;
-      }
-
-      return true;
-    });
+    return [root, ...root.getChildren(true)];
   }
 
   addNode(node) {
@@ -60,6 +57,16 @@ export class Tree {
     if (this.activeNode) {
       this.activeNode.isActive = true;
     }
+  }
+
+  pushStack(node) {
+    this.rootsStack.push(node);
+    this.renderer.render();
+  }
+
+  popStack() {
+    this.rootsStack.pop();
+    this.renderer.render();
   }
 
   serialize() {

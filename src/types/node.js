@@ -87,8 +87,18 @@ export class Node {
     this.tree.setActiveNode(this);
   }
 
-  getChildren() {
+  getChildren(deep = false) {
     if (this.isCollapsed) return [];
+
+    if (deep) {
+      const children = [];
+      for (const child of this.children) {
+        children.push(child);
+        children.push(...child.getChildren(true));
+      }
+
+      return children;
+    }
 
     return this.children;
   }

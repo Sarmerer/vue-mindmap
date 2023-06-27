@@ -22,11 +22,11 @@ export class Renderer {
   }
 
   #render() {
-    const roots = this.tree.getRoots();
-    if (!roots.length) return;
+    const root = this.tree.getRoot();
+    if (!root) return;
 
     const treeFactory = d3.tree();
-    const tree = treeFactory(this.buildHierarchy(roots[0]));
+    const tree = treeFactory(this.buildHierarchy(root));
 
     const layoutFactory = flextree({
       nodeSize: (node) => {

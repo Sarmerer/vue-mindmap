@@ -172,9 +172,20 @@ export default {
         contextMenuGroupId: "node",
         label: "Drill down",
         icon: "arrow-down",
-        when: activeNodeIsActionable,
+        when: (tree) => activeNodeIsActionable(tree) && !tree.activeNode.isRoot,
         run(tree) {
-          console.log("drill down");
+          tree.pushStack(tree.activeNode);
+        },
+      },
+      {
+        id: "drill-up",
+        toolbarGroupId: "left",
+        contextMenuGroupId: "node",
+        label: "Drill up",
+        icon: "arrow-up",
+        when: (tree) => tree.rootsStack.length > 0,
+        run(tree) {
+          tree.popStack();
         },
       },
 
