@@ -5,12 +5,8 @@
       :key="action.id"
       @click="hide(), action.run()"
     >
-      <b-icon
-        v-if="action.icon"
-        :icon="action.icon"
-        size="is-small"
-        v-text="action.label"
-      />
+      <b-icon v-if="action.icon" :icon="action.icon" size="is-small" />
+      {{ action.label }}
     </li>
   </ContextMenuR>
 </template>

@@ -1,27 +1,19 @@
 <template>
   <div class="toolbar">
     <div class="left-actions">
-      <button
-        v-for="action in actions.left"
+      <ToolbarAction
+        v-for="action in leftActions"
         :key="action.id"
-        :title="action.label"
-        class="action-button"
-        @click.stop="action.run()"
-      >
-        <b-icon :icon="action.icon"></b-icon>
-      </button>
+        v-bind="{ action }"
+      />
     </div>
 
     <div class="right-actions">
-      <button
-        v-for="action in actions.right"
+      <ToolbarAction
+        v-for="action in rightActions"
         :key="action.id"
-        :title="action.label"
-        class="action-button"
-        @click.stop="action.run()"
-      >
-        <b-icon :icon="action.icon"></b-icon>
-      </button>
+        v-bind="{ action }"
+      />
     </div>
   </div>
 </template>
@@ -29,6 +21,7 @@
 <script>
 import { Tree } from "../types/tree";
 
+import ToolbarAction from "./ToolbarAction.vue";
 export default {
   name: "Toolbar",
 
@@ -39,27 +32,26 @@ export default {
     },
   },
 
+  components: { ToolbarAction },
+
   computed: {
-    actions() {
-      const actions = { left: [], right: [] };
-
-      const orderedActions = [...this.tree.actionsManager.actions].sort(
-        (a, b) => {
-          if (a.toolbarOrder === b.toolbarOrder) return 0;
-          return a.toolbarOrder > b.toolbarOrder ? 1 : -1;
-        }
+    leftActions() {
+      return this.orderedActions.filter(
+        (action) => action.toolbarGroupId === "left" && action.when()
       );
+    },
 
-      for (const action of orderedActions) {
-        if (!action.toolbarGroupId || !action.when()) continue;
+    rightActions() {
+      return this.orderedActions.filter(
+        (action) => action.toolbarGroupId === "right" && action.when()
+      );
+    },
 
-        const group = actions[action.toolbarGroupId];
-        if (!group) continue;
-
-        group.push(action);
-      }
-
-      return actions;
+    orderedActions() {
+      return [...this.tree.actionsManager.actions].sort((a, b) => {
+        if (a.toolbarOrder === b.toolbarOrder) return 0;
+        return a.toolbarOrder > b.toolbarOrder ? 1 : -1;
+      });
     },
   },
 };
@@ -87,32 +79,5 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.action-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: background-color 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  border: none;
-  border: 2px solid #a03bc3;
-  border-radius: 4px;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  font-size: 14px;
-}
-
-.action-button:hover {
-  background-color: #a03bc3;
-}
-
-.action-button:focus,
-.action-button:active {
-  outline: none;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-  background-color: #a03bc3;
 }
 </style>
