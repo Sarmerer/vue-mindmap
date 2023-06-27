@@ -1,5 +1,6 @@
 <template>
   <div class="mindmap">
+    <EmojiBar v-bind="{ tree }" />
     <HotkeysModal v-bind="{ tree }" />
 
     <Toolbar v-bind="{ tree }" />
@@ -13,12 +14,14 @@ import { Tree } from "../types/tree";
 import { Renderer } from "../types/renderer";
 import { Navigator } from "../types/navigator";
 
-import Toolbar from "./Toolbar.r.vue";
+import EmojiBar from "./EmojiBar.r.vue";
 import HotkeysModal from "./modals/Hotkeys.vue";
+import Toolbar from "./Toolbar.r.vue";
 import TreeR from "./Tree.r.vue";
 
 export default {
   components: {
+    EmojiBar,
     HotkeysModal,
     Toolbar,
     TreeR,
