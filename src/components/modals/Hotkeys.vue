@@ -8,8 +8,8 @@
           v-for="(hotkey, index) in action.hotkeys"
           :key="index"
           class="hotkey"
+          v-text="formatHotkey(hotkey)"
         >
-          {{ formatHotkey(hotkey) }}
         </kbd>
       </tr>
     </table>
@@ -44,6 +44,7 @@ export default {
     this.tree.actionsManager.addAction({
       id: "help",
       toolbarGroupId: "right",
+      toolbarOrder: 5,
       label: "Show hotkeys",
       icon: "question",
       hotkeys: ["?"],

@@ -1,6 +1,6 @@
 <template>
   <ul
-    v-show="shown"
+    v-show="isShown"
     ref="contextMenu"
     class="context-menu"
     :style="{
@@ -17,7 +17,7 @@ export default {
     return {
       x: 0,
       y: 0,
-      shown: false,
+      isShown: false,
     };
   },
 
@@ -25,13 +25,13 @@ export default {
     show(e) {
       this.x = e.clientX;
       this.y = e.clientY;
-      this.shown = true;
+      this.isShown = true;
 
       window.addEventListener("click", this.maybeHide);
     },
 
     hide() {
-      this.shown = false;
+      this.isShown = false;
       window.removeEventListener("click", this.maybeHide);
     },
 
