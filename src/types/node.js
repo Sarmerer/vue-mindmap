@@ -14,7 +14,6 @@ export class Node {
     this.height = 100;
 
     this.label = Math.random().toString(36).substring(2, 15);
-    this.weight = 1;
     this.highlightedSide = null;
 
     this.isActive = false;
@@ -147,9 +146,17 @@ export class Node {
       id: this.id,
       parent: this.parent?.id ?? null,
       label: this.label,
-      weight: this.weight,
       isCollapsed: this.isCollapsed,
       isCompleted: this.isCompleted,
     };
+  }
+
+  deserialize(data) {
+    this.id = data.id;
+    this.label = data.label;
+    this.isCollapsed = data.isCollapsed;
+    this.isCompleted = data.isCompleted;
+
+    return this;
   }
 }

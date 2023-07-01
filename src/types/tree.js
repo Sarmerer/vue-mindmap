@@ -3,6 +3,8 @@ import { EmojiManager } from "./emiji-manager";
 import { Reorder } from "./reorder";
 import { Canvas } from "./canvas";
 import { Renderer } from "./renderer";
+import { Database } from "./database/generic";
+import { Node } from "./node";
 
 import { uuidv4 } from "../utils";
 
@@ -22,6 +24,7 @@ export class Tree {
 
     this.canvas = new Canvas();
     this.renderer = new Renderer(this);
+    this.database = null;
   }
 
   getRoot() {
@@ -76,20 +79,46 @@ export class Tree {
     this.renderer.render();
   }
 
+  /**
+   * @param {Database} database
+   */
+  setDatabase(database) {
+    this.database = database;
+  }
+
   serialize() {
     return {
       id: this.id,
       nodes: this.nodes.map((node) => node.serialize()),
+      activeNode: this.activeNode?.id ?? null,
     };
   }
 
   deserialize(data) {
+    if (!data) return this;
+
+    const index = new Map();
     const nodes = data.nodes.map((nodeData) => {
-      const node = new Node(this);
-      node.deserialize(nodeData);
+      const node = new Node(this).deserialize(nodeData);
+      index.set(node.id, node);
       return node;
     });
 
+    for (const node of data.nodes) {
+      if (node.parent && index.has(node.parent)) {
+        const parent = index.get(node.parent);
+        if (!parent) continue;
+
+        const self = index.get(node.id);
+        self.parent = parent;
+        parent.children.push(self);
+      }
+    }
+
+    this.id = data.id;
     this.nodes = nodes;
+    this.setActiveNode(index.get(data.activeNode ?? null));
+
+    return this;
   }
 }
