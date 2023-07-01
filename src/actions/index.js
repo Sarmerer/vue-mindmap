@@ -24,7 +24,7 @@ export default [
     label: "Add child",
     icon: "diagram2",
     hotkeys: ["tab"],
-    when: activeNodeIsActionable,
+    when: (tree) => tree.activeNode?.isActionable,
     run(tree) {
       const node = this.tree.activeNode.addChild();
       node.isEditing = true;
@@ -38,8 +38,7 @@ export default [
     label: "Add sibling",
     icon: "node-plus",
     hotkeys: ["enter"],
-    when: (tree) =>
-      tree.activeNode && tree.activeNode.parent && activeNodeIsActionable(tree),
+    when: (tree) => tree.activeNode?.isActionable && tree.activeNode.parent,
     run(tree) {
       const node = this.tree.activeNode.addSibling();
       node.isEditing = true;
@@ -55,9 +54,9 @@ export default [
     icon: "arrows-collapse",
     hotkeys: ["c"],
     when: (tree) =>
-      tree.activeNode?.children.length > 0 &&
-      !tree.activeNode?.isCollapsed &&
-      activeNodeIsActionable(tree),
+      tree.activeNode?.isActionable &&
+      tree.activeNode.children.length > 0 &&
+      !tree.activeNode.isCollapsed,
     run(tree) {
       tree.activeNode.setCollapsed(true);
     },
@@ -70,9 +69,9 @@ export default [
     icon: "arrows-expand",
     hotkeys: ["c"],
     when: (tree) =>
-      tree.activeNode?.children.length > 0 &&
-      tree.activeNode?.isCollapsed &&
-      activeNodeIsActionable(tree),
+      tree.activeNode?.isActionable &&
+      tree.activeNode.children.length > 0 &&
+      tree.activeNode.isCollapsed,
     run(tree) {
       tree.activeNode.setCollapsed(false);
     },
@@ -85,7 +84,7 @@ export default [
     label: "Edit",
     icon: "pencil",
     hotkeys: ["e"],
-    when: activeNodeIsActionable,
+    when: (tree) => tree.activeNode?.isActionable,
     run(tree) {
       tree.activeNode.setEditing(true);
     },
@@ -98,9 +97,7 @@ export default [
     icon: "check",
     hotkeys: ["d"],
     when: (tree) =>
-      tree.activeNode &&
-      !tree.activeNode.isCompleted &&
-      activeNodeIsActionable(tree),
+      tree.activeNode?.isActionable && !tree.activeNode.isCompleted,
     run(tree) {
       tree.activeNode.isCompleted = true;
     },
@@ -113,9 +110,7 @@ export default [
     icon: "x",
     hotkeys: ["d"],
     when: (tree) =>
-      tree.activeNode &&
-      tree.activeNode.isCompleted &&
-      activeNodeIsActionable(tree),
+      tree.activeNode?.isActionable && tree.activeNode.isCompleted,
     run(tree) {
       tree.activeNode.isCompleted = false;
     },
@@ -126,7 +121,7 @@ export default [
     contextMenuGroupId: "node",
     label: "Drill down",
     icon: "arrow-down",
-    when: (tree) => activeNodeIsActionable(tree) && !tree.activeNode.isRoot,
+    when: (tree) => tree.activeNode?.isActionable && !tree.activeNode.isRoot,
     run(tree) {
       tree.pushStack(tree.activeNode);
     },
@@ -199,23 +194,4 @@ export default [
       tree.canvas.reset();
     },
   },
-  {
-    id: "save-load",
-    toolbarGroupId: "right",
-    toolbarOrder: 2,
-    label: "Save/load",
-    icon: "save",
-    hotkeys: ["alt+s"],
-    run(tree) {
-      console.log(tree.database.readTrees());
-    },
-  },
 ];
-
-function activeNodeIsActionable(tree) {
-  return (
-    tree.activeNode &&
-    !tree.activeNode.isEditing &&
-    !tree.activeNode.isReordering
-  );
-}

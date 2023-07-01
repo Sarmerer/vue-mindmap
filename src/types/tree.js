@@ -58,15 +58,7 @@ export class Tree {
   }
 
   setActiveNode(node) {
-    if (this.activeNode) {
-      this.activeNode.isActive = false;
-    }
-
     this.activeNode = node;
-
-    if (this.activeNode) {
-      this.activeNode.isActive = true;
-    }
   }
 
   pushStack(node) {

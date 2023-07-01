@@ -16,7 +16,6 @@ export class Node {
     this.label = Math.random().toString(36).substring(2, 15);
     this.highlightedSide = null;
 
-    this.isActive = false;
     this.isReordering = false;
     this.isEditing = false;
     this.isCollapsed = false;
@@ -25,6 +24,14 @@ export class Node {
 
   get isRoot() {
     return this.parent === null || this.tree.rootsStack.at(-1) === this;
+  }
+
+  get isActive() {
+    return this.tree.activeNode === this;
+  }
+
+  get isActionable() {
+    return !this.isEditing && !this.isReordering;
   }
 
   setEditing(isEditing) {
