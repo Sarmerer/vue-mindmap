@@ -5,8 +5,6 @@
 </template>
 
 <script>
-import { tree } from "@/tree";
-
 import Mindmap from "./components/Mindmap.vue";
 
 export default {
@@ -14,12 +12,6 @@ export default {
 
   components: {
     Mindmap,
-  },
-
-  data() {
-    return {
-      tree,
-    };
   },
 };
 </script>
