@@ -1,5 +1,4 @@
 <template>
-  <!-- bootstrap vue modal listing all actions -->
   <b-modal ref="modal" hide-header hide-footer>
     <table class="hotkeys">
       <tr v-for="(action, index) in actions" :key="index" class="row">

@@ -36,8 +36,6 @@ export class EmojiManager {
   toggleNodeEmoji(emoji, node = this.tree.activeNode) {
     if (!node) return;
 
-    console.log(emoji);
-
     const usedEmojis = new Set(
       this.extractEmojis(node.label).map(({ emoji }) => emoji)
     );

@@ -37,7 +37,7 @@ export class ActionsManager {
   }
 
   runAction(id) {
-    const action = this.actions.get(id);
+    const action = this.actions.find((a) => a.id === id);
     if (!action) return;
 
     action.run();
