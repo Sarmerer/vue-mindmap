@@ -69,7 +69,7 @@ export default {
   z-index: 1;
 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  background-color: white;
+  background-color: var(--color-toolbar-background);
   padding: 0 8px;
   height: 48px;
 }

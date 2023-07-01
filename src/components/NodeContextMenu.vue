@@ -55,19 +55,19 @@ export default {
 <style scoped>
 .node-context-menu {
   border-radius: 4px;
-  background-color: #293845;
+  background-color: var(--color-main-foreground);
   padding: 8px 0;
 }
 
 .node-context-menu li {
   padding: 4px 16px;
-  color: #fff;
+  color: var(--color-main-background);
   font-weight: 500;
   font-size: 14px;
   line-height: 1.5;
 }
 
 .node-context-menu li:hover {
-  background-color: #a03bc3;
+  background-color: var(--color-main-foreground-hover);
 }
 </style>

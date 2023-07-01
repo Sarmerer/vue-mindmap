@@ -54,9 +54,8 @@ export default {
   left: 0;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #e5e5e5;
-  background-color: white;
-  padding: 0 8px;
+  border-top: 1px solid var(--color-statusbar-separator);
+  background-color: var(--color-statusbar-background);
   height: 24px;
 }
 
@@ -69,19 +68,21 @@ export default {
 .statusbar__item {
   display: flex;
   align-items: center;
+  gap: 4px;
   padding: 0 4px;
 }
 
 .statusbar__item:not(:last-child) {
-  border-right: 1px solid #e5e5e5;
+  border-right: 1px solid var(--color-statusbar-separator);
 }
 
 .statusbar__item__label {
+  color: var(--color-statusbar-foreground-active);
   font-size: 12px;
 }
 
 .statusbar__item__value {
-  margin-left: 4px;
+  color: var(--color-statusbar-foreground);
   font-weight: bold;
   font-size: 12px;
 }

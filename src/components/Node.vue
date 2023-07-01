@@ -36,12 +36,12 @@
     </div>
 
     <div v-else class="node__editor">
-      <input
+      <BaseInput
         class="node__editor__input"
         ref="labelTextarea"
         :value="node.label"
-        @focusout="node.setEditing(false)"
-        @keydown.prevent.stop.enter="setLabel($event.target.value)"
+        @focusout.native="node.setEditing(false)"
+        @keydown.native.prevent.stop.enter="setLabel($event.target.value)"
       />
     </div>
   </div>
@@ -50,6 +50,8 @@
 <script>
 import { Node } from "../types/node";
 
+import BaseInput from "./base/Input.vue";
+
 export default {
   props: {
     node: {
@@ -57,6 +59,8 @@ export default {
       required: true,
     },
   },
+
+  components: { BaseInput },
 
   watch: {
     "node.isEditing": {
@@ -156,7 +160,7 @@ export default {
   word-wrap: break-word;
   cursor: text;
   margin: 0;
-  color: #333;
+  color: var(--color-main-foreground);
   font-weight: 500;
 
   font-size: 14px;

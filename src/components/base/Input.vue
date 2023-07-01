@@ -38,7 +38,15 @@ export default {
 .base-input {
   border: 1px solid #ccc;
   border-radius: 4px;
+
+  background-color: var(--color-main-background);
   width: 100%;
+  color: var(--color-main-text);
   font-size: 16px;
+}
+
+.base-input:focus {
+  outline: none;
+  border-color: var(--color-main-foreground);
 }
 </style>

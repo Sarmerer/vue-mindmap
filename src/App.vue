@@ -18,17 +18,52 @@ export default {
 
 <style>
 :root {
-  --primary-clr: #eef2f5;
-  --secondary-clr: #a03bc3;
-  --node-bg-clr: white;
-  --node-link-clr: black;
-  --node-bg-secondary-clr: #282c34;
-  --context-menu-bg-clr: #293845;
-  --context-menu-item-hover-clr: #a03bc3;
-  --hr-clr: #6e6b74;
-  --max-height: calc(100vh - 1.5rem);
-  --text-primary: rgba(255, 255, 255, 0.6);
-  --text-secondary: rgba(255, 255, 255, 0.87);
+  --color-toolbar-background: white;
+  --color-toolbar-foreground: white;
+  --color-toolbar-foreground-hover: #a03bc3;
+  --color-toolbar-foreground-active: #a03bc3;
+  --color-toolbar-separator: #e5e5e5;
+  --color-toolbar-text: #2c3e50;
+
+  --color-main-background: white;
+  --color-main-foreground: #2c3e50;
+  --color-main-foreground-hover: #bdc3c7;
+  --color-main-foreground-active: #95a5a6;
+  --color-main-text: #2c3e50;
+
+  --color-statusbar-background: white;
+  --color-statusbar-foreground: #ecf0f1;
+  --color-statusbar-foreground-hover: #bdc3c7;
+  --color-statusbar-foreground-active: #95a5a6;
+  --color-statusbar-separator: #e5e5e5;
+
+  --layer-base: 0;
+  --layer-overlay: 1;
+  --layer-modal: 2;
+  --layer-top: 3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-toolbar-background: #282c34;
+    --color-toolbar-foreground: #282c34;
+    --color-toolbar-foreground-hover: #5c6370;
+    --color-toolbar-foreground-active: #5c6370;
+    --color-toolbar-separator: #5c6370;
+    --color-toolbar-text: #abb2bf;
+
+    --color-main-background: #282c34;
+    --color-main-foreground: #bbc2cf;
+    --color-main-foreground-hover: #5c6370;
+    --color-main-foreground-active: #5c6370;
+    --color-main-text: #abb2bf;
+
+    --color-statusbar-background: #282c34;
+    --color-statusbar-foreground: #abb2bf;
+    --color-statusbar-foreground-hover: #5c6370;
+    --color-statusbar-foreground-active: #5c6370;
+    --color-statusbar-separator: #5c6370;
+  }
 }
 
 html,
@@ -46,6 +81,5 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  color: #2c3e50;
 }
 </style>

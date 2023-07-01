@@ -128,7 +128,8 @@ export default {
 
   z-index: 2;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
-  background-color: white;
+  background-color: var(--color-toolbar-background);
+  color: var(--color-toolbar-text);
   width: 250px;
   overflow-y: scroll;
 }
@@ -140,7 +141,7 @@ export default {
 .emoji-bar hr {
   margin: 4px 0;
   border: none;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-toolbar-separator);
 }
 
 .slide-enter-active {
