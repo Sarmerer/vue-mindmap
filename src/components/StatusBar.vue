@@ -1,19 +1,39 @@
 <template>
   <footer class="statusbar">
     <div class="statusbar__left">
-      <span class="statusbar__item">
-        <span class="statusbar__item__label">Nodes:</span>
-        <span class="statusbar__item__value" v-text="totalNodes"></span>
+      <span
+        class="statusbar__item"
+        @click="tree.actionsManager.runAction('open-trees-modal')"
+      >
+        <span class="statusbar__item__value">
+          <b-icon icon="tree-fill"></b-icon>
+          {{ activeTreeLabel }}
+        </span>
       </span>
+
       <span class="statusbar__item">
-        <span class="statusbar__item__label">Active:</span>
-        <span class="statusbar__item__value" v-text="activeNodeLabel"></span>
+        <span class="statusbar__item__value">
+          <b-icon icon="exclamation-circle"></b-icon>
+          {{ nodes.todo }}
+
+          <b-icon icon="check2-circle"></b-icon>
+          {{ nodes.done }}
+        </span>
+      </span>
+
+      <span class="statusbar__item">
+        <span class="statusbar__item__value">
+          <b-icon icon="record-circle"></b-icon>
+          {{ activeNodeLabel }}
+        </span>
       </span>
     </div>
     <div class="statusbar__right">
       <span class="statusbar__item">
-        <span class="statusbar__item__label">Zoom:</span>
-        <span class="statusbar__item__value" v-text="zoomLevel"></span>
+        <span
+          class="statusbar__item__value"
+          v-text="`Zoom: ${zoomLevel}`"
+        ></span>
       </span>
     </div>
   </footer>
@@ -29,8 +49,22 @@ export default {
   },
 
   computed: {
-    totalNodes() {
-      return this.tree.nodes.length;
+    activeTreeLabel() {
+      return this.tree.label;
+    },
+
+    nodes() {
+      let todo = 0;
+      let done = 0;
+      for (const node of this.tree.nodes) {
+        if (node.isCompleted) {
+          done++;
+        } else {
+          todo++;
+        }
+      }
+
+      return { todo, done };
     },
 
     activeNodeLabel() {
@@ -63,27 +97,28 @@ export default {
 .statusbar__right {
   display: flex;
   align-items: center;
+  gap: 8px;
+  height: 100%;
 }
 
 .statusbar__item {
   display: flex;
+  justify-content: center;
   align-items: center;
+
   gap: 4px;
   padding: 0 4px;
+  height: 100%;
+  user-select: none;
 }
 
-.statusbar__item:not(:last-child) {
-  border-right: 1px solid var(--color-statusbar-separator);
-}
-
-.statusbar__item__label {
-  color: var(--color-statusbar-foreground-active);
-  font-size: 12px;
+.statusbar__item:hover {
+  cursor: pointer;
+  background-color: var(--color-statusbar-foreground-hover);
 }
 
 .statusbar__item__value {
-  color: var(--color-statusbar-foreground);
-  font-weight: bold;
+  color: var(--color-statusbar-text);
   font-size: 12px;
 }
 </style>

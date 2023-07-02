@@ -129,9 +129,9 @@ export default {
   z-index: 2;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
   background-color: var(--color-toolbar-background);
-  color: var(--color-toolbar-text);
   width: 250px;
   overflow-y: scroll;
+  color: var(--color-toolbar-text);
 }
 
 .emoji-bar__search {

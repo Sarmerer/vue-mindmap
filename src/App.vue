@@ -36,6 +36,7 @@ export default {
   --color-statusbar-foreground-hover: #bdc3c7;
   --color-statusbar-foreground-active: #95a5a6;
   --color-statusbar-separator: #e5e5e5;
+  --color-statusbar-text: #2c3e50;
 
   --layer-base: 0;
   --layer-overlay: 1;
@@ -60,9 +61,10 @@ export default {
 
     --color-statusbar-background: #282c34;
     --color-statusbar-foreground: #abb2bf;
-    --color-statusbar-foreground-hover: #5c6370;
+    --color-statusbar-foreground-hover: #353941;
     --color-statusbar-foreground-active: #5c6370;
     --color-statusbar-separator: #5c6370;
+    --color-statusbar-text: #abb2bf;
   }
 }
 
