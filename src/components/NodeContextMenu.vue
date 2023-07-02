@@ -5,7 +5,7 @@
       :key="action.id"
       @click="hide(), action.run()"
     >
-      <b-icon v-if="action.icon" :icon="action.icon" size="is-small" />
+      <BaseIcon v-if="action.icon" :icon="action.icon" size="is-small" />
       {{ action.label }}
     </li>
   </BaseContextMenu>
@@ -56,6 +56,11 @@ export default {
 }
 
 .node-context-menu li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  cursor: pointer;
   padding: 4px 16px;
   color: var(--color-main-background);
   font-weight: 500;

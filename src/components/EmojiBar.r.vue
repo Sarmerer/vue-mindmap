@@ -95,7 +95,7 @@ export default {
       id: "toggle-emoji-bar",
       toolbarGroupId: "right",
       label: "Toggle Emoji Bar",
-      icon: "emoji-laughing",
+      icon: "smile-plus",
       hotkeys: ["m"],
       run: () => {
         this.isShown = !this.isShown;

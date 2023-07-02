@@ -4,7 +4,7 @@
     class="action-button"
     @click.stop="action.run()"
   >
-    <b-icon :icon="action.icon"></b-icon>
+    <BaseIcon :icon="action.icon" />
   </BaseButton>
 </template>
 

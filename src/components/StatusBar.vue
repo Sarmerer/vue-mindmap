@@ -6,34 +6,34 @@
         @click="tree.actionsManager.runAction('open-trees-modal')"
       >
         <span class="statusbar__item__value">
-          <b-icon icon="tree-fill"></b-icon>
+          <BaseIcon icon="tree-pine" />
           {{ activeTreeLabel }}
         </span>
       </span>
 
       <span class="statusbar__item">
         <span class="statusbar__item__value">
-          <b-icon icon="exclamation-circle"></b-icon>
+          <BaseIcon icon="alert-circle" />
           {{ nodes.todo }}
 
-          <b-icon icon="check2-circle"></b-icon>
+          <BaseIcon icon="check-circle" />
           {{ nodes.done }}
         </span>
       </span>
 
       <span class="statusbar__item">
         <span class="statusbar__item__value">
-          <b-icon icon="record-circle"></b-icon>
+          <BaseIcon icon="circle-dot" />
           {{ activeNodeLabel }}
         </span>
       </span>
     </div>
     <div class="statusbar__right">
       <span class="statusbar__item">
-        <span
-          class="statusbar__item__value"
-          v-text="`Zoom: ${zoomLevel}`"
-        ></span>
+        <span class="statusbar__item__value">
+          <BaseIcon icon="zoom-in" />
+          {{ zoomLevel }}
+        </span>
       </span>
     </div>
   </footer>
@@ -118,7 +118,16 @@ export default {
 }
 
 .statusbar__item__value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
   color: var(--color-statusbar-text);
   font-size: 12px;
+}
+
+.statusbar__item__value > svg {
+  width: 12px;
+  height: 12px;
 }
 </style>

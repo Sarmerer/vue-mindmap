@@ -6,7 +6,7 @@ export default [
     id: "add-root",
     toolbarGroupId: "left",
     label: "Add root",
-    icon: "node-plus",
+    icon: "git-fork",
     hotkeys: ["enter"],
     when: (tree) => tree.nodes.length === 0,
     run(tree) {
@@ -22,7 +22,7 @@ export default [
     toolbarGroupId: "left",
     contextMenuGroupId: "node",
     label: "Add child",
-    icon: "diagram2",
+    icon: "git-commit",
     hotkeys: ["tab"],
     when: (tree) => tree.activeNode?.isActionable,
     run(tree) {
@@ -36,7 +36,7 @@ export default [
     toolbarGroupId: "left",
     contextMenuGroupId: "node",
     label: "Add sibling",
-    icon: "node-plus",
+    icon: "git-branch",
     hotkeys: ["enter"],
     when: (tree) => tree.activeNode?.isActionable && tree.activeNode.parent,
     run(tree) {
@@ -51,7 +51,7 @@ export default [
     toolbarGroupId: "left",
     contextMenuGroupId: "node",
     label: "Collapse",
-    icon: "arrows-collapse",
+    icon: "fold-vertical",
     hotkeys: ["c"],
     when: (tree) =>
       tree.activeNode?.isActionable &&
@@ -66,7 +66,7 @@ export default [
     toolbarGroupId: "left",
     contextMenuGroupId: "node",
     label: "Expand",
-    icon: "arrows-expand",
+    icon: "unfold-vertical",
     hotkeys: ["c"],
     when: (tree) =>
       tree.activeNode?.isActionable &&
@@ -120,7 +120,7 @@ export default [
     toolbarGroupId: "left",
     contextMenuGroupId: "node",
     label: "Drill down",
-    icon: "arrow-down",
+    icon: "arrow-down-square",
     when: (tree) => tree.activeNode?.isActionable && !tree.activeNode.isRoot,
     run(tree) {
       tree.pushStack(tree.activeNode);
@@ -131,7 +131,7 @@ export default [
     toolbarGroupId: "left",
     contextMenuGroupId: "node",
     label: "Drill up",
-    icon: "arrow-up",
+    icon: "arrow-up-square",
     when: (tree) => tree.rootsStack.length > 0,
     run(tree) {
       tree.popStack();
@@ -188,7 +188,7 @@ export default [
     toolbarGroupId: "right",
     toolbarOrder: 0,
     label: "Reset canvas",
-    icon: "compass",
+    icon: "locate-fixed",
     hotkeys: ["alt+r"],
     run(tree) {
       tree.canvas.reset();

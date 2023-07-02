@@ -30,23 +30,21 @@
             class="tree__actions--edit"
             @click="setEditedTree(editedTree === treeItem ? null : treeItem)"
           >
-            <b-icon
-              :icon="editedTree === treeItem ? 'check-2' : 'pencil'"
-            ></b-icon>
+            <BaseIcon :icon="editedTree === treeItem ? 'check-2' : 'pencil'" />
           </BaseButton>
 
           <BaseButton
             class="tree__actions--delete"
             @click="deleteTree(treeItem)"
           >
-            <b-icon icon="trash"></b-icon>
+            <BaseIcon icon="trash" />
           </BaseButton>
         </div>
       </div>
     </div>
 
     <BaseButton class="trees__new" @click="createTree">
-      <b-icon icon="plus"></b-icon>
+      <BaseIcon icon="plus" />
       Create new tree
     </BaseButton>
   </BaseModal>
@@ -194,6 +192,9 @@ export default {
 }
 
 .trees__new {
+  display: flex;
+  align-items: center;
+
   margin-top: 8px;
   width: 100%;
   color: var(--color-main-text);
