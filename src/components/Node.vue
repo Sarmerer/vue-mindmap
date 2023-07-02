@@ -50,8 +50,6 @@
 <script>
 import { Node } from "../types/node";
 
-import BaseInput from "./base/Input.vue";
-
 export default {
   props: {
     node: {
@@ -59,8 +57,6 @@ export default {
       required: true,
     },
   },
-
-  components: { BaseInput },
 
   computed: {
     childrenCount() {

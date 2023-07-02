@@ -1,5 +1,5 @@
 <template>
-  <ContextMenuR ref="contextMenu" class="node-context-menu">
+  <BaseContextMenu ref="contextMenu" class="node-context-menu">
     <li
       v-for="action of actions"
       :key="action.id"
@@ -8,13 +8,11 @@
       <b-icon v-if="action.icon" :icon="action.icon" size="is-small" />
       {{ action.label }}
     </li>
-  </ContextMenuR>
+  </BaseContextMenu>
 </template>
 
 <script>
 import { Tree } from "../types/tree";
-
-import ContextMenuR from "./ContextMenu.r.vue";
 
 export default {
   props: {
@@ -23,8 +21,6 @@ export default {
       required: true,
     },
   },
-
-  components: { ContextMenuR },
 
   computed: {
     actions() {

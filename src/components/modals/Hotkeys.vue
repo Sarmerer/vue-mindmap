@@ -18,8 +18,6 @@
 <script>
 import { Tree } from "../../types/tree";
 
-import BaseModal from "../base/Modal.vue";
-
 export default {
   props: {
     tree: {
@@ -27,8 +25,6 @@ export default {
       required: true,
     },
   },
-
-  components: { BaseModal },
 
   computed: {
     actions() {

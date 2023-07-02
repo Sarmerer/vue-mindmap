@@ -10,7 +10,6 @@
 
 <script>
 import { Action } from "../types/action";
-import BaseButton from "./base/Button";
 
 export default {
   props: {
@@ -19,8 +18,6 @@ export default {
       required: true,
     },
   },
-
-  components: { BaseButton },
 
   computed: {
     title() {

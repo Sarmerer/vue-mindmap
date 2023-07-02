@@ -55,10 +55,6 @@
 <script>
 import { Tree } from "../../types/tree";
 
-import BaseModal from "../base/Modal.vue";
-import BaseButton from "../base/Button.vue";
-import BaseInput from "../base/Input.vue";
-
 export default {
   props: {
     tree: {
@@ -66,8 +62,6 @@ export default {
       required: true,
     },
   },
-
-  components: { BaseModal, BaseButton, BaseInput },
 
   data() {
     return {

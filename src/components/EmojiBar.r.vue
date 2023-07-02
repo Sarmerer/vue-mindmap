@@ -37,7 +37,6 @@
 <script>
 import { Tree } from "../types/tree";
 
-import BaseInput from "./base/Input.vue";
 import EmojiList from "./EmojiList.vue";
 
 export default {
@@ -48,10 +47,7 @@ export default {
     },
   },
 
-  components: {
-    BaseInput,
-    EmojiList,
-  },
+  components: { EmojiList },
 
   watch: {
     isShown: {
