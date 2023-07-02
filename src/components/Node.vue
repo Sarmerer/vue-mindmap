@@ -38,10 +38,10 @@
     <div v-else class="node__editor">
       <BaseInput
         class="node__editor__input"
-        ref="labelTextarea"
+        autofocus
         :value="node.label"
-        @focusout.native="node.setEditing(false)"
-        @keydown.native.prevent.stop.enter="setLabel($event.target.value)"
+        @focusout="node.setEditing(false)"
+        @enter="setLabel($event.target.value)"
       />
     </div>
   </div>
@@ -61,19 +61,6 @@ export default {
   },
 
   components: { BaseInput },
-
-  watch: {
-    "node.isEditing": {
-      immediate: true,
-      handler(val) {
-        if (val) {
-          this.$nextTick(() => {
-            this.$refs.labelTextarea.focus();
-          });
-        }
-      },
-    },
-  },
 
   computed: {
     childrenCount() {

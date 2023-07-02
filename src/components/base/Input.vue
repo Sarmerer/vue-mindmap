@@ -5,6 +5,8 @@
     :type="type"
     :placeholder="placeholder"
     @input="$emit('input', $event.target.value)"
+    @keydown.prevent.stop.enter="$emit('enter', $event)"
+    @focusout="$emit('focusout', $event)"
   />
 </template>
 
@@ -24,11 +26,28 @@ export default {
       type: String,
       default: "",
     },
+
+    autofocus: {
+      type: [Boolean, Number],
+      default: false,
+    },
+  },
+
+  mounted() {
+    this.maybeFocus();
   },
 
   methods: {
     focus() {
       this.$el.focus();
+    },
+
+    maybeFocus() {
+      if (typeof this.autofocus === "number") {
+        setTimeout(() => this.focus(), this.autofocus);
+      } else if (this.autofocus) {
+        this.focus();
+      }
     },
   },
 };
