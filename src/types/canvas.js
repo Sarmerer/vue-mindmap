@@ -4,8 +4,8 @@ export class Canvas {
   constructor() {
     this.id = uuidv4();
 
-    this.offsetX = 0;
-    this.offsetY = 0;
+    this.x = 0;
+    this.y = 0;
     this.scale = 1;
 
     this.initialPanX = 0;
@@ -46,8 +46,8 @@ export class Canvas {
     const dx = event.clientX - this.initialPanX;
     const dy = event.clientY - this.initialPanY;
 
-    this.offsetX += dx;
-    this.offsetY += dy;
+    this.x += dx;
+    this.y += dy;
 
     this.initialPanX = event.clientX;
     this.initialPanY = event.clientY;
@@ -65,22 +65,22 @@ export class Canvas {
     if (this.isZooming || this.isPanning) return;
 
     const delta = event.deltaY;
-    const zoomFactor = 0.1;
+    const factor = 0.15 * this.scale;
+    const nextScale = delta > 0 ? this.scale - factor : this.scale + factor;
+    const ratio = 1 - nextScale / this.scale;
+    const { x: cursorX, y: cursorY } = this.toScreenSpace(
+      this.cursorX,
+      this.cursorY
+    );
 
-    if (delta > 0) {
-      this.scale -= zoomFactor;
-    }
-
-    if (delta < 0) {
-      this.scale += zoomFactor;
-    }
-
-    this.scale = Math.max(0.1, this.scale);
+    this.x += (cursorX - this.x) * ratio;
+    this.y += (cursorY - this.y) * ratio;
+    this.scale = nextScale;
   }
 
   reset() {
-    this.offsetX = 0;
-    this.offsetY = 0;
+    this.x = 0;
+    this.y = 0;
     this.scale = 1;
   }
 

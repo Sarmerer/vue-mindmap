@@ -24,7 +24,7 @@ export default {
 
   computed: {
     transform() {
-      return `translate3d(${this.canvas.offsetX}px, ${this.canvas.offsetY}px, 0) scale(${this.canvas.scale})`;
+      return `translate3d(${this.canvas.x}px, ${this.canvas.y}px, 0) scale(${this.canvas.scale})`;
     },
   },
 };
@@ -39,7 +39,7 @@ export default {
 }
 
 .canvas__content {
-  transform-origin: center;
+  transform-origin: top left;
   width: 100%;
   height: 100%;
 }
