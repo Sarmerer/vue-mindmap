@@ -43,7 +43,13 @@
       </div>
     </div>
 
-    <BaseButton class="trees__new" @click="createTree">
+    <BaseButton
+      class="trees__new"
+      :class="{
+        alone: trees.length === 0,
+      }"
+      @click="createTree"
+    >
       <BaseIcon icon="plus" />
       Create new tree
     </BaseButton>
@@ -199,5 +205,20 @@ export default {
   width: 100%;
   color: var(--color-main-text);
   text-align: left;
+}
+
+.trees__new.alone {
+  justify-content: center;
+  margin-top: 0;
+  border-radius: 4px;
+  background-color: var(--color-main-foreground);
+  width: 300px;
+  height: 32px;
+  color: var(--color-main-background);
+  font-weight: bold;
+}
+
+.trees__new.alone:hover {
+  background-color: var(--color-main-foreground-hover);
 }
 </style>

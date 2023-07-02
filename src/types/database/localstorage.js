@@ -15,8 +15,7 @@ export class LocalStorage extends Database {
   getTree(id) {
     if (!id) return null;
 
-    const tree = this.getTrees()[id];
-    return tree ?? null;
+    return this.getTrees()[id] ?? null;
   }
 
   setTree(id, tree) {
