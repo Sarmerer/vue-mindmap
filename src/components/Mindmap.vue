@@ -1,6 +1,7 @@
 <template>
   <div class="mindmap">
     <EmojiBar v-bind="{ tree }" />
+    <TreesModal v-bind="{ tree }" />
     <HotkeysModal v-bind="{ tree }" />
 
     <Toolbar v-bind="{ tree }" />
@@ -15,6 +16,7 @@ import { LocalStorage } from "../types/database/localstorage";
 import actions from "../actions";
 
 import EmojiBar from "./EmojiBar.r.vue";
+import TreesModal from "./modals/Trees.vue";
 import HotkeysModal from "./modals/Hotkeys.vue";
 import Toolbar from "./Toolbar.r.vue";
 import TreeR from "./Tree.r.vue";
@@ -23,6 +25,7 @@ import StatusBar from "./StatusBar.vue";
 export default {
   components: {
     EmojiBar,
+    TreesModal,
     HotkeysModal,
     Toolbar,
     TreeR,
@@ -31,23 +34,28 @@ export default {
 
   data() {
     return {
-      tree: new Tree(),
+      tree: null,
     };
   },
 
   created() {
-    this.tree.actionsManager.addActions(...actions);
+    const tree = new Tree();
+    tree.setDatabase(new LocalStorage());
 
-    this.tree.setDatabase(new LocalStorage());
-    this.tree.deserialize(this.tree.database.readTree("last"));
+    const lastTree = tree.database.getLastTreeId();
+    if (lastTree) {
+      tree.deserialize(tree.database.getTree(lastTree));
+    }
 
     window.addEventListener("beforeunload", () => {
-      this.tree.database.writeTree("last", this.tree.serialize());
+      tree.database.setTree(tree.id, tree.serialize());
+      tree.database.setLastTreeId(tree.id);
     });
 
-    this.$nextTick(() => {
-      this.tree.renderer.render();
-    });
+    tree.actionsManager.addActions(...actions);
+    tree.renderer.render();
+
+    this.tree = tree;
   },
 };
 </script>

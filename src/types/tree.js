@@ -11,6 +11,7 @@ import { uuidv4 } from "../utils";
 export class Tree {
   constructor() {
     this.id = uuidv4();
+    this.label = "Untitled";
 
     this.activeNode = null;
 
@@ -81,6 +82,7 @@ export class Tree {
   serialize() {
     return {
       id: this.id,
+      label: this.label,
       nodes: this.nodes.map((node) => node.serialize()),
       activeNode: this.activeNode?.id ?? null,
     };
@@ -108,6 +110,8 @@ export class Tree {
     }
 
     this.id = data.id;
+    this.label = data.label;
+
     this.nodes = nodes;
     this.setActiveNode(index.get(data.activeNode ?? null));
 

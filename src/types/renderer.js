@@ -23,7 +23,11 @@ export class Renderer {
 
   #render() {
     const root = this.tree.getRoot();
-    if (!root) return;
+    if (!root) {
+      this.tree.nodes = [];
+      this.tree.links = [];
+      return;
+    }
 
     const treeFactory = d3.tree();
     const tree = treeFactory(this.buildHierarchy(root));
