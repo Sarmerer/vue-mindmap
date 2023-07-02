@@ -149,6 +149,9 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .trees__list__item {
@@ -161,6 +164,7 @@ export default {
   background-color: var(--color-main-foreground);
   padding: 8px;
   min-width: 300px;
+  min-height: 32px;
 }
 
 .trees__list__item:hover {

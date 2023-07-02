@@ -64,7 +64,5 @@ export default {
   align-items: center;
 
   padding: 16px;
-  width: 100%;
-  height: 100%;
 }
 </style>

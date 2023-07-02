@@ -29,6 +29,7 @@ export default {
   --color-main-foreground: #2c3e50;
   --color-main-foreground-hover: #bdc3c7;
   --color-main-foreground-active: #95a5a6;
+  --color-main-separator: #e5e5e5;
   --color-main-text: #2c3e50;
 
   --color-statusbar-background: white;
@@ -57,6 +58,7 @@ export default {
     --color-main-foreground: #bbc2cf;
     --color-main-foreground-hover: #5c6370;
     --color-main-foreground-active: #5c6370;
+    --color-main-separator: #5c6370;
     --color-main-text: #abb2bf;
 
     --color-statusbar-background: #282c34;
@@ -80,8 +82,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+
   width: 100%;
   height: 100%;
   overflow: hidden;
+  font-family: "Roboto", sans-serif;
 }
 </style>

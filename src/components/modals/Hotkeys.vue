@@ -1,5 +1,5 @@
 <template>
-  <b-modal ref="modal" hide-header hide-footer>
+  <BaseModal ref="modal">
     <table class="hotkeys">
       <tr v-for="(action, index) in actions" :key="index" class="row">
         <td class="action" v-text="action.label"></td>
@@ -12,11 +12,13 @@
         </kbd>
       </tr>
     </table>
-  </b-modal>
+  </BaseModal>
 </template>
 
 <script>
 import { Tree } from "../../types/tree";
+
+import BaseModal from "../base/Modal.vue";
 
 export default {
   props: {
@@ -25,6 +27,8 @@ export default {
       required: true,
     },
   },
+
+  components: { BaseModal },
 
   computed: {
     actions() {
@@ -48,7 +52,7 @@ export default {
       icon: "question",
       hotkeys: ["?"],
       run: () => {
-        this.$refs.modal.show();
+        this.$refs.modal.open();
       },
     });
   },
@@ -84,8 +88,9 @@ export default {
 .hotkeys .row {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--color-main-separator);
   padding: 4px 12px;
+  min-width: 300px;
 }
 
 .hotkeys .row:last-child {
@@ -93,16 +98,18 @@ export default {
 }
 
 .hotkeys .action {
+  color: var(--color-main-text);
   font-weight: bold;
+  font-size: 16px;
 }
 
 .hotkeys .hotkey {
   margin-left: 4px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--color-main-separator);
   border-radius: 3px;
-  background-color: #f8f9fa;
+  background-color: var(--color-main-foreground);
   padding: 2px 4px;
-  color: #212529;
+  color: var(--color-main-foreground-hover);
   font-size: 0.8rem;
   font-family: monospace;
 }
