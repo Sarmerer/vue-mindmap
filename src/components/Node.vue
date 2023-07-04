@@ -164,8 +164,8 @@ export default {
 }
 
 .node.completed .node__label {
-  text-decoration: line-through;
   opacity: 0.5;
+  text-decoration: line-through;
 }
 
 .node__status {

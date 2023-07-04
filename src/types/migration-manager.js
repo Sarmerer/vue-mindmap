@@ -50,8 +50,11 @@ export class MigrationManager {
       id: uuidv4(),
       parent: legacyParent?.id || null,
       label: this.migrateNodeLabel(legacyNode),
+      weight: legacyNode.weight || 1,
       isCompleted: legacyNode.done || false,
       isCollapsed: legacyNode.collapsed || false,
+      childrenCountOverride: legacyNode.virtualChildren || 0,
+      completedChildrenCountOverride: legacyNode.virtualFinishedChildren || 0,
     };
 
     if (!Array.isArray(legacyNode.children)) return [node];
