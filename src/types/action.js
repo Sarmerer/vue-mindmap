@@ -48,6 +48,7 @@ export class Action {
   run() {
     if (typeof this.run_ !== "function") return;
     if (this.isRunning) return;
+    if (!this.when()) return;
 
     this.isRunning = true;
     this.run_(this.tree);

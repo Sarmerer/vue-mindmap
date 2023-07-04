@@ -36,9 +36,12 @@ export class ActionsManager {
     }
   }
 
-  runAction(id) {
+  run(id) {
     const action = this.actions.find((a) => a.id === id);
-    if (!action) return;
+    if (!action) {
+      console.error(`Action "${id}" not found`);
+      return;
+    }
 
     action.run();
   }

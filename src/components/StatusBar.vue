@@ -3,7 +3,7 @@
     <div class="statusbar__left">
       <span
         class="statusbar__item"
-        @click="tree.actionsManager.runAction('open-trees-modal')"
+        @click="tree.actionsManager.run('open-trees-modal')"
       >
         <span class="statusbar__item__value">
           <BaseIcon icon="tree-pine" />
@@ -55,6 +55,7 @@ export default {
 
     nodes() {
       const root = this.tree.getRoot();
+      if (!root) return { todo: 0, completed: 0 };
 
       const total = root.stats.getChildrenCount(true);
       const completed = root.stats.getCompletedChildrenCount(true);

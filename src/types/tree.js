@@ -92,13 +92,15 @@ export class Tree {
     if (!data) return this;
 
     const index = new Map();
-    const nodes = data.nodes.map((nodeData) => {
+    const dataNodes = data.nodes ?? [];
+
+    const nodes = dataNodes.map((nodeData) => {
       const node = new Node(this).deserialize(nodeData);
       index.set(node.id, node);
       return node;
     });
 
-    for (const node of data.nodes) {
+    for (const node of dataNodes) {
       if (node.parent && index.has(node.parent)) {
         const parent = index.get(node.parent);
         if (!parent) continue;

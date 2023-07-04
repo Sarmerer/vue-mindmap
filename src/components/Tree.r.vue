@@ -13,7 +13,7 @@
       </svg>
 
       <div :id="tree.id" class="nodes-container">
-        <NodeRenderer
+        <Node
           v-for="node of tree.getNodes()"
           :key="node.id"
           v-bind="{ node }"
@@ -27,9 +27,9 @@
 <script>
 import { Tree } from "../types/tree";
 
-import Canvas from "./Canvas.vue";
-import NodeRenderer from "./Node.vue";
 import NodeContextMenu from "./NodeContextMenu.vue";
+import Canvas from "./Canvas.vue";
+import Node from "./Node.vue";
 
 export default {
   props: {
@@ -41,8 +41,8 @@ export default {
 
   components: {
     NodeContextMenu,
-    NodeRenderer,
     Canvas,
+    Node,
   },
 
   methods: {

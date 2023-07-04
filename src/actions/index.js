@@ -10,6 +10,8 @@ export default [
     hotkeys: ["enter"],
     when: (tree) => tree.nodes.length === 0,
     run(tree) {
+      tree.canvas.reset();
+
       const node = new Node(tree);
       node.isEditing = true;
       tree.addNode(node);
@@ -166,7 +168,6 @@ export default [
         "Enter node children override (e.g. 2/10), leave empty to remove override",
         tree.activeNode.childrenOverride
       );
-      console.log(`input: "${input}"`);
       if (!input) {
         tree.activeNode.childrenCountOverride = 0;
         tree.activeNode.completedChildrenCountOverride = 0;

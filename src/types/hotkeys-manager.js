@@ -11,7 +11,9 @@ export class HotkeysManager {
       const hotkey = this.normalizeEvent(e);
       const actions = this.hotkeys.get(hotkey);
       if (!actions?.length) return;
-      if (document.activeElement.tagName === "INPUT") return;
+
+      const activeTag = document.activeElement.tagName;
+      if (activeTag === "INPUT" || activeTag === "TEXTAREA") return;
 
       e.preventDefault();
 

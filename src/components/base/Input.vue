@@ -6,6 +6,7 @@
     :placeholder="placeholder"
     @input="$emit('input', $event.target.value)"
     @keydown.prevent.stop.enter="$emit('enter', $event)"
+    @keydown.escape="$emit('escape', $event)"
     @focusout="$emit('focusout', $event)"
   />
 </template>

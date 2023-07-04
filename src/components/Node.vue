@@ -216,5 +216,6 @@ export default {
 
 .node__editor__input {
   width: 100%;
+  font-size: 14px;
 }
 </style>
