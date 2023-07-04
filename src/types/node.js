@@ -1,3 +1,4 @@
+import { NodeStats } from "./node-stats";
 import { uuidv4 } from "../utils";
 
 export class Node {
@@ -18,6 +19,7 @@ export class Node {
     this.weight = 1;
     this.childrenCountOverride = 0;
     this.completedChildrenCountOverride = 0;
+    this.stats = new NodeStats(this);
 
     this.isReordering = false;
     this.isEditing = false;
@@ -114,69 +116,6 @@ export class Node {
     }
 
     return this.children;
-  }
-
-  getChildrenCount(deep = false) {
-    if (this.childrenCountOverride > 0) return this.childrenCountOverride;
-
-    let count = this.children.length;
-
-    if (deep) {
-      for (const child of this.children) {
-        count += child.getChildrenCount(true);
-      }
-    }
-
-    return count;
-  }
-
-  getCompletedChildrenCount(deep = false) {
-    if (this.completedChildrenCountOverride > 0)
-      return this.completedChildrenCountOverride;
-
-    let count = 0;
-    for (const child of this.children) {
-      if (child.isCompleted) count++;
-
-      if (deep) count += child.getCompletedChildrenCount(true);
-    }
-
-    return count;
-  }
-
-  getChildrenWeight(deep = false) {
-    if (this.childrenCountOverride > 0) return this.childrenCountOverride;
-
-    let weight = 0;
-    for (const child of this.children) {
-      weight += child.weight;
-
-      if (deep) weight += child.getChildrenWeight(true);
-    }
-
-    return weight;
-  }
-
-  getCompletedChildrenWeight(deep = false) {
-    if (this.completedChildrenCountOverride > 0)
-      return this.completedChildrenCountOverride;
-
-    let weight = 0;
-    for (const child of this.children) {
-      if (child.isCompleted) weight += child.weight;
-
-      if (deep) weight += child.getCompletedChildrenWeight(true);
-    }
-
-    return weight;
-  }
-
-  getProgress(deep = false) {
-    const childrenWeight = this.getChildrenWeight(deep);
-    const completedChildrenWeight = this.getCompletedChildrenWeight(deep);
-    if (childrenWeight === 0) return 0;
-
-    return (completedChildrenWeight / childrenWeight) * 100;
   }
 
   measure() {

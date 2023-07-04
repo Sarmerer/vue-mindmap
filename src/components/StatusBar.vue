@@ -56,8 +56,8 @@ export default {
     nodes() {
       const root = this.tree.getRoot();
 
-      const total = root.getChildrenCount(true);
-      const completed = root.getCompletedChildrenCount(true);
+      const total = root.stats.getChildrenCount(true);
+      const completed = root.stats.getCompletedChildrenCount(true);
       const todo = total - completed;
 
       return { todo, completed };

@@ -71,15 +71,15 @@ export default {
 
   computed: {
     childrenCount() {
-      return this.node.getChildrenCount();
+      return this.node.stats.getChildrenCount();
     },
 
     completedChildrenCount() {
-      return this.node.getCompletedChildrenCount();
+      return this.node.stats.getCompletedChildrenCount();
     },
 
     progress() {
-      return this.node.getProgress();
+      return this.node.stats.getChildrenProgress();
     },
   },
 
@@ -165,6 +165,7 @@ export default {
 
 .node.completed .node__label {
   text-decoration: line-through;
+  opacity: 0.5;
 }
 
 .node__status {
