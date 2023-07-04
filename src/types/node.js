@@ -43,6 +43,16 @@ export class Node {
     return this.childrenCountOverride > 0;
   }
 
+  get isCompletedDeep() {
+    if (!this.isCompleted) return false;
+
+    for (const child of this.getChildren(true)) {
+      if (!child.isCompleted) return false;
+    }
+
+    return true;
+  }
+
   setEditing(isEditing) {
     this.isEditing = isEditing;
     this.tree.renderer.render();
@@ -51,6 +61,16 @@ export class Node {
   setCollapsed(isCollapsed) {
     this.isCollapsed = isCollapsed;
     this.tree.renderer.render();
+  }
+
+  setCompleted(isCompleted, deep = false) {
+    this.isCompleted = isCompleted;
+
+    if (deep) {
+      for (const child of this.children) {
+        child.setCompleted(isCompleted, true);
+      }
+    }
   }
 
   addSibling() {

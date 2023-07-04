@@ -23,10 +23,8 @@ export class NodeStats {
       return this.node.completedChildrenCountOverride;
 
     let count = 0;
-    for (const child of this.node.children) {
+    for (const child of this.node.getChildren(deep)) {
       if (child.isCompleted) count++;
-
-      if (deep) count += child.stats.getCompletedChildrenCount(true);
     }
 
     return count;
@@ -37,10 +35,8 @@ export class NodeStats {
       return this.node.childrenCountOverride;
 
     let weight = 0;
-    for (const child of this.node.children) {
+    for (const child of this.node.getChildren(deep)) {
       weight += child.weight;
-
-      if (deep) weight += child.stats.getChildrenWeight(true);
     }
 
     return weight;
@@ -51,10 +47,8 @@ export class NodeStats {
       return this.node.completedChildrenCountOverride;
 
     let weight = 0;
-    for (const child of this.node.children) {
+    for (const child of this.node.getChildren(deep)) {
       if (child.isCompleted) weight += child.weight;
-
-      if (deep) weight += child.stats.getCompletedChildrenWeight(true);
     }
 
     return weight;

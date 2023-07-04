@@ -118,6 +118,32 @@ export default [
     },
   },
   {
+    id: "done-deep",
+    toolbarGroupId: "left",
+    contextMenuGroupId: "node",
+    label: "Done deep",
+    icon: "check-square",
+    hotkeys: ["shift+d"],
+    when: (tree) =>
+      tree.activeNode?.isActionable && !tree.activeNode.isCompletedDeep,
+    run(tree) {
+      tree.activeNode.setCompleted(true, true);
+    },
+  },
+  {
+    id: "undone-deep",
+    toolbarGroupId: "left",
+    contextMenuGroupId: "node",
+    label: "Undo deep",
+    icon: "x-square",
+    hotkeys: ["shift+d"],
+    when: (tree) =>
+      tree.activeNode?.isActionable && tree.activeNode.isCompletedDeep,
+    run(tree) {
+      tree.activeNode.setCompleted(false, true);
+    },
+  },
+  {
     id: "drill-down",
     toolbarGroupId: "left",
     contextMenuGroupId: "node",
