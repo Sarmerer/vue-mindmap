@@ -16,6 +16,8 @@ export class Node {
     this.label = "Awesome task";
     this.highlightedSide = null;
     this.weight = 1;
+    this.childrenCountOverride = 0;
+    this.completedChildrenCountOverride = 0;
 
     this.isReordering = false;
     this.isEditing = false;
@@ -33,6 +35,10 @@ export class Node {
 
   get isActionable() {
     return !this.isEditing && !this.isReordering;
+  }
+
+  get isChildrenCountOverridden() {
+    return this.childrenCountOverride > 0;
   }
 
   setEditing(isEditing) {
@@ -111,6 +117,8 @@ export class Node {
   }
 
   getChildrenCount(deep = false) {
+    if (this.childrenCountOverride > 0) return this.childrenCountOverride;
+
     let count = this.children.length;
 
     if (deep) {
@@ -123,8 +131,10 @@ export class Node {
   }
 
   getCompletedChildrenCount(deep = false) {
-    let count = 0;
+    if (this.completedChildrenCountOverride > 0)
+      return this.completedChildrenCountOverride;
 
+    let count = 0;
     for (const child of this.children) {
       if (child.isCompleted) count++;
 
@@ -135,6 +145,8 @@ export class Node {
   }
 
   getChildrenWeight(deep = false) {
+    if (this.childrenCountOverride > 0) return this.childrenCountOverride;
+
     let weight = 0;
     for (const child of this.children) {
       weight += child.weight;
@@ -146,6 +158,9 @@ export class Node {
   }
 
   getCompletedChildrenWeight(deep = false) {
+    if (this.completedChildrenCountOverride > 0)
+      return this.completedChildrenCountOverride;
+
     let weight = 0;
     for (const child of this.children) {
       if (child.isCompleted) weight += child.weight;
@@ -183,19 +198,30 @@ export class Node {
     return {
       id: this.id,
       parent: this.parent?.id ?? null,
+
       label: this.label,
       weight: this.weight,
+
       isCollapsed: this.isCollapsed,
       isCompleted: this.isCompleted,
+
+      childrenCountOverride: this.childrenCountOverride,
+      completedChildrenCountOverride: this.completedChildrenCountOverride,
     };
   }
 
   deserialize(data) {
     this.id = data.id ?? uuidv4();
+
     this.label = data.label ?? "A task";
     this.weight = data.weight ?? 1;
+
     this.isCollapsed = data.isCollapsed ?? false;
     this.isCompleted = data.isCompleted ?? false;
+
+    this.childrenCountOverride = data.childrenCountOverride ?? 0;
+    this.completedChildrenCountOverride =
+      data.completedChildrenCountOverride ?? 0;
 
     return this;
   }

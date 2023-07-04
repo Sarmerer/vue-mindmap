@@ -21,8 +21,13 @@
       </span>
 
       <span class="node__status">
-        <small v-if="childrenCount > 0" class="node__progress__text">
-          <BaseIcon icon="check-check" />
+        <small
+          v-if="childrenCount > 0"
+          class="node__progress__text"
+          :class="{ overridden: node.isChildrenCountOverridden }"
+        >
+          <BaseIcon v-if="node.isChildrenCountOverridden" icon="layers" />
+          <BaseIcon v-else icon="check-check" />
           {{ completedChildrenCount }}/{{ childrenCount }}
         </small>
 
@@ -184,6 +189,11 @@ export default {
 .node__status .icon {
   width: 10px;
   height: 10px;
+}
+
+.node__progress__text.overridden {
+  fill: #4287f5;
+  color: #4287f5;
 }
 
 .node__progress__bar {

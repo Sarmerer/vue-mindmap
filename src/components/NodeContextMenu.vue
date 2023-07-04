@@ -5,7 +5,7 @@
       :key="action.id"
       @click="hide(), action.run()"
     >
-      <BaseIcon v-if="action.icon" :icon="action.icon" />
+      <BaseIcon v-if="action.icon" :icon="action.icon" :size="14" />
       {{ action.label }}
     </li>
   </BaseContextMenu>
@@ -70,5 +70,6 @@ export default {
 
 .node-context-menu li:hover {
   background-color: var(--color-main-foreground-hover);
+  color: var(--color-main-text);
 }
 </style>

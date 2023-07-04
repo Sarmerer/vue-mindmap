@@ -154,6 +154,37 @@ export default [
       tree.renderer.render();
     },
   },
+  {
+    id: "override-children",
+    contextMenuGroupId: "node",
+    label: "Override children",
+    icon: "layers",
+    hotkeys: ["o"],
+    when: (tree) => tree.activeNode?.isActionable,
+    run(tree) {
+      const input = prompt(
+        "Enter node children override (e.g. 2/10), leave empty to remove override",
+        tree.activeNode.childrenOverride
+      );
+      console.log(`input: "${input}"`);
+      if (!input) {
+        tree.activeNode.childrenCountOverride = 0;
+        tree.activeNode.completedChildrenCountOverride = 0;
+        tree.renderer.render();
+        return;
+      }
+
+      const [completedRaw, totalRaw] = input.split("/");
+      const completed = parseInt(completedRaw);
+      const total = parseInt(totalRaw);
+      if (isNaN(completed) || isNaN(total)) return;
+      if (completed > total) return;
+
+      tree.activeNode.childrenCountOverride = total;
+      tree.activeNode.completedChildrenCountOverride = completed;
+      tree.renderer.render();
+    },
+  },
 
   {
     id: "go-left",

@@ -17,7 +17,7 @@
           {{ nodes.todo }}
 
           <BaseIcon icon="check-circle" />
-          {{ nodes.done }}
+          {{ nodes.completed }}
         </span>
       </span>
 
@@ -54,17 +54,13 @@ export default {
     },
 
     nodes() {
-      let todo = 0;
-      let done = 0;
-      for (const node of this.tree.nodes) {
-        if (node.isCompleted) {
-          done++;
-        } else {
-          todo++;
-        }
-      }
+      const root = this.tree.getRoot();
 
-      return { todo, done };
+      const total = root.getChildrenCount(true);
+      const completed = root.getCompletedChildrenCount(true);
+      const todo = total - completed;
+
+      return { todo, completed };
     },
 
     activeNodeLabel() {
