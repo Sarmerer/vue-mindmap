@@ -139,6 +139,23 @@ export default [
   },
 
   {
+    id: "set-weight",
+    contextMenuGroupId: "node",
+    label: "Set weight",
+    icon: "scale",
+    hotkeys: ["w"],
+    when: (tree) => tree.activeNode?.isActionable,
+    run(tree) {
+      const input = prompt("Enter node weight", tree.activeNode.weight);
+      const weight = parseInt(input);
+      if (isNaN(weight)) return;
+
+      tree.activeNode.weight = weight <= 0 ? 1 : weight;
+      tree.renderer.render();
+    },
+  },
+
+  {
     id: "go-left",
     label: "Go left",
     icon: "arrow-left",

@@ -13,8 +13,9 @@ export class Node {
     this.width = 100;
     this.height = 100;
 
-    this.label = Math.random().toString(36).substring(2, 15);
+    this.label = "Awesome task";
     this.highlightedSide = null;
+    this.weight = 1;
 
     this.isReordering = false;
     this.isEditing = false;
@@ -133,6 +134,36 @@ export class Node {
     return count;
   }
 
+  getChildrenWeight(deep = false) {
+    let weight = 0;
+    for (const child of this.children) {
+      weight += child.weight;
+
+      if (deep) weight += child.getChildrenWeight(true);
+    }
+
+    return weight;
+  }
+
+  getCompletedChildrenWeight(deep = false) {
+    let weight = 0;
+    for (const child of this.children) {
+      if (child.isCompleted) weight += child.weight;
+
+      if (deep) weight += child.getCompletedChildrenWeight(true);
+    }
+
+    return weight;
+  }
+
+  getProgress(deep = false) {
+    const childrenWeight = this.getChildrenWeight(deep);
+    const completedChildrenWeight = this.getCompletedChildrenWeight(deep);
+    if (childrenWeight === 0) return 0;
+
+    return (completedChildrenWeight / childrenWeight) * 100;
+  }
+
   measure() {
     const el = document.getElementById(this.id);
     if (!el) return;
@@ -153,16 +184,18 @@ export class Node {
       id: this.id,
       parent: this.parent?.id ?? null,
       label: this.label,
+      weight: this.weight,
       isCollapsed: this.isCollapsed,
       isCompleted: this.isCompleted,
     };
   }
 
   deserialize(data) {
-    this.id = data.id;
-    this.label = data.label;
-    this.isCollapsed = data.isCollapsed;
-    this.isCompleted = data.isCompleted;
+    this.id = data.id ?? uuidv4();
+    this.label = data.label ?? "A task";
+    this.weight = data.weight ?? 1;
+    this.isCollapsed = data.isCollapsed ?? false;
+    this.isCompleted = data.isCompleted ?? false;
 
     return this;
   }

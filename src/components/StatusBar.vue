@@ -126,7 +126,7 @@ export default {
   font-size: 12px;
 }
 
-.statusbar__item__value > svg {
+.statusbar__item__value > .icon {
   width: 12px;
   height: 12px;
 }

@@ -20,19 +20,24 @@
         ...
       </span>
 
-      <div v-if="childrenCount > 0" class="node__progress">
-        <small
-          class="node__progress__text"
-          v-text="`${completedChildrenCount}/${childrenCount}`"
-        ></small>
+      <span class="node__status">
+        <small v-if="childrenCount > 0" class="node__progress__text">
+          <BaseIcon icon="check-check" />
+          {{ completedChildrenCount }}/{{ childrenCount }}
+        </small>
 
-        <div class="node__progress__bar">
+        <small v-if="node.weight > 1" class="node__weight">
+          <BaseIcon icon="scale" />
+          {{ node.weight }}
+        </small>
+
+        <div v-if="childrenCount > 0" class="node__progress__bar">
           <div
             class="node__progress__fill"
             :style="{ width: `${progress}%` }"
           ></div>
         </div>
-      </div>
+      </span>
     </div>
 
     <div v-else class="node__editor">
@@ -40,6 +45,7 @@
         class="node__editor__input"
         autofocus
         :value="node.label"
+        placeholder="Name your task..."
         @focusout="node.setEditing(false)"
         @enter="setLabel($event.target.value)"
       />
@@ -68,7 +74,7 @@ export default {
     },
 
     progress() {
-      return (this.completedChildrenCount / this.childrenCount) * 100;
+      return this.node.getProgress();
     },
   },
 
@@ -143,7 +149,7 @@ export default {
   word-wrap: break-word;
   cursor: text;
   margin: 0;
-  color: var(--color-main-foreground);
+  color: var(--color-main-text);
   font-weight: 500;
 
   font-size: 14px;
@@ -156,18 +162,37 @@ export default {
   text-decoration: line-through;
 }
 
-.node__progress__text {
+.node__status {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  color: var(--color-main-text);
   font-size: 10px;
   user-select: none;
+}
+
+.node__status:empty {
+  display: none;
+}
+
+.node__status > * {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.node__status .icon {
+  width: 10px;
+  height: 10px;
 }
 
 .node__progress__bar {
   position: absolute;
   bottom: -4px;
-  left: 0;
+  left: -1px;
   border-radius: 0 0 4px 4px;
   background-color: black;
-  width: 100%;
+  width: calc(100% + 2px);
   height: 3px;
   overflow: hidden;
 }

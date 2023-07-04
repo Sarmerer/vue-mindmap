@@ -1,5 +1,5 @@
 <template>
-  <component :size="16" :is="component" />
+  <component class="icon" v-bind="{ is, size }" />
 </template>
 
 <script>
@@ -11,10 +11,15 @@ export default {
       type: String,
       required: true,
     },
+
+    size: {
+      type: Number,
+      default: 16,
+    },
   },
 
   computed: {
-    component() {
+    is() {
       const icon = this.icon
         .split("-")
         .map((word) => word[0].toUpperCase() + word.slice(1))

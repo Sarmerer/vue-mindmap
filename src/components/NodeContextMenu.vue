@@ -5,7 +5,7 @@
       :key="action.id"
       @click="hide(), action.run()"
     >
-      <BaseIcon v-if="action.icon" :icon="action.icon" size="is-small" />
+      <BaseIcon v-if="action.icon" :icon="action.icon" />
       {{ action.label }}
     </li>
   </BaseContextMenu>
