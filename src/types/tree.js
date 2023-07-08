@@ -1,5 +1,6 @@
 import { ActionsManager } from "./actions-manager";
 import { EmojiManager } from "./emiji-manager";
+import { Navigator } from "./navigator";
 import { Reorder } from "./reorder";
 import { Canvas } from "./canvas";
 import { Renderer } from "./renderer";
@@ -19,6 +20,7 @@ export class Tree {
     this.links = [];
 
     this.actionsManager = new ActionsManager(this);
+    this.navigator = new Navigator(this)
     this.emojiManager = new EmojiManager(this);
     this.reorder = new Reorder(this);
     this.rootsStack = [];

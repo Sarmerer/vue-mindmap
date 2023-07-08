@@ -3,123 +3,56 @@ export class Navigator {
     this.tree = tree;
   }
 
-  up() {
+  /**
+   * @param {'up' | 'right' | 'down' | 'left'} direction
+   */
+  go(direction) {
     if (!this.tree.activeNode) return;
 
-    const { x, y } = this.tree.activeNode;
-    let closestNode = null;
-    let minDistance = Infinity;
-
-    for (const node of this.tree.getNodes()) {
-      if (node === this.tree.activeNode) continue;
-
-      const { x: nextX, y: nextY } = node;
-      const distance = Math.sqrt(
-        Math.pow(nextX - x, 2) + Math.pow(nextY - y, 2)
-      );
-
-      if (
-        nextY < y &&
-        distance < minDistance &&
-        Math.abs(nextX - x) <= node.width / 2
-      ) {
-        closestNode = node;
-        minDistance = distance;
-      }
-    }
-
+    const closestNode = this.getClosestNode(this.tree.activeNode, direction);
     if (!closestNode) return;
 
     this.tree.setActiveNode(closestNode);
   }
 
-  left() {
-    if (!this.tree.activeNode) return;
+  getClosestNode(node, direction) {
+    const adjacentNodes = this.getAdjacentNodes(node, direction);
+    if (!adjacentNodes.length) return null;
 
-    const { x, y } = this.tree.activeNode;
+    const { x: ax, y: ay } = node;
     let closestNode = null;
     let minDistance = Infinity;
 
-    for (const node of this.tree.getNodes()) {
-      if (node === this.tree.activeNode) continue;
+    for (const node of adjacentNodes) {
+      const { x: bx, y: by } = node;
+      const distance = Math.sqrt(Math.pow(bx - ax, 2) + Math.pow(by - ay, 2));
+      if (distance > minDistance) continue;
 
-      const { x: nextX, y: nextY } = node;
-      const distance = Math.sqrt(
-        Math.pow(nextX - x, 2) + Math.pow(nextY - y, 2)
-      );
-
-      if (
-        nextX < x &&
-        distance < minDistance &&
-        Math.abs(nextY - y) <= node.height / 2
-      ) {
-        closestNode = node;
-        minDistance = distance;
-      }
+      closestNode = node;
+      minDistance = distance;
     }
 
-    if (!closestNode) return;
-
-    this.tree.setActiveNode(closestNode);
+    return closestNode;
   }
 
-  down() {
-    if (!this.tree.activeNode) return;
+  getAdjacentNodes(node, direction) {
+    const isAdjacent = {
+      up: (nodeA, nodeB) => nodeA.y > nodeB.y + nodeB.height,
+      down: (nodeA, nodeB) => nodeA.y + nodeA.height < nodeB.y,
+      left: (nodeA, nodeB) => nodeA.x > nodeB.x + nodeB.width,
+      right: (nodeA, nodeB) => nodeA.x + nodeA.width < nodeB.x,
+    }[direction];
 
-    const { x, y } = this.tree.activeNode;
-    let closestNode = null;
-    let minDistance = Infinity;
+    if (!isAdjacent) return [];
 
-    for (const node of this.tree.getNodes()) {
-      if (node === this.tree.activeNode) continue;
+    const nodes = [];
+    for (const otherNode of this.tree.getNodes()) {
+      if (node === otherNode) continue;
+      if (!isAdjacent(node, otherNode)) continue;
 
-      const { x: nextX, y: nextY } = node;
-      const distance = Math.sqrt(
-        Math.pow(nextX - x, 2) + Math.pow(nextY - y, 2)
-      );
-
-      if (
-        nextY > y &&
-        distance < minDistance &&
-        Math.abs(nextX - x) <= node.width / 2
-      ) {
-        closestNode = node;
-        minDistance = distance;
-      }
+      nodes.push(otherNode);
     }
 
-    if (!closestNode) return;
-
-    this.tree.setActiveNode(closestNode);
-  }
-
-  right() {
-    if (!this.tree.activeNode) return;
-
-    const { x, y } = this.tree.activeNode;
-    let closestNode = null;
-    let minDistance = Infinity;
-
-    for (const node of this.tree.getNodes()) {
-      if (node === this.tree.activeNode) continue;
-
-      const { x: nextX, y: nextY } = node;
-      const distance = Math.sqrt(
-        Math.pow(nextX - x, 2) + Math.pow(nextY - y, 2)
-      );
-
-      if (
-        nextX > x &&
-        distance < minDistance &&
-        Math.abs(nextY - y) <= node.height / 2
-      ) {
-        closestNode = node;
-        minDistance = distance;
-      }
-    }
-
-    if (!closestNode) return;
-
-    this.tree.setActiveNode(closestNode);
+    return nodes;
   }
 }

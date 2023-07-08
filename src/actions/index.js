@@ -1,4 +1,3 @@
-import { Navigator } from "../types/navigator";
 import { Node } from "../types/node";
 
 export default [
@@ -220,8 +219,7 @@ export default [
     hotkeys: ["arrowleft"],
     when: (tree) => tree.activeNode,
     run(tree) {
-      const navigator = new Navigator(tree);
-      navigator.left();
+      tree.navigator.go("left");
     },
   },
   {
@@ -231,8 +229,7 @@ export default [
     hotkeys: ["arrowright"],
     when: (tree) => tree.activeNode,
     run(tree) {
-      const navigator = new Navigator(tree);
-      navigator.right();
+      tree.navigator.go("right");
     },
   },
   {
@@ -242,8 +239,7 @@ export default [
     hotkeys: ["arrowup"],
     when: (tree) => tree.activeNode,
     run(tree) {
-      const navigator = new Navigator(tree);
-      navigator.up();
+      tree.navigator.go("up");
     },
   },
   {
@@ -253,8 +249,7 @@ export default [
     hotkeys: ["arrowdown"],
     when: (tree) => tree.activeNode,
     run(tree) {
-      const navigator = new Navigator(tree);
-      navigator.down();
+      tree.navigator.go("down");
     },
   },
 
