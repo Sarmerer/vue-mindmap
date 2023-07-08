@@ -99,7 +99,6 @@ export class Node {
     if (index === -1) return;
 
     this.children.splice(index, 1);
-    this.tree.renderer.render();
   }
 
   setParent(parent) {
@@ -183,5 +182,13 @@ export class Node {
       data.completedChildrenCountOverride ?? 0;
 
     return this;
+  }
+
+  dispose() {
+    const children = [this, ...this.getChildren(true)];
+    for (const child of children) {
+      this.tree.removeNode(child);
+      this.parent?.removeChild(child);
+    }
   }
 }

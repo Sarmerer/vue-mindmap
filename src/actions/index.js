@@ -84,7 +84,7 @@ export default [
     contextMenuGroupId: "node",
     label: "Edit",
     icon: "pencil",
-    hotkeys: ["e"],
+    hotkeys: ["e", "f2"],
     when: (tree) => tree.activeNode?.isActionable,
     run(tree) {
       tree.activeNode.setEditing(true);
@@ -162,6 +162,21 @@ export default [
     when: (tree) => tree.rootsStack.length > 0,
     run(tree) {
       tree.popStack();
+    },
+  },
+  {
+    id: "delete",
+    toolbarGroupId: "left",
+    contextMenuGroupId: "node",
+    label: "Delete",
+    icon: "trash",
+    hotkeys: ["del", "backspace"],
+    when: (tree) => tree.activeNode?.isActionable,
+    run(tree) {
+      const nextActive = tree.navigator.getClosestNode(tree.activeNode) || null;
+
+      tree.activeNode.dispose();
+      this.tree.setActiveNode(nextActive);
     },
   },
 

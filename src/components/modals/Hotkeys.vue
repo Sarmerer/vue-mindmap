@@ -46,7 +46,7 @@ export default {
       toolbarOrder: 5,
       label: "Show hotkeys",
       icon: "help-circle",
-      hotkeys: ["?"],
+      hotkeys: ["?", "f1"],
       run: () => {
         this.$refs.modal.open();
       },

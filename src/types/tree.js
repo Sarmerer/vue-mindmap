@@ -55,13 +55,16 @@ export class Tree {
     this.renderer.render();
   }
 
-  addNodeAndActivate(node) {
-    this.addNode(node);
-    this.setActiveNode(node);
-  }
-
   setActiveNode(node) {
     this.activeNode = node;
+  }
+
+  removeNode(node) {
+    const index = this.nodes.indexOf(node);
+    if (index === -1) return;
+
+    this.nodes.splice(index, 1);
+    this.renderer.render();
   }
 
   pushStack(node) {
@@ -103,14 +106,18 @@ export class Tree {
     });
 
     for (const node of dataNodes) {
-      if (node.parent && index.has(node.parent)) {
-        const parent = index.get(node.parent);
-        if (!parent) continue;
+      if (!node.parent) continue;
 
-        const self = index.get(node.id);
-        self.parent = parent;
-        parent.children.push(self);
+      const parent = index.get(node.parent);
+      if (!parent) {
+        nodes.splice(nodes.indexOf(node), 1);
+        index.delete(node.id);
+        continue;
       }
+
+      const self = index.get(node.id);
+      self.parent = parent;
+      parent.children.push(self);
     }
 
     this.id = data.id;
