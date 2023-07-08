@@ -1,11 +1,15 @@
 <template>
   <div class="mindmap">
-    <EmojiBar v-bind="{ tree }" />
     <TreesModal v-bind="{ tree }" />
     <HotkeysModal v-bind="{ tree }" />
+    <MigrateModal v-bind="{ tree }" />
 
     <Toolbar v-bind="{ tree }" />
+    <EmojiBar v-bind="{ tree }" />
+
+    <Notebook />
     <TreeR v-bind="{ tree }" />
+
     <StatusBar v-bind="{ tree }" />
   </div>
 </template>
@@ -18,6 +22,8 @@ import actions from "../actions";
 import EmojiBar from "./EmojiBar.r.vue";
 import TreesModal from "./modals/Trees.vue";
 import HotkeysModal from "./modals/Hotkeys.vue";
+import MigrateModal from "./modals/Migrate.vue";
+
 import Toolbar from "./Toolbar.r.vue";
 import TreeR from "./Tree.r.vue";
 import StatusBar from "./StatusBar.vue";
@@ -27,6 +33,8 @@ export default {
     EmojiBar,
     TreesModal,
     HotkeysModal,
+    MigrateModal,
+
     Toolbar,
     TreeR,
     StatusBar,

@@ -185,7 +185,7 @@ export default [
     id: "override-children",
     contextMenuGroupId: "node",
     label: "Override children",
-    icon: "layers",
+    icon: "redo-dot",
     hotkeys: ["o"],
     when: (tree) => tree.activeNode?.isActionable,
     run(tree) {

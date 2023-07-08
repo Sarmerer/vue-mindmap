@@ -26,7 +26,7 @@
           class="node__progress__text"
           :class="{ overridden: node.isChildrenCountOverridden }"
         >
-          <BaseIcon v-if="node.isChildrenCountOverridden" icon="layers" />
+          <BaseIcon v-if="node.isChildrenCountOverridden" icon="redo-dot" />
           <BaseIcon v-else icon="check-check" />
           {{ completedChildrenCount }}/{{ childrenCount }}
         </small>

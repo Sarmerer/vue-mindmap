@@ -2,8 +2,12 @@ import { uuidv4 } from "../utils";
 import { get } from "node-emoji";
 
 export class MigrationManager {
+  isMigrationNeeded() {
+    return localStorage.getItem("vuex") !== null;
+  }
+
   migrate() {
-    if (!localStorage.getItem("vuex")) return;
+    if (!this.isMigrationNeeded()) return;
 
     const legacyData = JSON.parse(localStorage.getItem("vuex"));
 
@@ -12,11 +16,18 @@ export class MigrationManager {
       JSON.stringify(this.migrateTrees(legacyData.documents))
     );
 
+    localStorage.setItem(
+      "notes",
+      JSON.stringify(this.migrateNotes(legacyData.cards))
+    );
+
     if (legacyData.settings?.lastDocument) {
       localStorage.setItem("lastTree", legacyData.settings.lastDocument);
       delete legacyData.settings;
-      localStorage.setItem("vuex", JSON.stringify(legacyData));
     }
+
+    localStorage.setItem("vuex-migrated", JSON.stringify(legacyData));
+    localStorage.removeItem("vuex");
   }
 
   migrateTrees(legacyTrees) {
@@ -72,5 +83,27 @@ export class MigrationManager {
 
     const emoji = legacyNode.emoji.map((emoji) => get(emoji)).join(" ");
     return `${emoji} ${legacyNode.name}`;
+  }
+
+  migrateNotes(legacyNotes) {
+    if (!Array.isArray(legacyNotes)) return [];
+
+    const notes = [];
+    for (const legacyNote of legacyNotes) {
+      notes.push(this.migrateNote(legacyNote));
+    }
+
+    return notes;
+  }
+
+  migrateNote(legacyNote) {
+    return {
+      id: legacyNote.id,
+      group: legacyNote.group,
+      x: legacyNote.x,
+      y: legacyNote.y,
+      label: legacyNote.text,
+      icon: legacyNote.icon,
+    };
   }
 }
