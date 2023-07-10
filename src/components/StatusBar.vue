@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { Tree } from "../types/tree";
+import { Tree } from "../modules/tree/types/tree";
 
 export default {
   props: {

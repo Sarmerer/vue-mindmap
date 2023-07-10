@@ -1,13 +1,14 @@
-import { ActionsManager } from "./actions-manager";
-import { EmojiManager } from "./emiji-manager";
+import { ActionsManager } from "../../../types/actions-manager";
+import { EmojiManager } from "../../../types/emiji-manager";
+import { Canvas } from "../../../types/canvas";
+import { Database } from "../../../types/database/generic";
+
 import { Navigator } from "./navigator";
 import { Reorder } from "./reorder";
-import { Canvas } from "./canvas";
 import { Renderer } from "./renderer";
-import { Database } from "./database/generic";
 import { Node } from "./node";
 
-import { uuidv4 } from "../utils";
+import { uuidv4 } from "../../../utils";
 
 export class Tree {
   constructor() {

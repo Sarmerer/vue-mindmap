@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { Tree } from "../types/tree";
+import { Tree } from "../modules/tree/types/tree";
 import { LocalStorage } from "../types/database/localstorage";
 import actions from "../actions";
 
@@ -29,6 +29,7 @@ import Toolbar from "./Toolbar.r.vue";
 import EmojiBar from "./EmojiBar.r.vue";
 
 import TreeR from "./Tree.r.vue";
+import TreeR from "../modules/tree/index.vue";
 
 import StatusBar from "./StatusBar.vue";
 

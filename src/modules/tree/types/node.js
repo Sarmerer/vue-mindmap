@@ -1,5 +1,5 @@
 import { NodeStats } from "./node-stats";
-import { uuidv4 } from "../utils";
+import { uuidv4 } from "../../../utils";
 
 export class Node {
   constructor(tree) {
