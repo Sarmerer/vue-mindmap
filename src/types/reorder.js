@@ -20,7 +20,7 @@ export class Reorder {
   }
 
   maybeStart(node) {
-    node.setActive(true);
+    node.setActive();
 
     let initialX = this.tree.canvas.cursorX;
     let initialY = this.tree.canvas.cursorY;
@@ -42,8 +42,6 @@ export class Reorder {
   start(node) {
     if (this.activeNode) return;
     if (node.isRoot) return;
-
-    node.isReordering = true;
 
     this.activeNode = node;
     this.oldParent = node.parent;
@@ -89,7 +87,6 @@ export class Reorder {
   end() {
     if (!this.activeNode) return;
 
-    this.activeNode.isReordering = false;
     this.reorder();
 
     if (!this.wasCollapsed) {

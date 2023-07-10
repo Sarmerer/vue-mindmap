@@ -21,7 +21,6 @@ export class Node {
     this.completedChildrenCountOverride = 0;
     this.stats = new NodeStats(this);
 
-    this.isReordering = false;
     this.isEditing = false;
     this.isCollapsed = false;
     this.isCompleted = false;
@@ -33,6 +32,10 @@ export class Node {
 
   get isActive() {
     return this.tree.activeNode === this;
+  }
+
+  get isReordering() {
+    return this.tree.reorder.activeNode === this;
   }
 
   get isActionable() {
