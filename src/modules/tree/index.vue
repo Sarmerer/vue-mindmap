@@ -28,7 +28,7 @@
 import { Tree } from "./types/tree";
 
 import NodeContextMenu from "./components/NodeContextMenu.vue";
-import Canvas from "../../components/Canvas.vue";
+import Canvas from "../../core/components/Canvas.vue";
 import Node from "./components/Node.vue";
 
 export default {

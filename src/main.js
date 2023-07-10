@@ -4,7 +4,7 @@ import App from "./App.vue";
 Vue.config.productionTip = false;
 
 function loadBaseComponents() {
-  const components = import.meta.globEager("./components/base/*.vue");
+  const components = import.meta.globEager("./core/components/base/*.vue");
 
   for (const [path, module] of Object.entries(components)) {
     const name = "Base" + path.replace(/^.+\/([^/]+)\.vue/, "$1");

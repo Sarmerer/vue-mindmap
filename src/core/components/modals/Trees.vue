@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { Tree } from "../../modules/tree/types/tree";
+import { Tree } from "../../../modules/tree/types/tree";
 
 export default {
   props: {

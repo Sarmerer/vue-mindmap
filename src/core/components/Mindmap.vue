@@ -8,7 +8,6 @@
     <Toolbar v-bind="{ tree }" />
     <EmojiBar v-bind="{ tree }" />
 
-    <Notebook />
     <TreeR v-bind="{ tree }" />
 
     <StatusBar v-bind="{ tree }" />
@@ -16,7 +15,7 @@
 </template>
 
 <script>
-import { Tree } from "../modules/tree/types/tree";
+import { Tree } from "../../modules/tree/types/tree";
 import { LocalStorage } from "../types/database/localstorage";
 import actions from "../actions";
 
@@ -28,8 +27,7 @@ import MigrateModal from "./modals/Migrate.vue";
 import Toolbar from "./Toolbar.r.vue";
 import EmojiBar from "./EmojiBar.r.vue";
 
-import TreeR from "./Tree.r.vue";
-import TreeR from "../modules/tree/index.vue";
+import TreeR from "../../modules/tree/index.vue";
 
 import StatusBar from "./StatusBar.vue";
 

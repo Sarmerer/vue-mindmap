@@ -1,4 +1,4 @@
-import { Node } from "../modules/tree/types/node";
+import { Node } from "../../modules/tree/types/node";
 
 export default [
   {

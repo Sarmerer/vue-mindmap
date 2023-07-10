@@ -1,7 +1,7 @@
-import { ActionsManager } from "../../../types/actions-manager";
-import { EmojiManager } from "../../../types/emiji-manager";
-import { Canvas } from "../../../types/canvas";
-import { Database } from "../../../types/database/generic";
+import { ActionsManager } from "../../../core/types/actions-manager";
+import { EmojiManager } from "../../../core/types/emiji-manager"
+import { Canvas } from "../../../core/types/canvas";
+import { Database } from "../../../core/types/database/generic";
 
 import { Navigator } from "./navigator";
 import { Reorder } from "./reorder";

@@ -1,4 +1,4 @@
-import { uuidv4 } from "../utils";
+import { uuidv4 } from "../../utils";
 import { get } from "node-emoji";
 
 export class MigrationManager {
