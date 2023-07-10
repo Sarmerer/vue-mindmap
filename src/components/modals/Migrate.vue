@@ -31,7 +31,7 @@ export default {
     this.tree.actionsManager.addAction({
       id: "migrate",
       toolbarGroupId: "right",
-      toolbarOrder: 6,
+      toolbarOrder: -1,
       label: "Migrate",
       icon: "chevrons-up",
       when: () => this.migrationManager.isMigrationNeeded(),
@@ -74,17 +74,5 @@ export default {
 
 .migrate button {
   float: right;
-  transition: background-color 0.3s;
-  margin-top: 8px;
-
-  border-radius: 4px;
-  background-color: var(--color-main-foreground);
-  padding: 10px 20px;
-  color: var(--color-main-background);
-  font-size: 16px;
-}
-
-.migrate button:hover {
-  background-color: var(--color-main-foreground-hover);
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
   <div class="mindmap">
     <TreesModal v-bind="{ tree }" />
+    <TransferModal v-bind="{ tree }" />
     <HotkeysModal v-bind="{ tree }" />
     <MigrateModal v-bind="{ tree }" />
 
@@ -19,24 +20,30 @@ import { Tree } from "../types/tree";
 import { LocalStorage } from "../types/database/localstorage";
 import actions from "../actions";
 
-import EmojiBar from "./EmojiBar.r.vue";
 import TreesModal from "./modals/Trees.vue";
+import TransferModal from "./modals/Transfer.vue";
 import HotkeysModal from "./modals/Hotkeys.vue";
 import MigrateModal from "./modals/Migrate.vue";
 
 import Toolbar from "./Toolbar.r.vue";
+import EmojiBar from "./EmojiBar.r.vue";
+
 import TreeR from "./Tree.r.vue";
+
 import StatusBar from "./StatusBar.vue";
 
 export default {
   components: {
-    EmojiBar,
     TreesModal,
+    TransferModal,
     HotkeysModal,
     MigrateModal,
 
     Toolbar,
+    EmojiBar,
+
     TreeR,
+
     StatusBar,
   },
 
