@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { Action } from "../types/action";
+import { Action } from "../../../core/types/action";
 
 export default {
   props: {

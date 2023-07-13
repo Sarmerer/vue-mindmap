@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { Tree } from "../../modules/tree";
+import { Tree } from "../../tree";
 
 import ToolbarAction from "./ToolbarAction.vue";
 export default {

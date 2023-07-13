@@ -16,23 +16,23 @@
 </template>
 
 <script>
-import { Tree } from "../../modules/tree";
-import { LocalStorage } from "../types/database/localstorage";
-import { Notebook } from "../../modules/notebook/types/notebook";
-import actions from "../actions";
+import { Tree } from "../tree";
+import { LocalStorage } from "../../core/types/database/localstorage";
+import { Notebook } from "../notebook/types/notebook";
+import actions from "../../core/actions";
 
-import TreesModal from "./modals/Trees.vue";
-import TransferModal from "./modals/Transfer.vue";
-import HotkeysModal from "./modals/Hotkeys.vue";
-import MigrateModal from "./modals/Migrate.vue";
+import TreesModal from "./components/modals/Trees.vue";
+import TransferModal from "./components/modals/Transfer.vue";
+import HotkeysModal from "./components/modals/Hotkeys.vue";
+import MigrateModal from "./components/modals/Migrate.vue";
 
-import Toolbar from "./Toolbar.r.vue";
-import EmojiBar from "./EmojiBar.r.vue";
+import Toolbar from "./components/Toolbar.r.vue";
+import EmojiBar from "./components/EmojiBar.r.vue";
 
 import NotebookRenderer from "../../modules/Notebook";
 import TreeR from "../../modules/tree/index.vue";
 
-import StatusBar from "./StatusBar.vue";
+import StatusBar from "./components/StatusBar.vue";
 
 export default {
   components: {

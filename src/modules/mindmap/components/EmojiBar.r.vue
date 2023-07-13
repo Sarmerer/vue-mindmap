@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { Tree } from "../../modules/tree";
+import { Tree } from "../../tree";
 
 import EmojiList from "./EmojiList.vue";
 

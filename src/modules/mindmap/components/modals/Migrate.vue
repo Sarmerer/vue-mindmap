@@ -11,7 +11,7 @@
 
 <script>
 import { MigrationManager } from "../../types/migration-manager";
-import { Tree } from "../../../modules/tree";
+import { Tree } from "../../../tree";
 
 export default {
   props: {
@@ -34,18 +34,23 @@ export default {
       toolbarOrder: -1,
       label: "Migrate",
       icon: "chevrons-up",
+      hotkeys: ["ctrl+m"],
       when: () => this.migrationManager.isMigrationNeeded(),
       run: () => {
         this.$refs.modal.open();
       },
     });
 
-    if (!this.migrationManager.isMigrationNeeded()) return;
-
-    this.$refs.modal.open();
+    this.maybePrompt();
   },
 
   methods: {
+    maybePrompt() {
+      if (!this.migrationManager.isMigrationNeeded()) return;
+
+      this.$refs.modal.open();
+    },
+
     migrate() {
       this.migrationManager.migrate();
       this.$refs.modal.close();
