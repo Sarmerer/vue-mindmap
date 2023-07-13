@@ -69,19 +69,15 @@ export class Reorder {
     this.activeNode.x = this.tree.canvas.cursorX - this.grabOffsetX;
     this.activeNode.y = this.tree.canvas.cursorY - this.grabOffsetY;
 
-    const closestNode = this.getClosestNode(this.activeNode);
+    const { cursorX, cursorY } = this.tree.canvas;
+
+    const closestNode = this.getClosestNode(cursorX, cursorY);
     if (!closestNode) {
       this.setPotentialRelative(null);
       return;
     }
 
-    const quadrant = this.getHoveredQuadrant(
-      this.tree.canvas.cursorX,
-      this.tree.canvas.cursorY,
-      closestNode
-    );
-    if (!quadrant) return;
-
+    const quadrant = this.getHoveredQuadrant(cursorX, cursorY, closestNode);
     this.setPotentialRelative(closestNode, quadrant);
   }
 
@@ -144,8 +140,6 @@ export class Reorder {
   }
 
   setPotentialRelative(node, side) {
-    if (this.potentialRelative === node) return;
-
     if (this.potentialRelative) {
       this.potentialRelativeSide = null;
     }
@@ -157,34 +151,29 @@ export class Reorder {
     }
   }
 
-  getClosestNode(node) {
+  getClosestNode(x, y) {
     let closestNode = null;
     let closestDistance = Infinity;
-    for (const otherNode of this.tree.getNodes()) {
-      if (otherNode === node || otherNode.isRoot) continue;
+    for (const node of this.tree.nodes) {
+      if (node.isRoot || node === this.activeNode) continue;
+      if (!this.isOverlapping(x, y, node)) continue;
 
-      const distance = this.getDistance(node, otherNode);
-      if (distance === null || distance > closestDistance) continue;
+      const distance = this.getDistance(x, y, node.x, node.y);
+      if (distance > closestDistance) continue;
 
-      closestNode = otherNode;
+      closestNode = node;
       closestDistance = distance;
     }
 
     return closestNode;
   }
 
-  getDistance(node, otherNode) {
-    if (
-      node.x < otherNode.x - otherNode.width ||
-      node.x > otherNode.x + otherNode.width ||
-      node.y < otherNode.y - otherNode.height ||
-      node.y > otherNode.y + otherNode.height
-    ) {
-      return null;
-    }
-
-    return Math.sqrt(
-      Math.pow(node.x - otherNode.x, 2) + Math.pow(node.y - otherNode.y, 2)
+  isOverlapping(x, y, node) {
+    return !(
+      x < node.x ||
+      x > node.x + node.width ||
+      y < node.y ||
+      y > node.y + node.height
     );
   }
 
@@ -192,14 +181,11 @@ export class Reorder {
     const centerY = otherNode.y + otherNode.height / 2;
     const rightBoundary = otherNode.x + (2 / 3) * otherNode.width;
 
-    if (x > rightBoundary) {
-      return "right";
-    } else if (y < centerY) {
-      return "top";
-    } else if (y > centerY) {
-      return "bottom";
-    }
+    if (x > rightBoundary) return "right";
+    return y < centerY ? "top" : "bottom";
+  }
 
-    return null;
+  getDistance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
   }
 }
