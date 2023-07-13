@@ -11,7 +11,7 @@
 
 <script>
 import { MigrationManager } from "../../types/migration-manager";
-import { Tree } from "../../../modules/tree/types/tree";
+import { Tree } from "../../../modules/tree";
 
 export default {
   props: {

@@ -1,4 +1,4 @@
-import { Tree } from "../../modules/tree/types/tree";
+import { Tree } from "../../modules/tree";
 
 /**
  * @callback ActionRunner

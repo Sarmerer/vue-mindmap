@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { Tree } from "../../modules/tree/types/tree";
+import { Tree } from "../../modules/tree";
 import { LocalStorage } from "../types/database/localstorage";
 import { Notebook } from "../../modules/notebook/types/notebook";
 import actions from "../actions";
