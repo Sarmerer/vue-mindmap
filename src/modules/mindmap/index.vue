@@ -16,9 +16,8 @@
 </template>
 
 <script>
-import { Tree } from "../tree";
+import { Mindmap } from "../mindmap/types/mindmap";
 import { LocalStorage } from "../../core/types/database/localstorage";
-import { Notebook } from "../notebook/types/notebook";
 import actions from "../../core/actions";
 
 import TreesModal from "./components/modals/Trees.vue";
@@ -52,13 +51,24 @@ export default {
 
   data() {
     return {
-      tree: null,
-      notebook: null,
+      mindmap: null,
     };
   },
 
+  computed: {
+    tree() {
+      return this.mindmap.tree;
+    },
+
+    notebook() {
+      return this.mindmap.notebook;
+    },
+  },
+
   created() {
-    const tree = new Tree();
+    this.mindmap = new Mindmap();
+
+    const { tree } = this.mindmap;
     tree.setDatabase(new LocalStorage());
 
     const lastTree = tree.database.getLastTreeId();
@@ -73,10 +83,6 @@ export default {
 
     tree.actionsManager.addActions(...actions);
     tree.renderer.render();
-
-    this.tree = tree;
-
-    this.notebook = new Notebook();
   },
 };
 </script>
