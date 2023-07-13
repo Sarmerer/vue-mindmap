@@ -75,7 +75,7 @@ export default {
   },
 
   created() {
-    this.tree.actionsManager.addActions({
+    this.tree.actions.addActions({
       id: "open-trees-modal",
       toolbarGroupId: "right",
       toolbarOrder: 1.5,

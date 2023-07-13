@@ -28,7 +28,7 @@ export default {
   },
 
   mounted() {
-    this.tree.actionsManager.addAction({
+    this.tree.actions.addAction({
       id: "migrate",
       toolbarGroupId: "right",
       toolbarOrder: -1,

@@ -7,8 +7,8 @@ export default [
     label: "Add root",
     icon: "git-fork",
     hotkeys: ["enter"],
-    when: (tree) => tree.nodes.length === 0,
-    run(tree) {
+    when: ({ tree }) => tree.nodes.length === 0,
+    run({ tree }) {
       tree.canvas.reset();
 
       const node = new Node(tree);
@@ -25,8 +25,8 @@ export default [
     label: "Add child",
     icon: "git-commit",
     hotkeys: ["tab"],
-    when: (tree) => tree.activeNode?.isActionable,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode?.isActionable,
+    run({ tree }) {
       const node = this.tree.activeNode.addChild();
       node.isEditing = true;
       tree.setActiveNode(node);
@@ -39,8 +39,8 @@ export default [
     label: "Add sibling",
     icon: "git-branch",
     hotkeys: ["enter"],
-    when: (tree) => tree.activeNode?.isActionable && tree.activeNode.parent,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode?.isActionable && tree.activeNode.parent,
+    run({ tree }) {
       const node = this.tree.activeNode.addSibling();
       node.isEditing = true;
       tree.setActiveNode(node);
@@ -54,11 +54,11 @@ export default [
     label: "Collapse",
     icon: "fold-vertical",
     hotkeys: ["c"],
-    when: (tree) =>
+    when: ({ tree }) =>
       tree.activeNode?.isActionable &&
       tree.activeNode.children.length > 0 &&
       !tree.activeNode.isCollapsed,
-    run(tree) {
+    run({ tree }) {
       tree.activeNode.setCollapsed(true);
     },
   },
@@ -69,11 +69,11 @@ export default [
     label: "Expand",
     icon: "unfold-vertical",
     hotkeys: ["c"],
-    when: (tree) =>
+    when: ({ tree }) =>
       tree.activeNode?.isActionable &&
       tree.activeNode.children.length > 0 &&
       tree.activeNode.isCollapsed,
-    run(tree) {
+    run({ tree }) {
       tree.activeNode.setCollapsed(false);
     },
   },
@@ -85,8 +85,8 @@ export default [
     label: "Edit",
     icon: "pencil",
     hotkeys: ["e", "f2"],
-    when: (tree) => tree.activeNode?.isActionable,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode?.isActionable,
+    run({ tree }) {
       tree.activeNode.setEditing(true);
     },
   },
@@ -97,9 +97,9 @@ export default [
     label: "Done",
     icon: "check",
     hotkeys: ["d"],
-    when: (tree) =>
+    when: ({ tree }) =>
       tree.activeNode?.isActionable && !tree.activeNode.isCompleted,
-    run(tree) {
+    run({ tree }) {
       tree.activeNode.isCompleted = true;
     },
   },
@@ -110,9 +110,9 @@ export default [
     label: "Undo",
     icon: "x",
     hotkeys: ["d"],
-    when: (tree) =>
+    when: ({ tree }) =>
       tree.activeNode?.isActionable && tree.activeNode.isCompleted,
-    run(tree) {
+    run({ tree }) {
       tree.activeNode.isCompleted = false;
     },
   },
@@ -123,9 +123,9 @@ export default [
     label: "Done deep",
     icon: "check-square",
     hotkeys: ["shift+d"],
-    when: (tree) =>
+    when: ({ tree }) =>
       tree.activeNode?.isActionable && !tree.activeNode.isCompletedDeep,
-    run(tree) {
+    run({ tree }) {
       tree.activeNode.setCompleted(true, true);
     },
   },
@@ -136,9 +136,9 @@ export default [
     label: "Undo deep",
     icon: "x-square",
     hotkeys: ["shift+d"],
-    when: (tree) =>
+    when: ({ tree }) =>
       tree.activeNode?.isActionable && tree.activeNode.isCompletedDeep,
-    run(tree) {
+    run({ tree }) {
       tree.activeNode.setCompleted(false, true);
     },
   },
@@ -148,8 +148,8 @@ export default [
     contextMenuGroupId: "node",
     label: "Drill down",
     icon: "arrow-down-square",
-    when: (tree) => tree.activeNode?.isActionable && !tree.activeNode.isRoot,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode?.isActionable && !tree.activeNode.isRoot,
+    run({ tree }) {
       tree.pushStack(tree.activeNode);
     },
   },
@@ -159,8 +159,8 @@ export default [
     contextMenuGroupId: "node",
     label: "Drill up",
     icon: "arrow-up-square",
-    when: (tree) => tree.rootsStack.length > 0,
-    run(tree) {
+    when: ({ tree }) => tree.rootsStack.length > 0,
+    run({ tree }) {
       tree.popStack();
     },
   },
@@ -171,8 +171,8 @@ export default [
     label: "Delete",
     icon: "trash",
     hotkeys: ["del", "backspace"],
-    when: (tree) => tree.activeNode?.isActionable,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode?.isActionable,
+    run({ tree }) {
       const nextActive = tree.navigator.getClosestNode(tree.activeNode) || null;
 
       tree.activeNode.dispose();
@@ -186,8 +186,8 @@ export default [
     label: "Set weight",
     icon: "scale",
     hotkeys: ["w"],
-    when: (tree) => tree.activeNode?.isActionable,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode?.isActionable,
+    run({ tree }) {
       const input = prompt("Enter node weight", tree.activeNode.weight);
       const weight = parseInt(input);
       if (isNaN(weight)) return;
@@ -202,8 +202,8 @@ export default [
     label: "Override children",
     icon: "redo-dot",
     hotkeys: ["o"],
-    when: (tree) => tree.activeNode?.isActionable,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode?.isActionable,
+    run({ tree }) {
       const input = prompt(
         "Enter node children override (e.g. 2/10), leave empty to remove override",
         tree.activeNode.childrenOverride
@@ -232,8 +232,8 @@ export default [
     label: "Go left",
     icon: "arrow-left",
     hotkeys: ["arrowleft"],
-    when: (tree) => tree.activeNode,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode,
+    run({ tree }) {
       tree.navigator.go("left");
     },
   },
@@ -242,8 +242,8 @@ export default [
     label: "Go right",
     icon: "arrow-right",
     hotkeys: ["arrowright"],
-    when: (tree) => tree.activeNode,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode,
+    run({ tree }) {
       tree.navigator.go("right");
     },
   },
@@ -252,8 +252,8 @@ export default [
     label: "Go up",
     icon: "arrow-up",
     hotkeys: ["arrowup"],
-    when: (tree) => tree.activeNode,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode,
+    run({ tree }) {
       tree.navigator.go("up");
     },
   },
@@ -262,8 +262,8 @@ export default [
     label: "Go down",
     icon: "arrow-down",
     hotkeys: ["arrowdown"],
-    when: (tree) => tree.activeNode,
-    run(tree) {
+    when: ({ tree }) => tree.activeNode,
+    run({ tree }) {
       tree.navigator.go("down");
     },
   },

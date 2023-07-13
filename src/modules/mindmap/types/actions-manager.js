@@ -2,8 +2,8 @@ import { Action } from "./action";
 import { HotkeysManager } from "./hotkeys-manager";
 
 export class ActionsManager {
-  constructor(tree) {
-    this.tree = tree;
+  constructor(mindmap) {
+    this.mindmap = mindmap;
     this.actions = [];
 
     this.hotkeysManager = new HotkeysManager();
@@ -23,7 +23,7 @@ export class ActionsManager {
    * @returns {Action}
    */
   addAction(actionLike) {
-    const action = new Action(this.tree, actionLike);
+    const action = new Action(this.mindmap, actionLike);
     const index = this.actions.findIndex((a) => a.id === action.id);
     if (index !== -1) {
       this.actions.splice(index, 1);

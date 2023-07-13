@@ -22,8 +22,8 @@ export class Notebook {
     return this.mindmap.activeElement;
   }
 
-  addNote() {
-    this.notes.push(new Note());
+  addNote(note) {
+    this.notes.push(note);
   }
 
   removeNote(note) {

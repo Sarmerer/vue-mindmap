@@ -29,7 +29,7 @@ export default {
   computed: {
     actions() {
       const actions = [];
-      for (const action of this.tree.actionsManager.actions) {
+      for (const action of this.tree.actions.actions) {
         if (!action.hotkeys.length) continue;
 
         actions.push(action);
@@ -40,7 +40,7 @@ export default {
   },
 
   created() {
-    this.tree.actionsManager.addAction({
+    this.tree.actions.addAction({
       id: "help",
       toolbarGroupId: "right",
       toolbarOrder: 5,

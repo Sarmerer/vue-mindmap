@@ -3,7 +3,7 @@
     <div class="statusbar__left">
       <span
         class="statusbar__item"
-        @click="tree.actionsManager.run('open-trees-modal')"
+        @click="tree.actions.run('open-trees-modal')"
       >
         <span class="statusbar__item__value">
           <BaseIcon icon="tree-pine" />

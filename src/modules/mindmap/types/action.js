@@ -1,12 +1,12 @@
-import { Tree } from "../../modules/tree";
+import { Mindmap } from "./mindmap";
 
 /**
  * @callback ActionRunner
- * @param {Tree} tree
+ * @param {Mindmap} mindmap
  * @returns {Promise}
  *
  * @callback Condition
- * @param {Tree} tree
+ * @param {Mindmap} mindmap
  * @returns {Boolean}
  *
  * @typedef {Object} ActionOptions
@@ -24,11 +24,11 @@ import { Tree } from "../../modules/tree";
 
 export class Action {
   /**
-   * @param {Tree} tree
+   * @param {Mindmap} mindmap
    * @param {ActionOptions} actionLike
    */
-  constructor(tree, actionLike) {
-    this.tree = tree;
+  constructor(mindmap, actionLike) {
+    this.mindmap = mindmap;
 
     this.id = actionLike.id;
     this.label = actionLike.label || actionLike.id;
@@ -51,13 +51,13 @@ export class Action {
     if (!this.when()) return;
 
     this.isRunning = true;
-    this.run_(this.tree);
+    this.run_(this.mindmap);
     this.isRunning = false;
   }
 
   when() {
     if (typeof this.when_ !== "function") return true;
 
-    return this.when_(this.tree);
+    return this.when_(this.mindmap);
   }
 }

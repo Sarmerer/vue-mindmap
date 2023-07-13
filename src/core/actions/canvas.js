@@ -6,7 +6,7 @@ export default [
     label: "Reset canvas",
     icon: "locate-fixed",
     hotkeys: ["alt+r"],
-    run(tree) {
+    run({ tree }) {
       tree.canvas.reset();
     },
   },

@@ -81,7 +81,7 @@ export default {
       tree.database.setLastTreeId(tree.id);
     });
 
-    tree.actionsManager.addActions(...actions);
+    this.mindmap.actions.addActions(...actions);
     tree.renderer.render();
   },
 };

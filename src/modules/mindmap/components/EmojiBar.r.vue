@@ -91,7 +91,7 @@ export default {
   },
 
   created() {
-    this.tree.actionsManager.addAction({
+    this.tree.actions.addAction({
       id: "toggle-emoji-bar",
       toolbarGroupId: "right",
       label: "Toggle Emoji Bar",

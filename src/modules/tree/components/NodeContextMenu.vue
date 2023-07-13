@@ -26,7 +26,7 @@ export default {
     actions() {
       const actions = [];
 
-      for (const action of this.tree.actionsManager.actions) {
+      for (const action of this.tree.actions.actions) {
         if (!action.contextMenuGroupId || !action.when(this.tree)) continue;
 
         actions.push(action);

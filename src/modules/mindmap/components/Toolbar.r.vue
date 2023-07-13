@@ -48,7 +48,7 @@ export default {
     },
 
     orderedActions() {
-      return [...this.tree.actionsManager.actions].sort((a, b) => {
+      return [...this.tree.actions.actions].sort((a, b) => {
         if (a.toolbarOrder === b.toolbarOrder) return 0;
         return a.toolbarOrder > b.toolbarOrder ? 1 : -1;
       });

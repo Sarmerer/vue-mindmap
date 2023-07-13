@@ -1,4 +1,4 @@
-import { ActionsManager } from "../../../core/types/actions-manager";
+import { ActionsManager } from "../../mindmap/types/actions-manager";
 import { EmojiManager } from "../../../core/types/emoji-manager";
 import { Canvas } from "../../../core/types/canvas";
 import { Database } from "../../../core/types/database/generic";
@@ -20,7 +20,6 @@ export class Tree {
     this.nodes = [];
     this.links = [];
 
-    this.actionsManager = new ActionsManager(this);
     this.navigator = new Navigator(this);
     this.emojiManager = new EmojiManager(this);
     this.reorder = new Reorder(this);
@@ -29,6 +28,10 @@ export class Tree {
     this.canvas = new Canvas();
     this.renderer = new Renderer(this);
     this.database = null;
+  }
+
+  get actions() {
+    return this.mindmap.actions;
   }
 
   get activeNode() {

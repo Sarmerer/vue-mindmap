@@ -1,5 +1,6 @@
 import { Tree } from "../../tree";
 import { Notebook } from "../../notebook/types/notebook";
+import { ActionsManager } from "./actions-manager";
 
 import { uuidv4 } from "../../../utils";
 
@@ -7,10 +8,12 @@ export class Mindmap {
   constructor() {
     this.id = uuidv4();
 
+    this.activeElement = null;
+
     this.tree = new Tree(this);
     this.notebook = new Notebook(this);
 
-    this.activeElement = null;
+    this.actions = new ActionsManager(this);
   }
 
   setActiveElement(element) {
