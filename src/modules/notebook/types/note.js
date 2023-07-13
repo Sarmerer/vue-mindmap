@@ -15,6 +15,10 @@ export class Note {
     this.isEditing = false;
   }
 
+  get isActive() {
+    return this.notebook.activeNote === this;
+  }
+
   setGroup(group) {
     if (this.group === group) return;
 

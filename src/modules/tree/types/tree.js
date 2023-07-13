@@ -1,5 +1,5 @@
 import { ActionsManager } from "../../../core/types/actions-manager";
-import { EmojiManager } from "../../../core/types/emiji-manager"
+import { EmojiManager } from "../../../core/types/emoji-manager";
 import { Canvas } from "../../../core/types/canvas";
 import { Database } from "../../../core/types/database/generic";
 
@@ -11,11 +11,11 @@ import { Node } from "./node";
 import { uuidv4 } from "../../../utils";
 
 export class Tree {
-  constructor() {
+  constructor(mindmap) {
+    this.mindmap = mindmap;
+
     this.id = uuidv4();
     this.label = "Untitled";
-
-    this.activeNode = null;
 
     this.nodes = [];
     this.links = [];
@@ -29,6 +29,12 @@ export class Tree {
     this.canvas = new Canvas();
     this.renderer = new Renderer(this);
     this.database = null;
+  }
+
+  get activeNode() {
+    if (!(this.mindmap.activeElement instanceof Node)) return null;
+
+    return this.mindmap.activeElement;
   }
 
   getRoot() {
@@ -57,7 +63,7 @@ export class Tree {
   }
 
   setActiveNode(node) {
-    this.activeNode = node;
+    this.mindmap.setActiveElement(node);
   }
 
   removeNode(node) {

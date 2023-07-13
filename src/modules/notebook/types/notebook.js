@@ -2,10 +2,11 @@ import { Note } from "./note";
 import { Reorder } from "./reorder";
 
 export class Notebook {
-  constructor() {
+  constructor(mindmap) {
+    this.mindmap = mindmap;
+
     this.groups = [];
     this.notes = [];
-    this.activeNote = null;
 
     this.reorder = new Reorder(this);
 
@@ -13,6 +14,12 @@ export class Notebook {
     if (!notes?.length) return;
 
     this.notes = notes.map((note) => new Note(this).deserialize(note));
+  }
+
+  get activeNote() {
+    if (!(this.mindmap.activeElement instanceof Note)) return null;
+
+    return this.mindmap.activeElement;
   }
 
   addNote() {
@@ -24,6 +31,10 @@ export class Notebook {
     if (index !== -1) {
       this.notes.splice(index, 1);
     }
+  }
+
+  setActiveNote(note) {
+    this.mindmap.setActiveElement(note);
   }
 
   serialize() {

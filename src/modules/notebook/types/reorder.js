@@ -1,5 +1,7 @@
 export class Reorder {
-  constructor() {
+  constructor(notebook) {
+    this.notebook = notebook;
+
     this.activeNote = null;
 
     this.grabOffsetX = 0;
@@ -13,6 +15,8 @@ export class Reorder {
 
   start(event, note) {
     if (this.activeNote) return;
+
+    this.notebook.setActiveNote(note);
 
     this.grabOffsetX = event.clientX - note.x;
     this.grabOffsetY = event.clientY - note.y;

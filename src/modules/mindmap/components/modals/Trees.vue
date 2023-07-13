@@ -114,7 +114,7 @@ export default {
     },
 
     createTree() {
-      const newTree = new Tree().serialize();
+      const newTree = new Tree(this.tree.mindmap).serialize();
       this.tree.database.createTree(newTree);
       this.tree.deserialize(newTree);
       this.tree.renderer.render();
