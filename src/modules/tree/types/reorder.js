@@ -8,10 +8,12 @@ export class Reorder {
     this.oldParent = null;
     this.oldIndex = null;
     this.wasCollapsed = false;
+
     this.potentialRelative = null;
+    this.potentialRelativeSide = null;
 
     this.grabOffsetX = 0;
-    this.grabOffsetX = 0;
+    this.grabOffsetY = 0;
 
     this.listeners = {
       update: this.update.bind(this),
@@ -55,7 +57,7 @@ export class Reorder {
     this.activeNode.parent = DUMMY_PARENT;
 
     this.grabOffsetX = this.tree.canvas.cursorX - this.activeNode.x;
-    this.grabOffsetX = this.tree.canvas.cursorY - this.activeNode.y;
+    this.grabOffsetY = this.tree.canvas.cursorY - this.activeNode.y;
 
     window.addEventListener("mousemove", this.listeners.update);
     window.addEventListener("mouseup", this.listeners.end, { once: true });
@@ -65,7 +67,7 @@ export class Reorder {
     if (!this.activeNode) return;
 
     this.activeNode.x = this.tree.canvas.cursorX - this.grabOffsetX;
-    this.activeNode.y = this.tree.canvas.cursorY - this.grabOffsetX;
+    this.activeNode.y = this.tree.canvas.cursorY - this.grabOffsetY;
 
     const closestNode = this.getClosestNode(this.activeNode);
     if (!closestNode) {
@@ -81,7 +83,6 @@ export class Reorder {
     if (!quadrant) return;
 
     this.setPotentialRelative(closestNode, quadrant);
-    closestNode.highlight(quadrant);
   }
 
   end() {
@@ -111,7 +112,7 @@ export class Reorder {
       return;
     }
 
-    switch (this.potentialRelative.highlightedSide) {
+    switch (this.potentialRelativeSide) {
       case "right":
         this.activeNode.setParent(this.potentialRelative);
         break;
@@ -146,13 +147,13 @@ export class Reorder {
     if (this.potentialRelative === node) return;
 
     if (this.potentialRelative) {
-      this.potentialRelative.highlight(null);
+      this.potentialRelativeSide = null;
     }
 
     this.potentialRelative = node;
 
     if (this.potentialRelative) {
-      this.potentialRelative.highlight(side || null);
+      this.potentialRelativeSide = side || null;
     }
   }
 

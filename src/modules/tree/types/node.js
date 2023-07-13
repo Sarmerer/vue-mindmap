@@ -15,7 +15,6 @@ export class Node {
     this.height = 100;
 
     this.label = "Awesome task";
-    this.highlightedSide = null;
     this.weight = 1;
     this.childrenCountOverride = 0;
     this.completedChildrenCountOverride = 0;
@@ -54,6 +53,12 @@ export class Node {
     }
 
     return true;
+  }
+
+  get highlightedSide() {
+    if (this.tree.reorder.potentialRelative !== this) return null;
+
+    return this.tree.reorder.potentialRelativeSide || null;
   }
 
   setEditing(isEditing) {
@@ -146,13 +151,6 @@ export class Node {
 
     this.width = el.offsetWidth;
     this.height = el.offsetHeight;
-  }
-
-  /**
-   * @param {'top' | 'bottom' | 'right'} side
-   */
-  highlight(side) {
-    this.highlightedSide = side;
   }
 
   serialize() {
