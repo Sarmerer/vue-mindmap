@@ -8,6 +8,7 @@
     <Toolbar v-bind="{ tree }" />
     <EmojiBar v-bind="{ tree }" />
 
+    <NotebookRenderer v-bind="{ notebook }" />
     <TreeR v-bind="{ tree }" />
 
     <StatusBar v-bind="{ tree }" />
@@ -17,6 +18,7 @@
 <script>
 import { Tree } from "../../modules/tree/types/tree";
 import { LocalStorage } from "../types/database/localstorage";
+import { Notebook } from "../../modules/notebook/types/notebook";
 import actions from "../actions";
 
 import TreesModal from "./modals/Trees.vue";
@@ -27,6 +29,7 @@ import MigrateModal from "./modals/Migrate.vue";
 import Toolbar from "./Toolbar.r.vue";
 import EmojiBar from "./EmojiBar.r.vue";
 
+import NotebookRenderer from "../../modules/Notebook";
 import TreeR from "../../modules/tree/index.vue";
 
 import StatusBar from "./StatusBar.vue";
@@ -41,6 +44,7 @@ export default {
     Toolbar,
     EmojiBar,
 
+    NotebookRenderer,
     TreeR,
 
     StatusBar,
@@ -49,6 +53,7 @@ export default {
   data() {
     return {
       tree: null,
+      notebook: null,
     };
   },
 
@@ -70,6 +75,8 @@ export default {
     tree.renderer.render();
 
     this.tree = tree;
+
+    this.notebook = new Notebook();
   },
 };
 </script>

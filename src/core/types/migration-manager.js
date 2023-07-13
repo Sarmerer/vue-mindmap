@@ -88,9 +88,20 @@ export class MigrationManager {
   migrateNotes(legacyNotes) {
     if (!Array.isArray(legacyNotes)) return [];
 
+    const groupsIndex = new Map();
     const notes = [];
     for (const legacyNote of legacyNotes) {
-      notes.push(this.migrateNote(legacyNote));
+      const note = this.migrateNote(legacyNote);
+
+      if (note.group) {
+        if (!groupsIndex.has(note.group)) {
+          groupsIndex.set(note.group, uuidv4());
+        }
+
+        note.group = groupsIndex.get(note.group);
+      }
+
+      notes.push(note);
     }
 
     return notes;
@@ -99,11 +110,9 @@ export class MigrationManager {
   migrateNote(legacyNote) {
     return {
       id: legacyNote.id,
-      group: legacyNote.group,
       x: legacyNote.x,
       y: legacyNote.y,
       label: legacyNote.text,
-      icon: legacyNote.icon,
     };
   }
 }
