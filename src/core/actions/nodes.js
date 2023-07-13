@@ -170,13 +170,13 @@ export default [
     contextMenuGroupId: "node",
     label: "Delete",
     icon: "trash",
-    hotkeys: ["del", "backspace"],
+    hotkeys: ["delete", "backspace"],
     when: ({ tree }) => tree.activeNode?.isActionable,
     run({ tree }) {
-      const nextActive = tree.navigator.getClosestNode(tree.activeNode) || null;
+      const nextActive = tree.navigator.getClosestNode(tree.activeNode, 'left') || null;
 
       tree.activeNode.dispose();
-      this.tree.setActiveNode(nextActive);
+      tree.setActiveNode(nextActive);
     },
   },
 
