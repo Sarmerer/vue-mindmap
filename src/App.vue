@@ -10,9 +10,7 @@ import Mindmap from "./modules/mindmap";
 export default {
   name: "App",
 
-  components: {
-    Mindmap,
-  },
+  components: { Mindmap },
 };
 </script>
 

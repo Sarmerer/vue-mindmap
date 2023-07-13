@@ -1,6 +1,7 @@
+import { defineActions } from "../../modules/mindmap/types/actions-manager";
 import { Node } from "../../modules/tree";
 
-export default [
+export default defineActions(
   {
     id: "add-root",
     toolbarGroupId: "left",
@@ -27,7 +28,7 @@ export default [
     hotkeys: ["tab"],
     when: ({ tree }) => tree.activeNode?.isActionable,
     run({ tree }) {
-      const node = this.tree.activeNode.addChild();
+      const node = tree.activeNode.addChild();
       node.isEditing = true;
       tree.setActiveNode(node);
     },
@@ -41,7 +42,7 @@ export default [
     hotkeys: ["enter"],
     when: ({ tree }) => tree.activeNode?.isActionable && tree.activeNode.parent,
     run({ tree }) {
-      const node = this.tree.activeNode.addSibling();
+      const node = tree.activeNode.addSibling();
       node.isEditing = true;
       tree.setActiveNode(node);
     },
@@ -148,7 +149,8 @@ export default [
     contextMenuGroupId: "node",
     label: "Drill down",
     icon: "arrow-down-square",
-    when: ({ tree }) => tree.activeNode?.isActionable && !tree.activeNode.isRoot,
+    when: ({ tree }) =>
+      tree.activeNode?.isActionable && !tree.activeNode.isRoot,
     run({ tree }) {
       tree.pushStack(tree.activeNode);
     },
@@ -173,7 +175,8 @@ export default [
     hotkeys: ["delete", "backspace"],
     when: ({ tree }) => tree.activeNode?.isActionable,
     run({ tree }) {
-      const nextActive = tree.navigator.getClosestNode(tree.activeNode, 'left') || null;
+      const nextActive =
+        tree.navigator.getClosestNode(tree.activeNode, "left") || null;
 
       tree.activeNode.dispose();
       tree.setActiveNode(nextActive);
@@ -266,5 +269,5 @@ export default [
     run({ tree }) {
       tree.navigator.go("down");
     },
-  },
-];
+  }
+);

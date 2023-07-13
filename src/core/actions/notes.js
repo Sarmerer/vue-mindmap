@@ -1,6 +1,7 @@
+import { defineActions } from "../../modules/mindmap/types/actions-manager";
 import { Note } from "../../modules/notebook/types/note";
 
-export default [
+export default defineActions(
   {
     id: "add-note",
     toolbarGroupId: "left",
@@ -22,5 +23,5 @@ export default [
     run({ notebook }) {
       notebook.removeNote(notebook.activeNote);
     },
-  },
-];
+  }
+);

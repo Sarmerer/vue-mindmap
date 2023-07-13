@@ -8,7 +8,7 @@
     <Toolbar v-bind="{ tree }" />
     <EmojiBar v-bind="{ tree }" />
 
-    <NotebookRenderer v-bind="{ notebook }" />
+    <Notebook v-bind="{ notebook }" />
     <TreeR v-bind="{ tree }" />
 
     <StatusBar v-bind="{ tree }" />
@@ -28,7 +28,7 @@ import MigrateModal from "./components/modals/Migrate.vue";
 import Toolbar from "./components/Toolbar.r.vue";
 import EmojiBar from "./components/EmojiBar.r.vue";
 
-import NotebookRenderer from "../../modules/Notebook";
+import Notebook from "../../modules/notebook/index.vue";
 import TreeR from "../../modules/tree/index.vue";
 
 import StatusBar from "./components/StatusBar.vue";
@@ -43,7 +43,7 @@ export default {
     Toolbar,
     EmojiBar,
 
-    NotebookRenderer,
+    Notebook,
     TreeR,
 
     StatusBar,

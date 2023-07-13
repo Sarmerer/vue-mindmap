@@ -25,10 +25,10 @@ export class ActionsManager {
   addAction(actionLike) {
     const action = new Action(this.mindmap, actionLike);
     const index = this.actions.findIndex((a) => a.id === action.id);
-    if (index !== -1) {
-      this.actions.splice(index, 1);
-    } else {
+    if (index === -1) {
       this.actions.push(action);
+    } else {
+      this.actions.splice(index, 1);
     }
 
     for (const hotkey of action.hotkeys) {
@@ -45,4 +45,13 @@ export class ActionsManager {
 
     action.run();
   }
+}
+
+/**
+ *
+ * @param  {...import("./action").ActionOptions} actions
+ * @returns
+ */
+export function defineActions(...actions) {
+  return actions;
 }
