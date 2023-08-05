@@ -9,7 +9,10 @@
     <EmojiBar v-bind="{ tree }" />
 
     <Notebook v-bind="{ notebook }" />
-    <TreeR v-bind="{ tree }" />
+
+    <Canvas :canvas="tree.canvas">
+      <TreeR v-bind="{ tree }" />
+    </Canvas>
 
     <StatusBar v-bind="{ tree }" />
   </div>
@@ -28,7 +31,7 @@ import MigrateModal from "./components/modals/Migrate.vue";
 import Toolbar from "./components/Toolbar.r.vue";
 import EmojiBar from "./components/EmojiBar.r.vue";
 
-import Notebook from "../../modules/notebook/index.vue";
+import Canvas from "./components/Canvas.vue";
 import TreeR from "../../modules/tree/index.vue";
 
 import StatusBar from "./components/StatusBar.vue";
@@ -43,6 +46,7 @@ export default {
     Toolbar,
     EmojiBar,
 
+    Canvas,
     Notebook,
     TreeR,
 
@@ -90,6 +94,8 @@ export default {
 <style scoped>
 .mindmap {
   position: relative;
+
+  background-color: var(--color-main-background);
   width: 100%;
   height: 100%;
 }

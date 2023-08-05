@@ -49,6 +49,7 @@ export default {
   position: absolute;
   transform-origin: top left;
   z-index: 1;
+  z-index: var(--layer-top);
   margin: 0;
   padding: 0;
   list-style: none;

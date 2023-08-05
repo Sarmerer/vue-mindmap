@@ -1,6 +1,5 @@
-import { ActionsManager } from "../../mindmap/types/actions-manager";
 import { EmojiManager } from "../../../core/types/emoji-manager";
-import { Canvas } from "../../../core/types/canvas";
+import { Canvas } from "../../mindmap/types/canvas";
 import { Database } from "../../../core/types/database/generic";
 
 import { Navigator } from "./navigator";

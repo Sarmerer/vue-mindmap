@@ -2,34 +2,29 @@
   <div class="tree">
     <NodeContextMenu v-bind="{ tree }" ref="nodeContextMenu" />
 
-    <Canvas :canvas="tree.canvas">
-      <svg class="links-container">
-        <path
-          v-for="link in tree.links"
-          :key="link.id"
-          class="link"
-          :d="link.d"
-        ></path>
-      </svg>
+    <svg class="links-container">
+      <path
+        v-for="link in tree.links"
+        :key="link.id"
+        class="link"
+        :d="link.d"></path>
+    </svg>
 
-      <div :id="tree.id" class="nodes-container">
-        <Node
-          v-for="node of tree.getNodes()"
-          :key="node.id"
-          v-bind="{ node }"
-          @contextmenu="showContextMenu"
-        />
-      </div>
-    </Canvas>
+    <div :id="tree.id" class="nodes-container">
+      <Node
+        v-for="node of tree.getNodes()"
+        :key="node.id"
+        v-bind="{ node }"
+        @contextmenu="showContextMenu" />
+    </div>
   </div>
 </template>
 
 <script>
-import { Tree } from "./types/tree";
+import { Tree } from './types/tree'
 
-import NodeContextMenu from "./components/NodeContextMenu.vue";
-import Canvas from "../../core/components/Canvas.vue";
-import Node from "./components/Node.vue";
+import NodeContextMenu from './components/NodeContextMenu.vue'
+import Node from './components/Node.vue'
 
 export default {
   props: {
@@ -41,22 +36,21 @@ export default {
 
   components: {
     NodeContextMenu,
-    Canvas,
     Node,
   },
 
   methods: {
     showContextMenu(e) {
-      this.$refs.nodeContextMenu.show(e);
+      e = this.tree.canvas.toCanvasSpaceEvent(e)
+      this.$refs.nodeContextMenu.show(e)
     },
   },
-};
+}
 </script>
 
 <style scoped>
 .tree {
   position: relative;
-  background-color: var(--color-main-background);
   width: 100%;
   height: 100%;
   overflow: hidden;
