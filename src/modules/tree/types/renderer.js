@@ -1,83 +1,81 @@
-import { Tree } from "./tree";
+import { Tree } from './tree'
 
-import { flextree } from "d3-flextree";
-import * as d3 from "d3";
+import { flextree } from 'd3-flextree'
+import * as d3 from 'd3'
 
 export class Renderer {
   /**
    * @param {Tree} tree
    */
   constructor(tree) {
-    this.tree = tree;
-    this.isQueued = false;
+    this.tree = tree
+    this.isQueued = false
   }
 
   render() {
-    if (this.isQueued) return;
+    if (this.isQueued) return
 
     window.requestAnimationFrame(() => {
-      this.#render();
-      this.isQueued = false;
-    });
+      this.#render()
+      this.isQueued = false
+    })
   }
 
   #render() {
-    const root = this.tree.getRoot();
+    const root = this.tree.getRoot()
     if (!root) {
-      this.tree.nodes = [];
-      this.tree.links = [];
-      return;
+      this.tree.nodes = []
+      this.tree.links = []
+      return
     }
 
-    const treeFactory = d3.tree();
-    const tree = treeFactory(this.buildHierarchy(root));
+    const treeFactory = d3.tree()
+    const tree = treeFactory(this.buildHierarchy(root))
 
     const layoutFactory = flextree({
       nodeSize: (node) => {
-        node.data.measure();
-        return [node.data.height, node.data.width + 30];
+        node.data.measure()
+        return [node.data.height, node.data.width + 30]
       },
 
       spacing: (nodeA, nodeB) => nodeA.path(nodeB).length + 2,
-    });
+    })
 
-    const layout = layoutFactory(tree);
-    const screenHalfHeight = window.innerHeight / 2;
+    const layout = layoutFactory(tree)
+    const screenHalfHeight = window.innerHeight / 2
     for (const node of layout.descendants()) {
-      const matchingNode = this.tree.nodes.find(
-        ({ id }) => id === node.data.id
-      );
-      if (!matchingNode) continue;
+      const matchingNode = this.tree.nodes.find(({ id }) => id === node.data.id)
+      if (!matchingNode) continue
 
-      matchingNode.x = node.y + 100;
-      matchingNode.y = node.x + screenHalfHeight;
+      matchingNode.x = node.y + 100
+      matchingNode.y = node.x + screenHalfHeight
     }
 
     this.tree.links = layout.links().map((link) => ({
       id: link.target.data.id,
-      class: "link",
+      class: 'link',
       d: this.generateLinkPath(link.source.data, link.target.data),
-    }));
+    }))
   }
 
   buildHierarchy(node) {
-    return d3.hierarchy(node, (d) => d.getChildren());
+    return d3.hierarchy(node, (d) => d.getChildren())
   }
 
   generateLinkPath(source, target) {
-    const sourceRight = source.x + source.width;
-    const sourceBottom = source.y + source.height;
-    const targetRight = target.x + target.width;
-    const targetBottom = target.y + target.height;
-    const curviness = 25;
+    const sourceRight = source.x + source.width
+    const sourceBottom = source.y + source.height
+    const targetRight = target.x + target.width
+    const targetBottom = target.y + target.height
+    const curviness = 25
 
-    const steps = [];
+    const steps = []
 
     if (source.isRoot) {
       steps.push(
         `M${source.x},${sourceBottom}`,
         `L${sourceRight},${sourceBottom}`
-      );
+      )
     }
 
     steps.push(
@@ -86,8 +84,8 @@ export class Renderer {
       `${target.x - curviness},${targetBottom}`,
       `${target.x},${targetBottom}`,
       `L${targetRight},${targetBottom}`
-    );
+    )
 
-    return steps.join(" ");
+    return steps.join(' ')
   }
 }

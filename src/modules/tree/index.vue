@@ -7,7 +7,8 @@
         v-for="link in tree.links"
         :key="link.id"
         class="link"
-        :d="link.d"></path>
+        :d="link.d"
+      ></path>
     </svg>
 
     <div :id="tree.id" class="nodes-container">
@@ -15,7 +16,8 @@
         v-for="node of tree.getNodes()"
         :key="node.id"
         v-bind="{ node }"
-        @contextmenu="showContextMenu" />
+        @contextmenu="showContextMenu"
+      />
     </div>
   </div>
 </template>

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { Tree } from "../types/tree";
+import { Tree } from '../types/tree'
 
 export default {
   props: {
@@ -24,28 +24,28 @@ export default {
 
   computed: {
     actions() {
-      const actions = [];
+      const actions = []
 
       for (const action of this.tree.actions.actions) {
-        if (!action.contextMenuGroupId || !action.when(this.tree)) continue;
+        if (!action.contextMenuGroupId || !action.when(this.tree)) continue
 
-        actions.push(action);
+        actions.push(action)
       }
 
-      return actions;
+      return actions
     },
   },
 
   methods: {
     show(e) {
-      this.$refs.contextMenu.show(e);
+      this.$refs.contextMenu.show(e)
     },
 
     hide() {
-      this.$refs.contextMenu.hide();
+      this.$refs.contextMenu.hide()
     },
   },
-};
+}
 </script>
 
 <style scoped>

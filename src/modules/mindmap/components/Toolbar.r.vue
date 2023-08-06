@@ -19,11 +19,11 @@
 </template>
 
 <script>
-import { Tree } from "../../tree";
+import { Tree } from '../../tree'
 
-import ToolbarAction from "./ToolbarAction.vue";
+import ToolbarAction from './ToolbarAction.vue'
 export default {
-  name: "Toolbar",
+  name: 'Toolbar',
 
   props: {
     tree: {
@@ -37,24 +37,24 @@ export default {
   computed: {
     leftActions() {
       return this.orderedActions.filter(
-        (action) => action.toolbarGroupId === "left" && action.when()
-      );
+        (action) => action.toolbarGroupId === 'left' && action.when()
+      )
     },
 
     rightActions() {
       return this.orderedActions.filter(
-        (action) => action.toolbarGroupId === "right" && action.when()
-      );
+        (action) => action.toolbarGroupId === 'right' && action.when()
+      )
     },
 
     orderedActions() {
       return [...this.tree.actions.actions].sort((a, b) => {
-        if (a.toolbarOrder === b.toolbarOrder) return 0;
-        return a.toolbarOrder > b.toolbarOrder ? 1 : -1;
-      });
+        if (a.toolbarOrder === b.toolbarOrder) return 0
+        return a.toolbarOrder > b.toolbarOrder ? 1 : -1
+      })
     },
   },
-};
+}
 </script>
 <style scoped>
 .toolbar {

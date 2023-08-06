@@ -19,7 +19,7 @@
           :value="note.label"
           placeholder="Name your note..."
           @focusout="note.isEditing = false"
-          @enter="(note.label = $event.target.value), (note.isEditing = false)"
+          @enter=";(note.label = $event.target.value), (note.isEditing = false)"
         />
       </div>
     </div>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { Note } from "../types/note";
+import { Note } from '../types/note'
 
 export default {
   props: {
@@ -36,7 +36,7 @@ export default {
       required: true,
     },
   },
-};
+}
 </script>
 
 <style scoped>

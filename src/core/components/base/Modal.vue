@@ -15,20 +15,20 @@
 export default {
   methods: {
     open() {
-      this.$refs.dialog.showModal();
+      this.$refs.dialog.showModal()
     },
 
     close() {
-      this.$refs.dialog.close();
+      this.$refs.dialog.close()
     },
 
     maybeClose(event) {
       if (event.target === this.$refs.dialog) {
-        this.close();
+        this.close()
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>

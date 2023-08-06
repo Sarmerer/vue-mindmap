@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { Tree } from "../../tree";
+import { Tree } from '../../tree'
 
 export default {
   props: {
@@ -50,30 +50,30 @@ export default {
 
   computed: {
     activeTreeLabel() {
-      return this.tree.label;
+      return this.tree.label
     },
 
     nodes() {
-      const root = this.tree.getRoot();
-      if (!root) return { todo: 0, completed: 0 };
+      const root = this.tree.getRoot()
+      if (!root) return { todo: 0, completed: 0 }
 
-      const total = root.stats.getChildrenCount(true);
-      const completed = root.stats.getCompletedChildrenCount(true);
-      const todo = total - completed;
+      const total = root.stats.getChildrenCount(true)
+      const completed = root.stats.getCompletedChildrenCount(true)
+      const todo = total - completed
 
-      return { todo, completed };
+      return { todo, completed }
     },
 
     activeNodeLabel() {
-      const activeNode = this.tree.activeNode;
-      return activeNode ? activeNode.label : "None";
+      const activeNode = this.tree.activeNode
+      return activeNode ? activeNode.label : 'None'
     },
 
     zoomLevel() {
-      return `${Math.round(this.tree.canvas.scale * 100)}%`;
+      return `${Math.round(this.tree.canvas.scale * 100)}%`
     },
   },
-};
+}
 </script>
 
 <style scoped>

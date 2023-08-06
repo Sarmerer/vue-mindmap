@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { Action } from "../types/action";
+import { Action } from '../types/action'
 
 export default {
   props: {
@@ -21,12 +21,12 @@ export default {
 
   computed: {
     title() {
-      if (!this.action.hotkeys.length) return this.action.label;
+      if (!this.action.hotkeys.length) return this.action.label
 
-      return `${this.action.label} (${this.action.hotkeys[0]})`;
+      return `${this.action.label} (${this.action.hotkeys[0]})`
     },
   },
-};
+}
 </script>
 
 <style scoped>

@@ -11,10 +11,10 @@
 </template>
 
 <script>
-import { Notebook } from "./types/notebook";
+import { Notebook } from './types/notebook'
 
-import Group from "./components/Group.vue";
-import Note from "./components/Note.vue";
+import Group from './components/Group.vue'
+import Note from './components/Note.vue'
 
 export default {
   props: {
@@ -25,7 +25,7 @@ export default {
   },
 
   components: { Group, Note },
-};
+}
 </script>
 
 <style scoped>

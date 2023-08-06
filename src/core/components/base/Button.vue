@@ -21,22 +21,22 @@ export default {
   props: {
     iconLeft: {
       type: String,
-      default: "",
+      default: '',
     },
 
     iconRight: {
       type: String,
-      default: "",
+      default: '',
     },
 
     intent: {
       type: String,
-      default: "primary",
+      default: 'primary',
       validator: (value) =>
-        ["primary", "secondary", "danger", "text"].includes(value),
+        ['primary', 'secondary', 'danger', 'text'].includes(value),
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

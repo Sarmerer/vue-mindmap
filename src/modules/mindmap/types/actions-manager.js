@@ -1,12 +1,12 @@
-import { Action } from "./action";
-import { HotkeysManager } from "./hotkeys-manager";
+import { Action } from './action'
+import { HotkeysManager } from './hotkeys-manager'
 
 export class ActionsManager {
   constructor(mindmap) {
-    this.mindmap = mindmap;
-    this.actions = [];
+    this.mindmap = mindmap
+    this.actions = []
 
-    this.hotkeysManager = new HotkeysManager();
+    this.hotkeysManager = new HotkeysManager()
   }
 
   /**
@@ -14,7 +14,7 @@ export class ActionsManager {
    */
   addActions(...actions) {
     for (const action of actions) {
-      this.addAction(action);
+      this.addAction(action)
     }
   }
 
@@ -23,27 +23,27 @@ export class ActionsManager {
    * @returns {Action}
    */
   addAction(actionLike) {
-    const action = new Action(this.mindmap, actionLike);
-    const index = this.actions.findIndex((a) => a.id === action.id);
+    const action = new Action(this.mindmap, actionLike)
+    const index = this.actions.findIndex((a) => a.id === action.id)
     if (index === -1) {
-      this.actions.push(action);
+      this.actions.push(action)
     } else {
-      this.actions.splice(index, 1);
+      this.actions.splice(index, 1)
     }
 
     for (const hotkey of action.hotkeys) {
-      this.hotkeysManager.on(hotkey, action);
+      this.hotkeysManager.on(hotkey, action)
     }
   }
 
   run(id) {
-    const action = this.actions.find((a) => a.id === id);
+    const action = this.actions.find((a) => a.id === id)
     if (!action) {
-      console.error(`Action "${id}" not found`);
-      return;
+      console.error(`Action "${id}" not found`)
+      return
     }
 
-    action.run();
+    action.run()
   }
 }
 
@@ -53,5 +53,5 @@ export class ActionsManager {
  * @returns
  */
 export function defineActions(...actions) {
-  return actions;
+  return actions
 }

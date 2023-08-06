@@ -25,10 +25,10 @@ export default {
 
     label: {
       type: String,
-      default: "",
+      default: '',
     },
   },
-};
+}
 </script>
 
 <style scoped>

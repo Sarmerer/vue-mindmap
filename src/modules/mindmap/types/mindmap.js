@@ -1,23 +1,23 @@
-import { Tree } from "../../tree";
-import { Notebook } from "../../notebook/types/notebook";
-import { ActionsManager } from "./actions-manager";
+import { Tree } from '../../tree'
+import { Notebook } from '../../notebook/types/notebook'
+import { ActionsManager } from './actions-manager'
 
-import { uuidv4 } from "../../../utils";
+import { uuidv4 } from '../../../utils'
 
 export class Mindmap {
   constructor() {
-    this.id = uuidv4();
+    this.id = uuidv4()
 
-    this.activeElement = null;
+    this.activeElement = null
 
-    this.tree = new Tree(this);
-    this.notebook = new Notebook(this);
+    this.tree = new Tree(this)
+    this.notebook = new Notebook(this)
 
-    this.actions = new ActionsManager(this);
+    this.actions = new ActionsManager(this)
   }
 
   setActiveElement(element) {
-    this.activeElement = element;
+    this.activeElement = element
   }
 
   serialize() {
@@ -25,12 +25,12 @@ export class Mindmap {
       id: this.id,
       tree: this.tree.serialize(),
       notebook: this.notebook.serialize(),
-    };
+    }
   }
 
   deserialize(data) {
-    this.id = data.id;
-    this.tree.deserialize(data.tree);
-    this.notebook.deserialize(data.notebook);
+    this.id = data.id
+    this.tree.deserialize(data.tree)
+    this.notebook.deserialize(data.notebook)
   }
 }

@@ -15,17 +15,17 @@
 export default {
   props: {
     value: {
-      default: "",
+      default: '',
     },
 
     type: {
       type: String,
-      default: "text",
+      default: 'text',
     },
 
     placeholder: {
       type: String,
-      default: "",
+      default: '',
     },
 
     autofocus: {
@@ -35,23 +35,23 @@ export default {
   },
 
   mounted() {
-    this.maybeFocus();
+    this.maybeFocus()
   },
 
   methods: {
     focus() {
-      this.$el.focus();
+      this.$el.focus()
     },
 
     maybeFocus() {
-      if (typeof this.autofocus === "number") {
-        setTimeout(() => this.focus(), this.autofocus);
+      if (typeof this.autofocus === 'number') {
+        setTimeout(() => this.focus(), this.autofocus)
       } else if (this.autofocus) {
-        this.focus();
+        this.focus()
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>

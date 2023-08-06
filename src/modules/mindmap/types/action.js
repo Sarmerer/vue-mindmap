@@ -1,4 +1,4 @@
-import { Mindmap } from "./mindmap";
+import { Mindmap } from './mindmap'
 
 /**
  * @callback ActionRunner
@@ -28,36 +28,36 @@ export class Action {
    * @param {ActionOptions} actionLike
    */
   constructor(mindmap, actionLike) {
-    this.mindmap = mindmap;
+    this.mindmap = mindmap
 
-    this.id = actionLike.id;
-    this.label = actionLike.label || actionLike.id;
-    this.icon = actionLike.icon || null;
-    this.hotkeys = actionLike.hotkeys || [];
+    this.id = actionLike.id
+    this.label = actionLike.label || actionLike.id
+    this.icon = actionLike.icon || null
+    this.hotkeys = actionLike.hotkeys || []
 
-    this.isRunning = false;
-    this.run_ = actionLike.run;
-    this.when_ = actionLike.when;
+    this.isRunning = false
+    this.run_ = actionLike.run
+    this.when_ = actionLike.when
 
-    this.toolbarGroupId = actionLike.toolbarGroupId || null;
-    this.toolbarOrder = actionLike.toolbarOrder ?? 1;
-    this.contextMenuGroupId = actionLike.contextMenuGroupId || null;
-    this.contextMenuOrder = actionLike.contextMenuOrder ?? 1;
+    this.toolbarGroupId = actionLike.toolbarGroupId || null
+    this.toolbarOrder = actionLike.toolbarOrder ?? 1
+    this.contextMenuGroupId = actionLike.contextMenuGroupId || null
+    this.contextMenuOrder = actionLike.contextMenuOrder ?? 1
   }
 
   run() {
-    if (typeof this.run_ !== "function") return;
-    if (this.isRunning) return;
-    if (!this.when()) return;
+    if (typeof this.run_ !== 'function') return
+    if (this.isRunning) return
+    if (!this.when()) return
 
-    this.isRunning = true;
-    this.run_(this.mindmap);
-    this.isRunning = false;
+    this.isRunning = true
+    this.run_(this.mindmap)
+    this.isRunning = false
   }
 
   when() {
-    if (typeof this.when_ !== "function") return true;
+    if (typeof this.when_ !== 'function') return true
 
-    return this.when_(this.mindmap);
+    return this.when_(this.mindmap)
   }
 }

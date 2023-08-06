@@ -23,10 +23,10 @@ export default {
 
     label: {
       type: String,
-      default: "",
+      default: '',
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -62,7 +62,7 @@ export default {
   background-color: #fff;
   width: 16px;
   height: 16px;
-  content: "";
+  content: '';
 }
 
 .base-toggle__input:checked + .base-toggle__slider {

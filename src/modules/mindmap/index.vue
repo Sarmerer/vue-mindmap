@@ -19,22 +19,22 @@
 </template>
 
 <script>
-import { Mindmap } from "../mindmap/types/mindmap";
-import { LocalStorage } from "../../core/types/database/localstorage";
-import actions from "../../core/actions";
+import { Mindmap } from '../mindmap/types/mindmap'
+import { LocalStorage } from '../../core/types/database/localstorage'
+import actions from '../../core/actions'
 
-import TreesModal from "./components/modals/Trees.vue";
-import TransferModal from "./components/modals/Transfer.vue";
-import HotkeysModal from "./components/modals/Hotkeys.vue";
-import MigrateModal from "./components/modals/Migrate.vue";
+import TreesModal from './components/modals/Trees.vue'
+import TransferModal from './components/modals/Transfer.vue'
+import HotkeysModal from './components/modals/Hotkeys.vue'
+import MigrateModal from './components/modals/Migrate.vue'
 
-import Toolbar from "./components/Toolbar.r.vue";
-import EmojiBar from "./components/EmojiBar.r.vue";
+import Toolbar from './components/Toolbar.r.vue'
+import EmojiBar from './components/EmojiBar.r.vue'
 
-import Canvas from "./components/Canvas.vue";
-import TreeR from "../../modules/tree/index.vue";
+import Canvas from './components/Canvas.vue'
+import TreeR from '../../modules/tree/index.vue'
 
-import StatusBar from "./components/StatusBar.vue";
+import StatusBar from './components/StatusBar.vue'
 
 export default {
   components: {
@@ -56,39 +56,39 @@ export default {
   data() {
     return {
       mindmap: null,
-    };
+    }
   },
 
   computed: {
     tree() {
-      return this.mindmap.tree;
+      return this.mindmap.tree
     },
 
     notebook() {
-      return this.mindmap.notebook;
+      return this.mindmap.notebook
     },
   },
 
   created() {
-    this.mindmap = new Mindmap();
+    this.mindmap = new Mindmap()
 
-    const { tree } = this.mindmap;
-    tree.setDatabase(new LocalStorage());
+    const { tree } = this.mindmap
+    tree.setDatabase(new LocalStorage())
 
-    const lastTree = tree.database.getLastTreeId();
+    const lastTree = tree.database.getLastTreeId()
     if (lastTree) {
-      tree.deserialize(tree.database.getTree(lastTree));
+      tree.deserialize(tree.database.getTree(lastTree))
     }
 
-    window.addEventListener("beforeunload", () => {
-      tree.database.setTree(tree.id, tree.serialize());
-      tree.database.setLastTreeId(tree.id);
-    });
+    window.addEventListener('beforeunload', () => {
+      tree.database.setTree(tree.id, tree.serialize())
+      tree.database.setLastTreeId(tree.id)
+    })
 
-    this.mindmap.actions.addActions(...actions);
-    tree.renderer.render();
+    this.mindmap.actions.addActions(...actions)
+    tree.renderer.render()
   },
-};
+}
 </script>
 
 <style scoped>

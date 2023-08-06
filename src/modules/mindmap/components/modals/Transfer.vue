@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { Tree } from "../../../tree";
+import { Tree } from '../../../tree'
 
 export default {
   props: {
@@ -45,102 +45,102 @@ export default {
       useActiveNode: false,
 
       importFile: null,
-      exportFileName: "mindmap",
-    };
+      exportFileName: 'mindmap',
+    }
   },
 
   computed: {
     title() {
-      return this.isImport ? "Import" : "Export";
+      return this.isImport ? 'Import' : 'Export'
     },
 
     prefix() {
-      return this.isImport ? "From" : "To";
+      return this.isImport ? 'From' : 'To'
     },
 
     destination() {
-      const target = this.useClipboard ? "Clipboard" : "File";
-      return `${this.prefix} ${target}`;
+      const target = this.useClipboard ? 'Clipboard' : 'File'
+      return `${this.prefix} ${target}`
     },
 
     canTransfer() {
       return this.isImport
         ? !this.useClipboard && !this.importFile
-        : !this.useClipboard && !this.exportFileName;
+        : !this.useClipboard && !this.exportFileName
     },
   },
 
   mounted() {
     this.tree.actions.addAction({
-      id: "transfer",
-      toolbarGroupId: "right",
+      id: 'transfer',
+      toolbarGroupId: 'right',
       toolbarOrder: 4.5,
-      label: "Transfer",
-      icon: "arrow-down-up",
+      label: 'Transfer',
+      icon: 'arrow-down-up',
       run: () => {
-        this.$refs.modal.open();
+        this.$refs.modal.open()
       },
-    });
+    })
   },
 
   methods: {
     transfer() {
       if (this.isImport) {
-        this.import();
+        this.import()
       } else {
-        this.export();
+        this.export()
       }
     },
 
     import() {
       if (this.useClipboard) {
-        this.importFromClipboard();
+        this.importFromClipboard()
       } else {
-        this.importFromFile();
+        this.importFromFile()
       }
     },
 
     importFromClipboard() {
       navigator.clipboard.readText().then((data) => {
-        this.tree.deserialize(JSON.parse(data));
-        this.$refs.modal.close();
-      });
+        this.tree.deserialize(JSON.parse(data))
+        this.$refs.modal.close()
+      })
     },
 
     importFromFile() {
-      const fileReader = new FileReader();
+      const fileReader = new FileReader()
       fileReader.onload = () => {
-        this.tree.deserialize(JSON.parse(fileReader.result));
-        this.$refs.modal.close();
-      };
-      fileReader.readAsText(this.importFile);
+        this.tree.deserialize(JSON.parse(fileReader.result))
+        this.$refs.modal.close()
+      }
+      fileReader.readAsText(this.importFile)
     },
 
     export() {
       if (this.useClipboard) {
-        this.exportToClipboard();
+        this.exportToClipboard()
       } else {
-        this.exportToFile();
+        this.exportToFile()
       }
     },
 
     exportToClipboard() {
-      const data = JSON.stringify(this.tree.serialize());
-      navigator.clipboard.writeText(data);
+      const data = JSON.stringify(this.tree.serialize())
+      navigator.clipboard.writeText(data)
     },
 
     exportToFile() {
-      const data = JSON.stringify(this.tree.serialize());
-      const blob = new Blob([data], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
+      const data = JSON.stringify(this.tree.serialize())
+      const blob = new Blob([data], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${this.exportFileName}.json`;
-      a.click();
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${this.exportFileName}.json`
+      a.click()
     },
   },
-};
+}
 </script>
 
 <style scoped>

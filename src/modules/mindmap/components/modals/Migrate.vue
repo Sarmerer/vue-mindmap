@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import { MigrationManager } from "../../types/migration-manager";
-import { Tree } from "../../../tree";
+import { MigrationManager } from '../../types/migration-manager'
+import { Tree } from '../../../tree'
 
 export default {
   props: {
@@ -24,39 +24,39 @@ export default {
   data() {
     return {
       migrationManager: new MigrationManager(),
-    };
+    }
   },
 
   mounted() {
     this.tree.actions.addAction({
-      id: "migrate",
-      toolbarGroupId: "right",
+      id: 'migrate',
+      toolbarGroupId: 'right',
       toolbarOrder: -1,
-      label: "Migrate",
-      icon: "chevrons-up",
-      hotkeys: ["ctrl+m"],
+      label: 'Migrate',
+      icon: 'chevrons-up',
+      hotkeys: ['ctrl+m'],
       when: () => this.migrationManager.isMigrationNeeded(),
       run: () => {
-        this.$refs.modal.open();
+        this.$refs.modal.open()
       },
-    });
+    })
 
-    this.maybePrompt();
+    this.maybePrompt()
   },
 
   methods: {
     maybePrompt() {
-      if (!this.migrationManager.isMigrationNeeded()) return;
+      if (!this.migrationManager.isMigrationNeeded()) return
 
-      this.$refs.modal.open();
+      this.$refs.modal.open()
     },
 
     migrate() {
-      this.migrationManager.migrate();
-      this.$refs.modal.close();
+      this.migrationManager.migrate()
+      this.$refs.modal.close()
     },
   },
-};
+}
 </script>
 
 <style scoped>

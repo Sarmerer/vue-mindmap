@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { Node } from "../types/node";
+import { Node } from '../types/node'
 
 export default {
   props: {
@@ -71,34 +71,34 @@ export default {
 
   computed: {
     childrenCount() {
-      return this.node.stats.getChildrenCount();
+      return this.node.stats.getChildrenCount()
     },
 
     completedChildrenCount() {
-      return this.node.stats.getCompletedChildrenCount();
+      return this.node.stats.getCompletedChildrenCount()
     },
 
     progress() {
-      return this.node.stats.getChildrenProgress();
+      return this.node.stats.getChildrenProgress()
     },
   },
 
   methods: {
     setLabel(value) {
-      this.node.isEditing = false;
-      this.node.setLabel(value);
+      this.node.isEditing = false
+      this.node.setLabel(value)
     },
 
     showContextMenu(e) {
-      this.node.setActive();
-      this.$emit("contextmenu", e, this.node);
+      this.node.setActive()
+      this.$emit('contextmenu', e, this.node)
     },
 
     maybeReorder() {
-      this.node.tree.reorder.maybeStart(this.node);
+      this.node.tree.reorder.maybeStart(this.node)
     },
   },
-};
+}
 </script>
 
 <style scoped>

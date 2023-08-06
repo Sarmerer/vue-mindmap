@@ -18,30 +18,30 @@ export default {
       x: 0,
       y: 0,
       open: false,
-    };
+    }
   },
 
   methods: {
     show(e) {
-      this.x = e.clientX;
-      this.y = e.clientY;
-      this.open = true;
+      this.x = e.clientX
+      this.y = e.clientY
+      this.open = true
 
-      window.addEventListener("click", this.maybeHide);
+      window.addEventListener('click', this.maybeHide)
     },
 
     hide() {
-      this.open = false;
-      window.removeEventListener("click", this.maybeHide);
+      this.open = false
+      window.removeEventListener('click', this.maybeHide)
     },
 
     maybeHide(e) {
-      if (this.$el.contains(e.target)) return;
+      if (this.$el.contains(e.target)) return
 
-      this.hide();
+      this.hide()
     },
   },
-};
+}
 </script>
 
 <style scoped>

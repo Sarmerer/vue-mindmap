@@ -5,13 +5,13 @@
 </template>
 
 <script>
-import Mindmap from "./modules/mindmap";
+import Mindmap from './modules/mindmap'
 
 export default {
-  name: "App",
+  name: 'App',
 
   components: { Mindmap },
-};
+}
 </script>
 
 <style>
@@ -84,6 +84,6 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 </style>

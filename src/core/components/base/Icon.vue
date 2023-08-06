@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import * as icons from "lucide-vue";
+import * as icons from 'lucide-vue'
 
 export default {
   props: {
@@ -21,12 +21,12 @@ export default {
   computed: {
     is() {
       const icon = this.icon
-        .split("-")
+        .split('-')
         .map((word) => word[0].toUpperCase() + word.slice(1))
-        .join("");
+        .join('')
 
-      return icons[icon];
+      return icons[icon]
     },
   },
-};
+}
 </script>

@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { Tree } from "../../../tree";
+import { Tree } from '../../../tree'
 
 export default {
   props: {
@@ -71,75 +71,75 @@ export default {
     return {
       trees: [],
       editedTree: null,
-    };
+    }
   },
 
   created() {
     this.tree.actions.addActions({
-      id: "open-trees-modal",
-      toolbarGroupId: "right",
+      id: 'open-trees-modal',
+      toolbarGroupId: 'right',
       toolbarOrder: 1.5,
-      label: "Change tree",
-      icon: "save",
-      toolbarTitle: "Change tree",
+      label: 'Change tree',
+      icon: 'save',
+      toolbarTitle: 'Change tree',
       run: () => {
-        this.updateTrees();
-        this.$refs.modal.open();
+        this.updateTrees()
+        this.$refs.modal.open()
       },
-    });
+    })
   },
 
   methods: {
     updateTrees() {
-      this.trees = Object.values(this.tree.database.getTrees());
+      this.trees = Object.values(this.tree.database.getTrees())
     },
 
     setEditedTree(tree) {
-      this.editedTree = tree;
+      this.editedTree = tree
     },
 
     setLabel(tree, label) {
-      tree.label = label;
+      tree.label = label
 
       if (tree.id === this.tree.id) {
-        this.tree.label = label;
+        this.tree.label = label
       } else {
-        this.tree.database.updateTree(tree.id, { label });
+        this.tree.database.updateTree(tree.id, { label })
       }
     },
 
     reset() {
-      this.trees = [];
-      this.editedTree = null;
+      this.trees = []
+      this.editedTree = null
     },
 
     createTree() {
-      const newTree = new Tree(this.tree.mindmap).serialize();
-      this.tree.database.createTree(newTree);
-      this.tree.deserialize(newTree);
-      this.tree.renderer.render();
+      const newTree = new Tree(this.tree.mindmap).serialize()
+      this.tree.database.createTree(newTree)
+      this.tree.deserialize(newTree)
+      this.tree.renderer.render()
 
-      this.updateTrees();
+      this.updateTrees()
     },
 
     setTree(tree) {
-      if (tree.id === this.tree.id) return;
+      if (tree.id === this.tree.id) return
 
-      this.tree.database.setTree(this.tree.id, this.tree.serialize());
-      this.tree.database.setLastTreeId(tree.id);
+      this.tree.database.setTree(this.tree.id, this.tree.serialize())
+      this.tree.database.setLastTreeId(tree.id)
 
-      this.tree.deserialize(tree);
-      this.tree.renderer.render();
+      this.tree.deserialize(tree)
+      this.tree.renderer.render()
 
-      this.$refs.modal.close();
+      this.$refs.modal.close()
     },
 
     deleteTree(tree) {
-      this.tree.database.deleteTree(tree.id);
-      this.updateTrees();
+      this.tree.database.deleteTree(tree.id)
+      this.updateTrees()
     },
   },
-};
+}
 </script>
 
 <style scoped>

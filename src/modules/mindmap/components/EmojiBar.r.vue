@@ -35,9 +35,9 @@
 </template>
 
 <script>
-import { Tree } from "../../tree";
+import { Tree } from '../../tree'
 
-import EmojiList from "./EmojiList.vue";
+import EmojiList from './EmojiList.vue'
 
 export default {
   props: {
@@ -55,8 +55,8 @@ export default {
       handler(isShown) {
         if (isShown) {
           setTimeout(() => {
-            this.$refs.searchInput.focus();
-          }, 200);
+            this.$refs.searchInput.focus()
+          }, 200)
         }
       },
     },
@@ -65,54 +65,54 @@ export default {
   data() {
     return {
       isShown: false,
-      query: "",
-    };
+      query: '',
+    }
   },
 
   computed: {
     emojis() {
       const emojis = this.query
         ? this.tree.emojiManager.search(this.query)
-        : this.tree.emojiManager.getAll();
+        : this.tree.emojiManager.getAll()
 
-      const used = new Set(this.usedEmojis.map((emoji) => emoji.key));
-      return emojis.filter((emoji) => !used.has(emoji.key));
+      const used = new Set(this.usedEmojis.map((emoji) => emoji.key))
+      return emojis.filter((emoji) => !used.has(emoji.key))
     },
 
     usedEmojis() {
-      if (!this.tree.activeNode) return [];
+      if (!this.tree.activeNode) return []
 
-      return this.tree.emojiManager.extractEmojis(this.tree.activeNode.label);
+      return this.tree.emojiManager.extractEmojis(this.tree.activeNode.label)
     },
 
     favorites() {
-      return this.tree.emojiManager.getFavorites();
+      return this.tree.emojiManager.getFavorites()
     },
   },
 
   created() {
     this.tree.actions.addAction({
-      id: "toggle-emoji-bar",
-      toolbarGroupId: "right",
-      label: "Toggle Emoji Bar",
-      icon: "smile-plus",
-      hotkeys: ["m"],
+      id: 'toggle-emoji-bar',
+      toolbarGroupId: 'right',
+      label: 'Toggle Emoji Bar',
+      icon: 'smile-plus',
+      hotkeys: ['m'],
       run: () => {
-        this.isShown = !this.isShown;
+        this.isShown = !this.isShown
       },
-    });
+    })
   },
 
   methods: {
     toggleNodeEmoji({ emoji }) {
-      this.tree.emojiManager.toggleNodeEmoji(emoji);
+      this.tree.emojiManager.toggleNodeEmoji(emoji)
     },
 
     toggleFavorite({ emoji }) {
-      this.tree.emojiManager.toggleFavorite(emoji);
+      this.tree.emojiManager.toggleFavorite(emoji)
     },
   },
-};
+}
 </script>
 
 <style scoped>

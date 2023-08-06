@@ -1,47 +1,47 @@
-import { Note } from "./note";
-import { Reorder } from "./reorder";
+import { Note } from './note'
+import { Reorder } from './reorder'
 
 export class Notebook {
   constructor(mindmap) {
-    this.mindmap = mindmap;
+    this.mindmap = mindmap
 
-    this.groups = [];
-    this.notes = [];
+    this.groups = []
+    this.notes = []
 
-    this.reorder = new Reorder(this);
+    this.reorder = new Reorder(this)
 
-    const notes = JSON.parse(localStorage.getItem("notes"));
-    if (!notes?.length) return;
+    const notes = JSON.parse(localStorage.getItem('notes'))
+    if (!notes?.length) return
 
-    this.notes = notes.map((note) => new Note(this).deserialize(note));
+    this.notes = notes.map((note) => new Note(this).deserialize(note))
   }
 
   get activeNote() {
-    if (!(this.mindmap.activeElement instanceof Note)) return null;
+    if (!(this.mindmap.activeElement instanceof Note)) return null
 
-    return this.mindmap.activeElement;
+    return this.mindmap.activeElement
   }
 
   addNote(note) {
-    this.notes.push(note);
+    this.notes.push(note)
   }
 
   removeNote(note) {
-    const index = this.notes.indexOf(note);
+    const index = this.notes.indexOf(note)
     if (index !== -1) {
-      this.notes.splice(index, 1);
+      this.notes.splice(index, 1)
     }
   }
 
   setActiveNote(note) {
-    this.mindmap.setActiveElement(note);
+    this.mindmap.setActiveElement(note)
   }
 
   serialize() {
     return {
       groups: this.groups.map((group) => group.serialize()),
       notes: this.notes.map((note) => note.serialize()),
-    };
+    }
   }
 
   deserialize(data) {}

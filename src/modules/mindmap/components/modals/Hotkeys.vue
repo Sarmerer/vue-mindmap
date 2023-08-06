@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { Tree } from "../../../tree";
+import { Tree } from '../../../tree'
 
 export default {
   props: {
@@ -28,51 +28,51 @@ export default {
 
   computed: {
     actions() {
-      const actions = [];
+      const actions = []
       for (const action of this.tree.actions.actions) {
-        if (!action.hotkeys.length) continue;
+        if (!action.hotkeys.length) continue
 
-        actions.push(action);
+        actions.push(action)
       }
 
-      return actions;
+      return actions
     },
   },
 
   created() {
     this.tree.actions.addAction({
-      id: "help",
-      toolbarGroupId: "right",
+      id: 'help',
+      toolbarGroupId: 'right',
       toolbarOrder: 5,
-      label: "Show hotkeys",
-      icon: "help-circle",
-      hotkeys: ["?", "f1"],
+      label: 'Show hotkeys',
+      icon: 'help-circle',
+      hotkeys: ['?', 'f1'],
       run: () => {
-        this.$refs.modal.open();
+        this.$refs.modal.open()
       },
-    });
+    })
   },
 
   methods: {
     formatHotkey(hotkey) {
       const symbols = {
-        arrowup: "↑",
-        arrowright: "→",
-        arrowdown: "↓",
-        arrowleft: "←",
-      };
+        arrowup: '↑',
+        arrowright: '→',
+        arrowdown: '↓',
+        arrowleft: '←',
+      }
 
       return hotkey
-        .split("+")
+        .split('+')
         .map(
           (key) =>
             symbols[key.toLowerCase()] ||
-            [key[0].toUpperCase(), key.slice(1)].join("")
+            [key[0].toUpperCase(), key.slice(1)].join('')
         )
-        .join(" + ");
+        .join(' + ')
     },
   },
-};
+}
 </script>
 
 <style scoped>

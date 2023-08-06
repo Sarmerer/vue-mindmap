@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { Canvas } from "../types/canvas";
+import { Canvas } from '../types/canvas'
 
 export default {
   props: {
@@ -24,10 +24,10 @@ export default {
 
   computed: {
     transform() {
-      return `translate3d(${this.canvas.x}px, ${this.canvas.y}px, 0) scale(${this.canvas.scale})`;
+      return `translate3d(${this.canvas.x}px, ${this.canvas.y}px, 0) scale(${this.canvas.scale})`
     },
   },
-};
+}
 </script>
 
 <style scoped>
