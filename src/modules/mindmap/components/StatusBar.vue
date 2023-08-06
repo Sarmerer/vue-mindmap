@@ -3,8 +3,7 @@
     <div class="statusbar__left">
       <span
         class="statusbar__item"
-        @click="tree.actions.run('open-trees-modal')"
-      >
+        @click="tree.actions.run('open-trees-modal')">
         <span class="statusbar__item__value">
           <BaseIcon icon="tree-pine" />
           {{ activeTreeLabel }}
@@ -40,15 +39,23 @@
 </template>
 
 <script>
-import { Tree } from '../../tree'
+import { Mindmap } from '../types/mindmap'
 
 export default {
   props: {
-    tree: Tree,
+    mindmap: Mindmap,
     required: true,
   },
 
   computed: {
+    tree() {
+      return this.mindmap.tree
+    },
+
+    canvas() {
+      return this.mindmap.canvas
+    },
+
     activeTreeLabel() {
       return this.tree.label
     },
@@ -70,7 +77,7 @@ export default {
     },
 
     zoomLevel() {
-      return `${Math.round(this.tree.canvas.scale * 100)}%`
+      return `${Math.round(this.canvas.scale * 100)}%`
     },
   },
 }

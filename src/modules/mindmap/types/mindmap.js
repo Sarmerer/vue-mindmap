@@ -1,3 +1,4 @@
+import { Canvas } from './canvas'
 import { Tree } from '../../tree'
 import { Notebook } from '../../notebook/types/notebook'
 import { ActionsManager } from './actions-manager'
@@ -10,6 +11,7 @@ export class Mindmap {
 
     this.activeElement = null
 
+    this.canvas = new Canvas()
     this.tree = new Tree(this)
     this.notebook = new Notebook(this)
 

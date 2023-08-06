@@ -9,8 +9,8 @@ export default defineActions(
     icon: 'git-fork',
     hotkeys: ['enter'],
     when: ({ tree }) => tree.nodes.length === 0,
-    run({ tree }) {
-      tree.canvas.reset()
+    run({ tree, canvas }) {
+      canvas.reset()
 
       const node = new Node(tree)
       node.isEditing = true

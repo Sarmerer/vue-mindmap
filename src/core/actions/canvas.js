@@ -7,7 +7,7 @@ export default defineActions({
   label: 'Reset canvas',
   icon: 'locate-fixed',
   hotkeys: ['alt+r'],
-  run({ tree }) {
-    tree.canvas.reset()
+  run({ canvas }) {
+    canvas.reset()
   },
 })

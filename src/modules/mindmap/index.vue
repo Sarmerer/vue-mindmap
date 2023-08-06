@@ -10,11 +10,11 @@
 
     <Notebook v-bind="{ notebook }" />
 
-    <Canvas :canvas="tree.canvas">
+    <Canvas :canvas="canvas">
       <TreeR v-bind="{ tree }" />
     </Canvas>
 
-    <StatusBar v-bind="{ tree }" />
+    <StatusBar v-bind="{ mindmap }" />
   </div>
 </template>
 
@@ -32,6 +32,7 @@ import Toolbar from './components/Toolbar.r.vue'
 import EmojiBar from './components/EmojiBar.r.vue'
 
 import Canvas from './components/Canvas.vue'
+import Notebook from '../../modules/notebook/index.vue'
 import TreeR from '../../modules/tree/index.vue'
 
 import StatusBar from './components/StatusBar.vue'
@@ -60,6 +61,10 @@ export default {
   },
 
   computed: {
+    canvas() {
+      return this.mindmap.canvas
+    },
+
     tree() {
       return this.mindmap.tree
     },

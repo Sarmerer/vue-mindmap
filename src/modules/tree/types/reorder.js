@@ -21,15 +21,19 @@ export class Reorder {
     }
   }
 
+  get canvas() {
+    return this.tree.mindmap.canvas
+  }
+
   maybeStart(node) {
     node.setActive()
 
-    let initialX = this.tree.canvas.cursorX
-    let initialY = this.tree.canvas.cursorY
+    let initialX = this.canvas.cursorX
+    let initialY = this.canvas.cursorY
 
     const maybeStart_ = () => {
-      const dx = Math.abs(this.tree.canvas.cursorX - initialX)
-      const dy = Math.abs(this.tree.canvas.cursorY - initialY)
+      const dx = Math.abs(this.canvas.cursorX - initialX)
+      const dy = Math.abs(this.canvas.cursorY - initialY)
       if (dx < 15 && dy < 15) return
 
       this.start(node)
@@ -56,8 +60,8 @@ export class Reorder {
     this.activeNode.setParent(null)
     this.activeNode.parent = DUMMY_PARENT
 
-    this.grabOffsetX = this.tree.canvas.cursorX - this.activeNode.x
-    this.grabOffsetY = this.tree.canvas.cursorY - this.activeNode.y
+    this.grabOffsetX = this.canvas.cursorX - this.activeNode.x
+    this.grabOffsetY = this.canvas.cursorY - this.activeNode.y
 
     window.addEventListener('mousemove', this.listeners.update)
     window.addEventListener('mouseup', this.listeners.end, { once: true })
@@ -66,10 +70,10 @@ export class Reorder {
   update() {
     if (!this.activeNode) return
 
-    this.activeNode.x = this.tree.canvas.cursorX - this.grabOffsetX
-    this.activeNode.y = this.tree.canvas.cursorY - this.grabOffsetY
+    this.activeNode.x = this.canvas.cursorX - this.grabOffsetX
+    this.activeNode.y = this.canvas.cursorY - this.grabOffsetY
 
-    const { cursorX, cursorY } = this.tree.canvas
+    const { cursorX, cursorY } = this.canvas
 
     const closestNode = this.getClosestNode(cursorX, cursorY)
     if (!closestNode) {
