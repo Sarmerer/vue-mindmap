@@ -1,16 +1,60 @@
 <template>
-  <div></div>
+  <div
+    :id="group.id"
+    class="group"
+    :class="{ shadow: group.isShadow }"
+    :style="{ transform: `translate(${group.x}px, ${group.y}px)` }"
+    @mousedown.stop.prevent="group.notebook.reorder.maybeStart(group)">
+    <Note
+      v-for="note in group.notes"
+      :key="note.id"
+      :note="note"
+      class="group__note" />
+  </div>
 </template>
 
 <script>
+import { Group } from '../types/group'
+
+import Note from './Note.vue'
+
 export default {
   props: {
-    notes: {
-      type: Array,
+    group: {
+      type: Group,
       required: true,
     },
   },
+
+  components: { Note },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.group {
+  display: flex;
+  position: absolute;
+  gap: 8px;
+  z-index: var(--layer-overlay);
+
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 12px;
+  width: fit-content;
+}
+
+.group:hover {
+  cursor: move;
+  border-color: #999;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.group.shadow {
+  border: 1px dashed #ccc;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.group__note {
+  position: relative;
+}
+</style>

@@ -1,14 +1,15 @@
 <template>
   <div
+    :id="note.id"
     class="note"
     :class="{
       editing: note.isEditing,
-      selected: note.isSelected,
+      active: note.isActive,
+      shadow: note.isShadow,
     }"
-    :style="{ translate: `${note.x}px ${note.y}px` }"
+    :style="{ translate }"
     @dblclick.stop.prevent="note.isEditing = true"
-    @mousedown.stop.prevent="note.notebook.reorder.start($event, note)"
-  >
+    @mousedown.stop.prevent="note.notebook.reorder.maybeStart(note)">
     <div class="note__content">
       <pre v-if="!note.isEditing" class="note__label" v-text="note.label"></pre>
 
@@ -19,8 +20,9 @@
           :value="note.label"
           placeholder="Name your note..."
           @focusout="note.isEditing = false"
-          @enter=";(note.label = $event.target.value), (note.isEditing = false)"
-        />
+          @enter="
+            ;(note.label = $event.target.value), (note.isEditing = false)
+          " />
       </div>
     </div>
   </div>
@@ -36,6 +38,14 @@ export default {
       required: true,
     },
   },
+
+  computed: {
+    translate() {
+      if (this.note.group) return '0px 0px'
+
+      return `${this.note.x}px ${this.note.y}px`
+    },
+  },
 }
 </script>
 
@@ -46,7 +56,6 @@ export default {
   flex-direction: column;
 
   z-index: var(--layer-overlay);
-  transition: transform 0.1s ease-in-out;
   cursor: pointer;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
@@ -55,7 +64,21 @@ export default {
   height: 130px;
 }
 
-.node.editing .node__content {
+.note.active {
+  z-index: var(--layer-modal);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.note.shadow {
+  border: 1px dashed var(--color-main-foreground);
+  background-color: transparent;
+}
+
+.note.shadow .note__content {
+  display: none;
+}
+
+.note.editing .note__content {
   padding: 4px;
 }
 

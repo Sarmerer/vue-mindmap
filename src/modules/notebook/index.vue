@@ -3,10 +3,12 @@
     <Group
       v-for="group in notebook.groups"
       :key="group.id"
-      v-bind="{ group }"
-    />
+      v-bind="{ group }" />
 
-    <Note v-for="note in notebook.notes" :key="note.id" v-bind="{ note }" />
+    <Note
+      v-for="note in notebook.getNotes()"
+      :key="note.id"
+      v-bind="{ note }" />
   </div>
 </template>
 
@@ -33,5 +35,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -1,53 +1,53 @@
-import { uuidv4 } from '../../../utils'
+import { Sticky } from './sticky'
 
-export class Note {
+export class Note extends Sticky {
   constructor(notebook) {
-    this.notebook = notebook
+    super(notebook)
 
-    this.id = uuidv4()
     this.group = null
-
-    this.x = 0
-    this.y = 0
-
     this.label = 'Double click to edit'
-
     this.isEditing = false
+    this.isShadow = false
   }
 
-  get isActive() {
-    return this.notebook.activeNote === this
-  }
-
-  setGroup(group) {
-    if (this.group === group) return
-
+  setGroup(group, index = -1) {
     this.group?.removeNote(this)
-
     this.group = group
+    group?.addNote(this, index)
+  }
 
-    group?.addNote(this)
+  detach() {
+    this.moveToScreenSpace()
+    this.setGroup(null)
+  }
+
+  moveToScreenSpace() {
+    const el = document.getElementById(this.id)
+    if (!el) return
+
+    const { x, y } = el.getBoundingClientRect()
+    this.x = x
+    this.y = y
   }
 
   serialize() {
     return {
-      id: this.id,
-
-      x: this.x,
-      y: this.y,
+      ...super.serialize(),
 
       label: this.label,
     }
   }
 
   deserialize(data) {
-    this.id = data.id
-
-    this.x = data.x
-    this.y = data.y
+    super.deserialize(data)
 
     this.label = data.label
 
     return this
+  }
+
+  dispose() {
+    this.setGroup(null)
+    this.notebook.removeNote(this)
   }
 }
