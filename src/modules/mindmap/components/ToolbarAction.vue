@@ -2,9 +2,8 @@
   <BaseButton
     v-bind="{ title }"
     class="action-button"
-    @click.stop="action.run()"
-  >
-    <BaseIcon :icon="action.icon" />
+    @click.stop="action.run()">
+    <BaseIcon :icon="action.icon" :intent="action.intent" />
   </BaseButton>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <component class="icon" v-bind="{ is, size }" />
+  <component class="icon" :class="[intent_]" v-bind="{ is, size }" />
 </template>
 
 <script>
@@ -16,6 +16,13 @@ export default {
       type: Number,
       default: 16,
     },
+
+    intent: {
+      type: String,
+      default: null,
+      validator: (value) =>
+        !value || ['danger', 'success', 'warning', 'info'].includes(value),
+    },
   },
 
   computed: {
@@ -27,6 +34,30 @@ export default {
 
       return icons[icon]
     },
+
+    intent_() {
+      if (!this.intent) return null
+
+      return `icon--${this.intent}`
+    },
   },
 }
 </script>
+
+<style scoped>
+.icon--danger {
+  color: #ff3860;
+}
+
+.icon--success {
+  color: #00d1b2;
+}
+
+.icon--warning {
+  color: #ffdd57;
+}
+
+.icon--info {
+  color: #209cee;
+}
+</style>
