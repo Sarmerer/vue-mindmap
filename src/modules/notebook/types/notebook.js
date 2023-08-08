@@ -13,6 +13,10 @@ export class Notebook {
     this.reorder = new Reorder(this)
   }
 
+  get repo() {
+    return this.mindmap.repo.notebook
+  }
+
   get activeSticky() {
     if (!(this.mindmap.activeElement instanceof Sticky)) return null
 
