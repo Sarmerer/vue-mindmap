@@ -10,7 +10,7 @@
 
     <Notebook v-bind="{ notebook }" />
 
-    <Canvas :canvas="canvas">
+    <Canvas :canvas="canvas" @mousedown.native="clearActiveElement">
       <TreeR v-bind="{ tree }" />
     </Canvas>
 
@@ -92,6 +92,12 @@ export default {
 
     this.mindmap.actions.addActions(...actions)
     tree.renderer.render()
+  },
+
+  methods: {
+    clearActiveElement() {
+      this.mindmap.setActiveElement(null)
+    },
   },
 }
 </script>
