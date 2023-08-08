@@ -1,6 +1,4 @@
 import { EmojiManager } from '../../../core/types/emoji-manager'
-import { Canvas } from '../../mindmap/types/canvas'
-import { Database } from '../../../core/types/database/generic'
 
 import { Navigator } from './navigator'
 import { Reorder } from './reorder'
@@ -25,7 +23,10 @@ export class Tree {
     this.rootsStack = []
 
     this.renderer = new Renderer(this)
-    this.database = null
+  }
+
+  get repo() {
+    return this.mindmap.repo.tree
   }
 
   get actions() {
@@ -83,13 +84,6 @@ export class Tree {
   popStack() {
     this.rootsStack.pop()
     this.renderer.render()
-  }
-
-  /**
-   * @param {Database} database
-   */
-  setDatabase(database) {
-    this.database = database
   }
 
   serialize() {

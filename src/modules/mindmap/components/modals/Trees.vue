@@ -8,11 +8,11 @@
         :class="{
           edited: editedTree?.id === treeItem.id,
           active: treeItem.id === tree.id,
-        }">
+        }"
+        @click="setTree(treeItem)">
         <div
           v-if="editedTree !== treeItem"
           class="tree__label"
-          @click="setTree(treeItem)"
           v-text="treeItem.label"></div>
         <BaseInput
           v-if="editedTree === treeItem"
@@ -25,13 +25,15 @@
         <div class="tree__actions">
           <BaseButton
             class="tree__actions--edit"
-            @click="setEditedTree(editedTree === treeItem ? null : treeItem)">
+            @click.stop="
+              setEditedTree(editedTree === treeItem ? null : treeItem)
+            ">
             <BaseIcon :icon="editedTree === treeItem ? 'check' : 'pencil'" />
           </BaseButton>
 
           <BaseButton
             class="tree__actions--delete"
-            @click="deleteTree(treeItem)">
+            @click.stop="deleteTree(treeItem)">
             <BaseIcon icon="trash" />
           </BaseButton>
         </div>
@@ -76,15 +78,15 @@ export default {
       label: 'Other trees',
       icon: 'save',
       run: () => {
-        this.updateTrees()
+        this.fetchTrees()
         this.$refs.modal.open()
       },
     })
   },
 
   methods: {
-    updateTrees() {
-      this.trees = Object.values(this.tree.database.getTrees())
+    fetchTrees() {
+      this.trees = Object.values(this.tree.repo.readAll())
     },
 
     setEditedTree(tree) {
@@ -94,42 +96,60 @@ export default {
     setLabel(tree, label) {
       tree.label = label
 
-      if (tree.id === this.tree.id) {
-        this.tree.label = label
+      if (tree.id !== this.tree.id) {
+        this.tree.repo.update(tree.id, tree)
       } else {
-        this.tree.database.updateTree(tree.id, { label })
+        this.tree.label = label
       }
-    },
 
-    reset() {
-      this.trees = []
-      this.editedTree = null
+      this.fetchTrees()
     },
 
     createTree() {
       const newTree = new Tree(this.tree.mindmap).serialize()
-      this.tree.database.createTree(newTree)
+      this.tree.repo.create(newTree.id, newTree)
+      this.tree.repo.setLastId(newTree.id)
+
       this.tree.deserialize(newTree)
       this.tree.renderer.render()
 
-      this.updateTrees()
+      this.fetchTrees()
     },
 
     setTree(tree) {
       if (tree.id === this.tree.id) return
 
-      this.tree.database.setTree(this.tree.id, this.tree.serialize())
-      this.tree.database.setLastTreeId(tree.id)
+      this.tree.repo.update(this.tree.id, this.tree.serialize())
 
+      this.tree.repo.setLastId(tree.id)
       this.tree.deserialize(tree)
       this.tree.renderer.render()
 
-      this.updateTrees()
+      this.fetchTrees()
     },
 
     deleteTree(tree) {
-      this.tree.database.deleteTree(tree.id)
-      this.updateTrees()
+      this.tree.repo.delete(tree.id)
+
+      this.fetchTrees()
+
+      if (tree.id === this.tree.id) {
+        this.fixActiveTree()
+      }
+    },
+
+    fixActiveTree() {
+      const lastTree = this.trees.at(-1)
+      if (!lastTree) return
+
+      this.tree.repo.setLastId(lastTree.id)
+
+      this.tree.deserialize(lastTree)
+      this.tree.renderer.render()
+    },
+
+    reset() {
+      this.editedTree = null
     },
   },
 }
