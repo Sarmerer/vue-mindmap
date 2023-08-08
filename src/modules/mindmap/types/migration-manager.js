@@ -17,8 +17,11 @@ export class MigrationManager {
     )
 
     localStorage.setItem(
-      'notes',
-      JSON.stringify(this.migrateNotes(legacyData.cards))
+      'notebook',
+      JSON.stringify({
+        groups: this.migrateNoteGroups(legacyData.cardGroups),
+        notes: this.migrateNotes(legacyData.cards),
+      })
     )
 
     if (legacyData.settings?.lastDocument) {
@@ -85,21 +88,48 @@ export class MigrationManager {
     return `${emoji} ${legacyNode.name}`
   }
 
+  migrateNoteGroups(legacyNoteGroups) {
+    if (!Array.isArray(legacyNoteGroups)) return []
+
+    const groups = []
+    for (const legacyNoteGroup of legacyNoteGroups) {
+      groups.push(this.migrateNoteGroup(legacyNoteGroup))
+    }
+
+    return groups
+  }
+
+  migrateNoteGroup(legacyNoteGroup) {
+    return {
+      id: legacyNoteGroup.id,
+      x: legacyNoteGroup.x,
+      y: legacyNoteGroup.y,
+      alignment: this.migrateLegacyGroupAlignment(legacyNoteGroup.snap),
+    }
+  }
+
+  migrateLegacyGroupAlignment(legacyAlignment) {
+    const alignment = { x: 0, y: 0 }
+
+    if (!legacyAlignment) return alignment
+
+    if (legacyAlignment.top) alignment.y = -1
+    else if (legacyAlignment.bottom) alignment.y = 1
+
+    if (legacyAlignment.left) alignment.x = -1
+    else if (legacyAlignment.right) alignment.x = 1
+
+    console.log(legacyAlignment, alignment)
+
+    return alignment
+  }
+
   migrateNotes(legacyNotes) {
     if (!Array.isArray(legacyNotes)) return []
 
-    const groupsIndex = new Map()
     const notes = []
     for (const legacyNote of legacyNotes) {
       const note = this.migrateNote(legacyNote)
-
-      if (note.group) {
-        if (!groupsIndex.has(note.group)) {
-          groupsIndex.set(note.group, uuidv4())
-        }
-
-        note.group = groupsIndex.get(note.group)
-      }
 
       notes.push(note)
     }
@@ -113,6 +143,8 @@ export class MigrationManager {
       x: legacyNote.x,
       y: legacyNote.y,
       label: legacyNote.text,
+      group: legacyNote.group,
+      order: legacyNote.orderInGroup,
     }
   }
 }

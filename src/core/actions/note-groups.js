@@ -101,11 +101,12 @@ export default defineActions(
     hotkeys: ['del', 'backspace'],
     when: ({ notebook }) => notebook.activeGroup !== null,
     run({ notebook }) {
-      for (const note of notebook.activeGroup.notes) {
+      const group = notebook.activeGroup
+      for (const note of group.notes) {
         note.dispose()
       }
 
-      notebook.activeGroup.dispose()
+      group?.dispose()
     },
   }
 )

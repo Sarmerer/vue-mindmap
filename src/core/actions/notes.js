@@ -9,7 +9,8 @@ export default defineActions(
     label: 'Add note',
     icon: 'sticker',
     hotkeys: ['n'],
-    when: ({ notebook }) => notebook.activeNote !== null,
+    when: ({ notebook, tree }) =>
+      notebook.activeSticky === null && tree.activeNode === null,
     run({ notebook }) {
       notebook.addNote(new Note(notebook))
     },

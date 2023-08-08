@@ -35,6 +35,8 @@ export class Note extends Sticky {
       ...super.serialize(),
 
       label: this.label,
+      group: this.group?.id,
+      order: this.group?.notes.indexOf(this) ?? -1,
     }
   }
 

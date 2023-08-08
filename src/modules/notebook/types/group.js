@@ -82,18 +82,17 @@ export class Group extends Sticky {
 
   serialize() {
     return {
-      id: this.id,
-      x: this.x,
-      y: this.y,
-      notes: this.notes.map((note) => note.id),
+      ...super.serialize(),
+
+      alignment: this.alignment,
     }
   }
 
   deserialize(data) {
-    this.id = data.id
-    this.x = data.x
-    this.y = data.y
-    this.notes = data.notes
+    super.deserialize(data)
+
+    this.setAxisAlignment('x', data.alignment?.x ?? 0)
+    this.setAxisAlignment('y', data.alignment?.y ?? 0)
 
     return this
   }
