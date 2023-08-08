@@ -40,14 +40,14 @@ export class Reorder {
   maybeStart(sticky) {
     sticky.setActive()
 
-    this.initialX = this.canvas.cursorX
-    this.initialY = this.canvas.cursorY
+    this.initialX = this.canvas.cursorScreenX
+    this.initialY = this.canvas.cursorScreenY
 
     const xThreshold = 15
     const yThreshold = 15
     const maybeStart_ = () => {
-      const dx = Math.abs(this.canvas.cursorX - this.initialX)
-      const dy = Math.abs(this.canvas.cursorY - this.initialY)
+      const dx = Math.abs(this.canvas.cursorScreenX - this.initialX)
+      const dy = Math.abs(this.canvas.cursorScreenY - this.initialY)
       if (dx < xThreshold && dy < yThreshold) return
 
       this.start(sticky)
@@ -65,8 +65,8 @@ export class Reorder {
     sticky.detach()
     sticky.setActive()
 
-    this.grabOffsetX = this.canvas.cursorX - sticky.x
-    this.grabOffsetY = this.canvas.cursorY - sticky.y
+    this.grabOffsetX = this.canvas.cursorScreenX - sticky.x
+    this.grabOffsetY = this.canvas.cursorScreenY - sticky.y
     this.activeSticky = sticky
 
     window.addEventListener('mousemove', this.listeners.update)
@@ -77,11 +77,11 @@ export class Reorder {
     if (!this.activeSticky) return
 
     if (!this.activeSticky.isAlignedX) {
-      this.activeSticky.x = this.canvas.cursorX - this.grabOffsetX
+      this.activeSticky.x = this.canvas.cursorScreenX - this.grabOffsetX
     }
 
     if (!this.activeSticky.isAlignedY) {
-      this.activeSticky.y = this.canvas.cursorY - this.grabOffsetY
+      this.activeSticky.y = this.canvas.cursorScreenY - this.grabOffsetY
     }
 
     if (this.activeSticky instanceof Group) return

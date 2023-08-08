@@ -13,6 +13,8 @@ export class Canvas {
 
     this.cursorX = 0
     this.cursorY = 0
+    this.cursorScreenX = 0
+    this.cursorScreenY = 0
 
     this.isPanning = false
     this.isZooming = false
@@ -25,6 +27,9 @@ export class Canvas {
   }
 
   #updateCursorPosition(event) {
+    this.cursorScreenX = event.clientX
+    this.cursorScreenY = event.clientY
+
     event = this.toCanvasSpaceEvent(event)
     this.cursorX = event.clientX
     this.cursorY = event.clientY
