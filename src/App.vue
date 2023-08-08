@@ -37,6 +37,18 @@ export default {
   --color-statusbar-separator: #e5e5e5;
   --color-statusbar-text: #2c3e50;
 
+  --color-danger-background: #e74c3c;
+  --color-danger-foreground: #ecf0f1;
+
+  --color-warning-background: #f39c12;
+  --color-warning-foreground: #ecf0f1;
+
+  --color-success-background: #2ecc71;
+  --color-success-foreground: #ecf0f1;
+
+  --color-info-background: #3498db;
+  --color-info-foreground: #ecf0f1;
+
   --layer-base: 0;
   --layer-overlay: 1;
   --layer-modal: 2;

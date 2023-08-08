@@ -125,7 +125,9 @@ export default defineActions(
     icon: 'check-square',
     hotkeys: ['shift+d'],
     when: ({ tree }) =>
-      tree.activeNode?.isActionable && !tree.activeNode.isCompletedDeep,
+      tree.activeNode?.isActionable &&
+      tree.activeNode.children.length &&
+      !tree.activeNode.isCompletedDeep,
     run({ tree }) {
       tree.activeNode.setCompleted(true, true)
     },
@@ -138,7 +140,9 @@ export default defineActions(
     icon: 'x-square',
     hotkeys: ['shift+d'],
     when: ({ tree }) =>
-      tree.activeNode?.isActionable && tree.activeNode.isCompletedDeep,
+      tree.activeNode?.isActionable &&
+      tree.activeNode.children.length &&
+      tree.activeNode.isCompletedDeep,
     run({ tree }) {
       tree.activeNode.setCompleted(false, true)
     },
@@ -172,6 +176,7 @@ export default defineActions(
     contextMenuGroupId: 'node',
     label: 'Delete',
     icon: 'trash',
+    intent: 'danger',
     hotkeys: ['delete', 'backspace'],
     when: ({ tree }) => tree.activeNode?.isActionable,
     run({ tree }) {

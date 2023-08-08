@@ -3,8 +3,9 @@
     <li
       v-for="action of actions"
       :key="action.id"
-      @click="hide(), action.run()"
-    >
+      class="node-context-menu__item"
+      :class="[`node-context-menu__item--${action.intent}`]"
+      @click="hide(), action.run()">
       <BaseIcon v-if="action.icon" :icon="action.icon" :size="14" />
       {{ action.label }}
     </li>
@@ -55,7 +56,7 @@ export default {
   padding: 8px 0;
 }
 
-.node-context-menu li {
+.node-context-menu__item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -68,8 +69,44 @@ export default {
   line-height: 1.5;
 }
 
-.node-context-menu li:hover {
+.node-context-menu__item:hover {
   background-color: var(--color-main-foreground-hover);
   color: var(--color-main-text);
+}
+
+.node-context-menu__item--danger {
+  color: var(--color-danger-background);
+}
+
+.node-context-menu__item--danger:hover {
+  background-color: var(--color-danger-background);
+  color: var(--color-danger-foreground);
+}
+
+.node-context-menu__item--warning {
+  color: var(--color-warning-background);
+}
+
+.node-context-menu__item--warning:hover {
+  background-color: var(--color-warning-background);
+  color: var(--color-warning-foreground);
+}
+
+.node-context-menu__item--success {
+  color: var(--color-success-background);
+}
+
+.node-context-menu__item--success:hover {
+  background-color: var(--color-success-background);
+  color: var(--color-success-foreground);
+}
+
+.node-context-menu__item--info {
+  color: var(--color-info-background);
+}
+
+.node-context-menu__item--info:hover {
+  background-color: var(--color-info-background);
+  color: var(--color-info-foreground);
 }
 </style>

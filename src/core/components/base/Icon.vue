@@ -46,18 +46,18 @@ export default {
 
 <style scoped>
 .icon--danger {
-  color: #ff3860;
+  color: var(--color-danger-background);
 }
 
 .icon--success {
-  color: #00d1b2;
+  color: var(--color-success-background);
 }
 
 .icon--warning {
-  color: #ffdd57;
+  color: var(--color-warning-background);
 }
 
 .icon--info {
-  color: #209cee;
+  color: var(--color-info-background);
 }
 </style>
