@@ -32,6 +32,7 @@ export default defineActions(
       note.isEditing = true
       notebook.addNote(note)
       note.setGroup(notebook.activeGroup)
+      notebook.setActiveSticky(note)
     },
   },
 

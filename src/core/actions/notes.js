@@ -12,7 +12,12 @@ export default defineActions(
     when: ({ notebook, tree }) =>
       notebook.activeSticky === null && tree.activeNode === null,
     run({ notebook }) {
-      notebook.addNote(new Note(notebook))
+      const note = new Note(notebook)
+      note.isEditing = true
+      note.x = window.innerWidth / 2
+      note.y = window.innerHeight / 2
+      notebook.addNote(note)
+      notebook.setActiveSticky(note)
     },
   },
 
@@ -53,6 +58,7 @@ export default defineActions(
     toolbarGroupId: 'left',
     label: 'Delete note',
     icon: 'trash',
+    intent: 'danger',
     hotkeys: ['del', 'backspace', 'd'],
     when: ({ notebook }) => notebook.activeNote !== null,
     run({ notebook }) {

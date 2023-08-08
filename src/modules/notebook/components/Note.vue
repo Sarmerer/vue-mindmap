@@ -54,8 +54,9 @@ export default {
   display: flex;
   position: absolute;
   flex-direction: column;
-
   z-index: var(--layer-overlay);
+
+  transition: box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
   cursor: pointer;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
@@ -66,7 +67,9 @@ export default {
 
 .note.active {
   z-index: var(--layer-modal);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-main-foreground-active);
 }
 
 .note.shadow {

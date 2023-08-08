@@ -2,7 +2,7 @@
   <div
     :id="group.id"
     class="group"
-    :class="{ shadow: group.isShadow }"
+    :class="{ active: group.isActive, shadow: group.isShadow }"
     :style="{ transform: `translate(${group.x}px, ${group.y}px)` }"
     @mousedown.stop.prevent="group.notebook.reorder.maybeStart(group)">
     <Note
@@ -37,6 +37,7 @@ export default {
   gap: 8px;
   z-index: var(--layer-overlay);
 
+  transition: border-color 0.1s ease-in-out, background-color 0.1s ease-in-out;
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 12px;
@@ -45,6 +46,11 @@ export default {
 
 .group:hover {
   cursor: move;
+  border-color: #999;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.group.active {
   border-color: #999;
   background-color: rgba(255, 255, 255, 0.15);
 }
