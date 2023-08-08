@@ -8,35 +8,30 @@
         :class="{
           edited: editedTree?.id === treeItem.id,
           active: treeItem.id === tree.id,
-        }"
-      >
+        }">
         <div
           v-if="editedTree !== treeItem"
           class="tree__label"
           @click="setTree(treeItem)"
-          v-text="treeItem.label"
-        ></div>
+          v-text="treeItem.label"></div>
         <BaseInput
           v-if="editedTree === treeItem"
           autofocus
           class="tree__label__input"
           :value="treeItem.label"
           @input="setLabel(treeItem, $event)"
-          @enter="setEditedTree(null)"
-        />
+          @enter="setEditedTree(null)" />
 
         <div class="tree__actions">
           <BaseButton
             class="tree__actions--edit"
-            @click="setEditedTree(editedTree === treeItem ? null : treeItem)"
-          >
-            <BaseIcon :icon="editedTree === treeItem ? 'check-2' : 'pencil'" />
+            @click="setEditedTree(editedTree === treeItem ? null : treeItem)">
+            <BaseIcon :icon="editedTree === treeItem ? 'check' : 'pencil'" />
           </BaseButton>
 
           <BaseButton
             class="tree__actions--delete"
-            @click="deleteTree(treeItem)"
-          >
+            @click="deleteTree(treeItem)">
             <BaseIcon icon="trash" />
           </BaseButton>
         </div>
@@ -48,8 +43,7 @@
       :class="{
         alone: trees.length === 0,
       }"
-      @click="createTree"
-    >
+      @click="createTree">
       <BaseIcon icon="plus" />
       Create new tree
     </BaseButton>
@@ -79,9 +73,8 @@ export default {
       id: 'open-trees-modal',
       toolbarGroupId: 'right',
       toolbarOrder: 1.5,
-      label: 'Change tree',
+      label: 'Other trees',
       icon: 'save',
-      toolbarTitle: 'Change tree',
       run: () => {
         this.updateTrees()
         this.$refs.modal.open()
@@ -131,7 +124,7 @@ export default {
       this.tree.deserialize(tree)
       this.tree.renderer.render()
 
-      this.$refs.modal.close()
+      this.updateTrees()
     },
 
     deleteTree(tree) {
@@ -203,7 +196,7 @@ export default {
 
   margin-top: 8px;
   width: 100%;
-  color: var(--color-main-text);
+  color: var(--color-main-background);
   text-align: left;
 }
 
@@ -214,7 +207,6 @@ export default {
   background-color: var(--color-main-foreground);
   width: 300px;
   height: 32px;
-  color: var(--color-main-background);
   font-weight: bold;
 }
 

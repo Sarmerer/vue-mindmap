@@ -6,8 +6,7 @@
       <BaseToggle
         v-if="isImport"
         v-model="useActiveNode"
-        :label="useActiveNode ? 'Append To Active Node' : 'Rewrite Tree'"
-      />
+        :label="useActiveNode ? 'Append To Active Node' : 'Rewrite Tree'" />
 
       <div v-if="isImport && !useClipboard" class="transfer__import__input">
         <input type="file" />
@@ -15,8 +14,7 @@
 
       <div
         v-else-if="!isImport && !useClipboard"
-        class="transfer__export__input"
-      >
+        class="transfer__export__input">
         <BaseInput v-model="exportFileName" />
       </div>
 
@@ -75,7 +73,7 @@ export default {
       id: 'transfer',
       toolbarGroupId: 'right',
       toolbarOrder: 4.5,
-      label: 'Transfer',
+      label: 'Import / Export',
       icon: 'arrow-down-up',
       run: () => {
         this.$refs.modal.open()

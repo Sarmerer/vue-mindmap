@@ -24,7 +24,7 @@ export default defineActions(
     id: 'add-note-to-group',
     toolbarGroupId: 'left',
     label: 'Add note',
-    icon: 'sticker',
+    icon: 'file-plus-2',
     hotkeys: ['n'],
     when: ({ notebook }) => notebook.activeGroup !== null,
     run({ notebook }) {

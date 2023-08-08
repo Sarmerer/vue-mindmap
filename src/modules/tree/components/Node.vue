@@ -11,36 +11,37 @@
     :style="{ translate: `${node.x}px ${node.y}px` }"
     @dblclick.stop.prevent="node.setEditing(true)"
     @contextmenu.stop.prevent="showContextMenu"
-    @mousedown.stop.prevent="maybeReorder"
-  >
+    @mousedown.stop.prevent="maybeReorder">
     <div v-if="!node.isEditing" class="node__content">
       <p class="node__label" v-text="node.label"></p>
 
-      <span class="node__collapsed-indicator" v-show="node.isCollapsed">
-        ...
-      </span>
-
       <span class="node__status">
         <small
-          v-if="childrenCount > 0"
+          v-show="node.isCollapsed"
+          title="Collapsed"
+          class="node__collapsed-indicator">
+          <BaseIcon icon="eye-off" />
+        </small>
+
+        <small
+          v-show="childrenCount > 0"
+          title="Overridden progress"
           class="node__progress__text"
-          :class="{ overridden: node.isChildrenCountOverridden }"
-        >
+          :class="{ overridden: node.isChildrenCountOverridden }">
           <BaseIcon v-if="node.isChildrenCountOverridden" icon="redo-dot" />
           <BaseIcon v-else icon="check-check" />
           {{ completedChildrenCount }}/{{ childrenCount }}
         </small>
 
-        <small v-if="node.weight > 1" class="node__weight">
+        <small v-show="node.weight > 1" title="Weight" class="node__weight">
           <BaseIcon icon="scale" />
           {{ node.weight }}
         </small>
 
-        <div v-if="childrenCount > 0" class="node__progress__bar">
+        <div v-show="childrenCount > 0" class="node__progress__bar">
           <div
             class="node__progress__fill"
-            :style="{ width: `${progress}%` }"
-          ></div>
+            :style="{ width: `${progress}%` }"></div>
         </div>
       </span>
     </div>
@@ -52,8 +53,7 @@
         :value="node.label"
         placeholder="Name your task..."
         @focusout="node.setEditing(false)"
-        @enter="setLabel($event.target.value)"
-      />
+        @enter="setLabel($event.target.value)" />
     </div>
   </div>
 </template>

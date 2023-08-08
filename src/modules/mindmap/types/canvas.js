@@ -89,18 +89,6 @@ export class Canvas {
     this.scale = 1
   }
 
-  toCanvasSpaceEvent(event) {
-    if (event.normalized) return event
-
-    const { x, y } = this.toCanvasSpace(event.clientX, event.clientY)
-    return new MouseEvent(event.type, {
-      ...event,
-      normalized: true,
-      clientX: x,
-      clientY: y,
-    })
-  }
-
   toCanvasSpace(x, y) {
     const el = document.getElementById(this.id)
     if (!el) return { x, y }
@@ -113,6 +101,18 @@ export class Canvas {
     }
   }
 
+  toCanvasSpaceEvent(event) {
+    if (event.normalized) return event
+
+    const { x, y } = this.toCanvasSpace(event.clientX, event.clientY)
+    return new MouseEvent(event.type, {
+      ...event,
+      normalized: true,
+      clientX: x,
+      clientY: y,
+    })
+  }
+
   toScreenSpace(x, y) {
     const el = document.getElementById(this.id)
     if (!el) return { x, y }
@@ -123,5 +123,17 @@ export class Canvas {
       x: x * this.scale + rect.left,
       y: y * this.scale + rect.top,
     }
+  }
+
+  toScreenSpaceEvent(event) {
+    if (event.normalized) return event
+
+    const { x, y } = this.toScreenSpace(event.clientX, event.clientY)
+    return new MouseEvent(event.type, {
+      ...event,
+      normalized: true,
+      clientX: x,
+      clientY: y,
+    })
   }
 }

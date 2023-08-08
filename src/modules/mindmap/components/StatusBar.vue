@@ -28,10 +28,17 @@
       </span>
     </div>
     <div class="statusbar__right">
-      <span class="statusbar__item">
-        <span class="statusbar__item__value">
-          <BaseIcon icon="zoom-in" />
-          {{ zoomLevel }}
+      <span class="statusbar__item" @click="tree.actions.run('reset-canvas')">
+        <span class="statusbar__item__values">
+          <span class="statusbar__item__value">
+            <BaseIcon icon="target" />
+            {{ canvasPosition }}
+          </span>
+
+          <span class="statusbar__item__value">
+            <BaseIcon icon="zoom-in" />
+            {{ zoomLevel }}
+          </span>
         </span>
       </span>
     </div>
@@ -74,6 +81,12 @@ export default {
     activeNodeLabel() {
       const activeNode = this.tree.activeNode
       return activeNode ? activeNode.label : 'None'
+    },
+
+    canvasPosition() {
+      const x = Math.round(this.canvas.x / this.canvas.scale)
+      const y = Math.round(this.canvas.y / this.canvas.scale)
+      return `x: ${x} y: ${y}`
     },
 
     zoomLevel() {
@@ -119,6 +132,11 @@ export default {
 .statusbar__item:hover {
   cursor: pointer;
   background-color: var(--color-statusbar-foreground-hover);
+}
+
+.statusbar__item__values {
+  display: flex;
+  gap: 8px;
 }
 
 .statusbar__item__value {

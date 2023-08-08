@@ -10,8 +10,7 @@
           label="Favorites"
           :emojis="favorites"
           @toggle="toggleNodeEmoji"
-          @favorite="toggleFavorite"
-        />
+          @favorite="toggleFavorite" />
         <hr />
       </template>
 
@@ -20,16 +19,14 @@
           label="Used"
           :emojis="usedEmojis"
           @toggle="toggleNodeEmoji"
-          @favorite="toggleFavorite"
-        />
+          @favorite="toggleFavorite" />
         <hr />
       </template>
 
       <EmojiList
         v-bind="{ emojis }"
         @toggle="toggleNodeEmoji"
-        @favorite="toggleFavorite"
-      />
+        @favorite="toggleFavorite" />
     </aside>
   </transition>
 </template>
@@ -97,6 +94,7 @@ export default {
       label: 'Toggle Emoji Bar',
       icon: 'smile-plus',
       hotkeys: ['m'],
+      when: ({ tree }) => tree.activeNode !== null,
       run: () => {
         this.isShown = !this.isShown
       },
