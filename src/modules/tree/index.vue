@@ -7,8 +7,7 @@
         v-for="link in tree.links"
         :key="link.id"
         class="link"
-        :d="link.d"
-      ></path>
+        :d="link.d"></path>
     </svg>
 
     <div :id="tree.id" class="nodes-container">
@@ -16,8 +15,7 @@
         v-for="node of tree.getNodes()"
         :key="node.id"
         v-bind="{ node }"
-        @contextmenu="showContextMenu"
-      />
+        @contextmenu.native.stop.prevent="showContextMenu" />
     </div>
   </div>
 </template>
@@ -43,7 +41,7 @@ export default {
 
   methods: {
     showContextMenu(e) {
-      e = this.tree.canvas.toCanvasSpaceEvent(e)
+      e = this.tree.mindmap.canvas.toCanvasSpaceEvent(e)
       this.$refs.nodeContextMenu.show(e)
     },
   },

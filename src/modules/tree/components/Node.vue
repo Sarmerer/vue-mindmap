@@ -10,7 +10,6 @@
     }"
     :style="{ translate: `${node.x}px ${node.y}px` }"
     @dblclick.stop.prevent="node.setEditing(true)"
-    @contextmenu.stop.prevent="showContextMenu"
     @mousedown.stop.prevent="maybeReorder">
     <div v-if="!node.isEditing" class="node__content">
       <p class="node__label" v-text="node.label"></p>
@@ -87,11 +86,6 @@ export default {
     setLabel(value) {
       this.node.isEditing = false
       this.node.setLabel(value)
-    },
-
-    showContextMenu(e) {
-      this.node.setActive()
-      this.$emit('contextmenu', e, this.node)
     },
 
     maybeReorder() {

@@ -24,7 +24,6 @@ export class Tree {
     this.reorder = new Reorder(this)
     this.rootsStack = []
 
-    this.canvas = new Canvas()
     this.renderer = new Renderer(this)
     this.database = null
   }
