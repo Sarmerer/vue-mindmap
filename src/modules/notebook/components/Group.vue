@@ -5,11 +5,17 @@
     :class="{ active: group.isActive, shadow: group.isShadow }"
     :style="{ transform: `translate(${group.x}px, ${group.y}px)` }"
     @mousedown.stop.prevent="group.notebook.reorder.maybeStart(group)">
-    <Note
-      v-for="note in group.notes"
-      :key="note.id"
-      :note="note"
-      class="group__note" />
+    <div class="group__handle">
+      <BaseIcon icon="grip" :size="14" />
+    </div>
+
+    <div class="group__notes">
+      <Note
+        v-for="note in group.notes"
+        :key="note.id"
+        :note="note"
+        class="group__note" />
+    </div>
   </div>
 </template>
 
@@ -34,17 +40,17 @@ export default {
 .group {
   display: flex;
   position: absolute;
+  flex-direction: column;
   gap: 8px;
   z-index: var(--layer-overlay);
 
   transition: border-color 0.1s ease-in-out, background-color 0.1s ease-in-out;
   border: 1px solid #ccc;
   border-radius: 6px;
-  padding: 12px;
   width: fit-content;
 }
 
-.group:hover {
+.group:hover:not(:has(*:hover)) {
   cursor: move;
   border-color: #999;
   background-color: rgba(255, 255, 255, 0.15);
@@ -58,6 +64,25 @@ export default {
 .group.shadow {
   border: 1px dashed #ccc;
   background-color: rgba(255, 255, 255, 0.15);
+}
+
+.group__handle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: move;
+  width: 24px;
+  height: 24px;
+
+  color: #999;
+}
+
+.group__notes {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  padding-top: 0;
 }
 
 .group__note {

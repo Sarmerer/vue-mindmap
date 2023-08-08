@@ -35,7 +35,13 @@ export class Group extends Sticky {
     this.align()
   }
 
+  alignLate() {
+    setTimeout(this.align.bind(this), 0)
+  }
+
   align() {
+    if (!this.isAligned) return
+
     const canvas = document.getElementById(this.notebook.mindmap.canvas.id)
     if (!canvas) return
 
@@ -44,17 +50,18 @@ export class Group extends Sticky {
 
     const boundaries = canvas.getBoundingClientRect()
     const { width, height } = el.getBoundingClientRect()
+    const margin = 10
 
     if (this.alignment.y === -1) {
-      this.y = 0 + 48
+      this.y = 0 + 48 + margin
     } else if (this.alignment.y === 1) {
-      this.y = boundaries.height - height - 25
+      this.y = boundaries.height - height - 25 - margin
     }
 
     if (this.alignment.x === -1) {
-      this.x = 0
+      this.x = 0 + margin
     } else if (this.alignment.x === 1) {
-      this.x = boundaries.width - width
+      this.x = boundaries.width - width - margin
     }
   }
 
@@ -67,6 +74,7 @@ export class Group extends Sticky {
     }
 
     this.notes.splice(index, 0, note)
+    this.alignLate()
   }
 
   removeNote(note) {
@@ -77,7 +85,10 @@ export class Group extends Sticky {
 
     if (this.notes.length === 0) {
       this.dispose()
+      return
     }
+
+    this.alignLate()
   }
 
   serialize() {

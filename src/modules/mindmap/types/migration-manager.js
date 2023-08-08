@@ -119,8 +119,6 @@ export class MigrationManager {
     if (legacyAlignment.left) alignment.x = -1
     else if (legacyAlignment.right) alignment.x = 1
 
-    console.log(legacyAlignment, alignment)
-
     return alignment
   }
 

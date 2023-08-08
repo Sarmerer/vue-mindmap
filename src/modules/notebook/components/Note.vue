@@ -65,6 +65,11 @@ export default {
   height: 130px;
 }
 
+.note:hover {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+  background-color: var(--color-main-foreground-hover);
+}
+
 .note.active {
   z-index: var(--layer-modal);
 
