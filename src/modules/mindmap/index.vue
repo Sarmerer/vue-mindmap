@@ -20,7 +20,6 @@
 
 <script>
 import { Mindmap } from '../mindmap/types/mindmap'
-import { LocalStorage } from '../../core/types/database/localstorage'
 import actions from '../../core/actions'
 
 import TreesModal from './components/modals/Trees.vue'
@@ -76,22 +75,8 @@ export default {
 
   created() {
     this.mindmap = new Mindmap()
-
-    const { tree } = this.mindmap
-    tree.setDatabase(new LocalStorage())
-
-    const lastTree = tree.database.getLastTreeId()
-    if (lastTree) {
-      tree.deserialize(tree.database.getTree(lastTree))
-    }
-
-    window.addEventListener('beforeunload', () => {
-      tree.database.setTree(tree.id, tree.serialize())
-      tree.database.setLastTreeId(tree.id)
-    })
-
+    this.mindmap.repo.init()
     this.mindmap.actions.addActions(...actions)
-    tree.renderer.render()
   },
 
   methods: {

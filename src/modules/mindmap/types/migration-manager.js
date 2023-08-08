@@ -2,12 +2,18 @@ import { uuidv4 } from '../../../utils'
 import { get } from 'node-emoji'
 
 export class MigrationManager {
+  constructor(mindmap) {
+    this.mindmap = mindmap
+  }
+
   isMigrationNeeded() {
     return localStorage.getItem('vuex') !== null
   }
 
   migrate() {
     if (!this.isMigrationNeeded()) return
+
+    this.mindmap.repo.flush()
 
     const legacyData = JSON.parse(localStorage.getItem('vuex'))
 
@@ -31,6 +37,9 @@ export class MigrationManager {
 
     localStorage.setItem('vuex-migrated', JSON.stringify(legacyData))
     localStorage.removeItem('vuex')
+
+    this.mindmap.repo.cache(true)
+    this.mindmap.repo.init()
   }
 
   migrateTrees(legacyTrees) {

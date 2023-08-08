@@ -2,6 +2,7 @@ import { Canvas } from './canvas'
 import { Tree } from '../../tree'
 import { Notebook } from '../../notebook/types/notebook'
 import { ActionsManager } from './actions-manager'
+import MindmapRepo from '../repo'
 
 import { uuidv4 } from '../../../utils'
 
@@ -16,6 +17,7 @@ export class Mindmap {
     this.notebook = new Notebook(this)
 
     this.actions = new ActionsManager(this)
+    this.repo = new MindmapRepo(this)
   }
 
   setActiveElement(element) {

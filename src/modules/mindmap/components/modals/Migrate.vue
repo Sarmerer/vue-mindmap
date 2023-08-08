@@ -23,7 +23,7 @@ export default {
 
   data() {
     return {
-      migrationManager: new MigrationManager(),
+      migrationManager: new MigrationManager(this.tree.mindmap),
     }
   },
 
