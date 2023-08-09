@@ -11,7 +11,12 @@
     @dblclick.stop.prevent="note.isEditing = true"
     @mousedown.stop.prevent="note.notebook.reorder.maybeStart(note)">
     <div class="note__content">
-      <pre v-if="!note.isEditing" class="note__label" v-text="note.label"></pre>
+      <template v-if="!note.isEditing">
+        <pre class="note__label" v-text="note.label"></pre>
+        <span class="note__icon-wrapper" @click="toggleEmojiBar">
+          <span v-if="note.icon" class="note__icon" v-text="note.icon"></span>
+        </span>
+      </template>
 
       <div v-else class="note__editor">
         <BaseTextarea
@@ -44,6 +49,12 @@ export default {
       if (this.note.group) return '0px 0px'
 
       return `${this.note.x}px ${this.note.y}px`
+    },
+  },
+
+  methods: {
+    toggleEmojiBar() {
+      this.note.notebook.actions.run('toggle-emoji-bar')
     },
   },
 }
@@ -94,8 +105,10 @@ export default {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  padding: 8px;
+  justify-content: space-between;
 
+  cursor: grab;
+  padding: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -104,15 +117,35 @@ export default {
 .note__label {
   word-wrap: break-word;
   display: inline;
+
+  cursor: text;
   margin: 0;
   border: none;
   background-color: transparent;
   padding: 0;
-
   font-size: 14px;
   font-family: inherit;
   user-select: none;
   white-space: pre-wrap;
+}
+
+.note__icon-wrapper {
+  align-self: flex-end;
+
+  cursor: pointer;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+}
+
+.note__icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -2px;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
 }
 
 .note__editor {

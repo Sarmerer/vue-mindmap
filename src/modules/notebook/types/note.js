@@ -1,3 +1,4 @@
+import EmojiApplicable from '../../emoji/types/emoji-applicable'
 import { Sticky } from './sticky'
 
 export class Note extends Sticky {
@@ -6,6 +7,13 @@ export class Note extends Sticky {
 
     this.group = null
     this.label = 'Double click to edit'
+    this.icon = null
+    this.emoji = new EmojiApplicable({
+      getEmoji: this.getEmoji.bind(this),
+      addEmoji: this.addEmoji.bind(this),
+      removeEmoji: this.removeEmoji.bind(this),
+    })
+
     this.isEditing = false
     this.isShadow = false
   }
@@ -30,11 +38,29 @@ export class Note extends Sticky {
     this.y = y
   }
 
+  getEmoji() {
+    if (typeof this.icon !== 'string') return []
+
+    const emoji = this.emoji.utils.find(this.icon)
+    if (!emoji) return []
+
+    return [emoji]
+  }
+
+  addEmoji(emoji) {
+    this.icon = emoji
+  }
+
+  removeEmoji() {
+    this.icon = null
+  }
+
   serialize() {
     return {
       ...super.serialize(),
 
       label: this.label,
+      icon: this.icon,
       group: this.group?.id,
       order: this.group?.notes.indexOf(this) ?? -1,
     }
@@ -44,6 +70,7 @@ export class Note extends Sticky {
     super.deserialize(data)
 
     this.label = data.label
+    this.icon = data.icon
 
     return this
   }

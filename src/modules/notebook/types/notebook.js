@@ -17,6 +17,10 @@ export class Notebook {
     return this.mindmap.repo.notebook
   }
 
+  get actions() {
+    return this.mindmap.actions
+  }
+
   get activeSticky() {
     if (!(this.mindmap.activeElement instanceof Sticky)) return null
 

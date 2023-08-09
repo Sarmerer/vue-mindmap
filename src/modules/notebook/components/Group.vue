@@ -58,7 +58,7 @@ export default {
 }
 
 .group:hover:not(:has(*:hover)) {
-  cursor: move;
+  cursor: grab;
   border-color: #999;
   background-color: rgba(255, 255, 255, 0.15);
 }
@@ -94,7 +94,7 @@ export default {
   justify-content: center;
   align-items: center;
 
-  cursor: move;
+  cursor: grab;
   width: 24px;
   height: 24px;
 
