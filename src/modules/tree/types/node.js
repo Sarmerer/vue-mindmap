@@ -1,3 +1,4 @@
+import EmojiApplicable from '../../emoji/types/emoji-applicable'
 import { NodeStats } from './node-stats'
 import { uuidv4 } from '../../../utils'
 
@@ -19,6 +20,11 @@ export class Node {
     this.childrenCountOverride = 0
     this.completedChildrenCountOverride = 0
     this.stats = new NodeStats(this)
+    this.emoji = new EmojiApplicable({
+      getEmoji: this.getEmoji.bind(this),
+      addEmoji: this.addEmoji.bind(this),
+      removeEmoji: this.removeEmoji.bind(this),
+    })
 
     this.isEditing = false
     this.isCollapsed = false
@@ -120,11 +126,6 @@ export class Node {
     this.tree.renderer.render()
   }
 
-  setLabel(label) {
-    this.label = label
-    this.tree.renderer.render()
-  }
-
   setActive() {
     this.tree.setActiveNode(this)
   }
@@ -143,6 +144,38 @@ export class Node {
     }
 
     return this.children
+  }
+
+  setLabel(label) {
+    this.label = label
+    this.tree.renderer.render()
+  }
+
+  setLabelEmoji(emoji) {
+    const label = this.emoji.utils.strip(this.label)
+    this.setLabel(`${emoji} ${label}`)
+  }
+
+  getEmoji() {
+    const emoji = []
+    this.emoji.utils.replace(this.label, emoji.push.bind(emoji))
+    return emoji
+  }
+
+  addEmoji(emoji) {
+    const used = new Set(this.getEmoji().map(({ emoji }) => emoji))
+    if (used.has(emoji)) return
+
+    used.add(emoji)
+    this.setLabelEmoji(Array.from(used).join(''))
+  }
+
+  removeEmoji(emoji) {
+    const used = new Set(this.getEmoji().map(({ emoji }) => emoji))
+    if (!used.has(emoji)) return
+
+    used.delete(emoji)
+    this.setLabelEmoji(Array.from(used).join(''))
   }
 
   measure() {
