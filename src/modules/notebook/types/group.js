@@ -52,6 +52,11 @@ export class Group extends Sticky {
   }
 
   dispose() {
+    const notes = this.notes.slice()
+    for (const note of notes) {
+      note.dispose()
+    }
+
     this.notebook.removeGroup(this)
   }
 }

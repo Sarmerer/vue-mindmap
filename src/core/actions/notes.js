@@ -96,7 +96,7 @@ export default defineActions(
     hotkeys: ['del', 'backspace', 'd'],
     when: isActionable,
     run({ notebook }) {
-      notebook.removeNote(notebook.activeNote)
+      notebook.activeNote?.dispose()
     },
   }
 )

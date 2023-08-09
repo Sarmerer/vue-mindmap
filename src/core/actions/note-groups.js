@@ -85,12 +85,7 @@ export default defineActions(
     hotkeys: ['del', 'backspace'],
     when: ({ notebook }) => notebook.activeGroup !== null,
     run({ notebook }) {
-      const group = notebook.activeGroup
-      for (const note of group.notes) {
-        note.dispose()
-      }
-
-      group?.dispose()
+      notebook.activeGroup?.dispose()
     },
   }
 )
