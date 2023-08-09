@@ -140,7 +140,11 @@ export default {
 
     fixActiveTree() {
       const lastTree = this.trees.at(-1)
-      if (!lastTree) return
+      if (!lastTree) {
+        this.tree.deserialize(new Tree(this.tree.mindmap).serialize())
+        this.tree.renderer.render()
+        return
+      }
 
       this.tree.repo.setLastId(lastTree.id)
 

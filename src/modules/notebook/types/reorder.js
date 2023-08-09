@@ -76,11 +76,11 @@ export class Reorder {
   update() {
     if (!this.activeSticky) return
 
-    if (!this.activeSticky.isAlignedX) {
+    if (!this.activeSticky.align?.isAlignedX) {
       this.activeSticky.x = this.canvas.cursorScreenX - this.grabOffsetX
     }
 
-    if (!this.activeSticky.isAlignedY) {
+    if (!this.activeSticky.align?.isAlignedY) {
       this.activeSticky.y = this.canvas.cursorScreenY - this.grabOffsetY
     }
 

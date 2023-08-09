@@ -113,22 +113,22 @@ export class MigrationManager {
       id: legacyNoteGroup.id,
       x: legacyNoteGroup.x,
       y: legacyNoteGroup.y,
-      alignment: this.migrateLegacyGroupAlignment(legacyNoteGroup.snap),
+      align: this.migrateLegacyGroupAlign(legacyNoteGroup.snap),
     }
   }
 
-  migrateLegacyGroupAlignment(legacyAlignment) {
-    const alignment = { x: 0, y: 0 }
+  migrateLegacyGroupAlign(legacyAlignment) {
+    const align = { x: 0, y: 0 }
 
-    if (!legacyAlignment) return alignment
+    if (!legacyAlignment) return align
 
-    if (legacyAlignment.top) alignment.y = -1
-    else if (legacyAlignment.bottom) alignment.y = 1
+    if (legacyAlignment.top) align.y = -1
+    else if (legacyAlignment.bottom) align.y = 1
 
-    if (legacyAlignment.left) alignment.x = -1
-    else if (legacyAlignment.right) alignment.x = 1
+    if (legacyAlignment.left) align.x = -1
+    else if (legacyAlignment.right) align.x = 1
 
-    return alignment
+    return align
   }
 
   migrateNotes(legacyNotes) {

@@ -1,24 +1,6 @@
 import { defineActions } from '../../modules/mindmap/types/actions-manager'
 import { Note } from '../../modules/notebook/types/note'
 
-const isAligned = (notebook, axis) => {
-  const group = notebook.activeGroup
-  if (!group) return false
-
-  switch (axis) {
-    case 'up':
-      return group.alignment.y === -1
-    case 'right':
-      return group.alignment.x === 1
-    case 'bottom':
-      return group.alignment.y === 1
-    case 'left':
-      return group.alignment.x === -1
-    default:
-      return false
-  }
-}
-
 export default defineActions(
   {
     id: 'add-note-to-group',
@@ -41,12 +23,12 @@ export default defineActions(
     toolbarGroupId: 'left',
     label: 'Align group up',
     icon: 'align-start-horizontal',
-    intent: ({ notebook }) => (isAligned(notebook, 'up') ? 'success' : null),
+    intent: ({ notebook }) => (notebook.activeGroup.align.up ? 'info' : null),
     hotkeys: ['u'],
     when: ({ notebook }) => notebook.activeGroup !== null,
     run({ notebook }) {
-      const value = isAligned(notebook, 'up') ? 0 : -1
-      notebook.activeGroup.setAxisAlignment('y', value)
+      const value = notebook.activeGroup.align.up ? 0 : -1
+      notebook.activeGroup.align.set('y', value)
     },
   },
 
@@ -55,12 +37,13 @@ export default defineActions(
     toolbarGroupId: 'left',
     label: 'Align group right',
     icon: 'align-end-vertical',
-    intent: ({ notebook }) => (isAligned(notebook, 'right') ? 'success' : null),
+    intent: ({ notebook }) =>
+      notebook.activeGroup.align.right ? 'info' : null,
     hotkeys: ['r'],
     when: ({ notebook }) => notebook.activeGroup !== null,
     run({ notebook }) {
-      const value = isAligned(notebook, 'right') ? 0 : 1
-      notebook.activeGroup.setAxisAlignment('x', value)
+      const value = notebook.activeGroup.align.right ? 0 : 1
+      notebook.activeGroup.align.set('x', value)
     },
   },
 
@@ -70,12 +53,12 @@ export default defineActions(
     label: 'Align group down',
     icon: 'align-end-horizontal',
     intent: ({ notebook }) =>
-      isAligned(notebook, 'bottom') ? 'success' : null,
+      notebook.activeGroup.align.bottom ? 'info' : null,
     hotkeys: ['b'],
     when: ({ notebook }) => notebook.activeGroup !== null,
     run({ notebook }) {
-      const value = isAligned(notebook, 'bottom') ? 0 : 1
-      notebook.activeGroup.setAxisAlignment('y', value)
+      const value = notebook.activeGroup.align.bottom ? 0 : 1
+      notebook.activeGroup.align.set('y', value)
     },
   },
 
@@ -84,12 +67,12 @@ export default defineActions(
     toolbarGroupId: 'left',
     label: 'Align group left',
     icon: 'align-start-vertical',
-    intent: ({ notebook }) => (isAligned(notebook, 'left') ? 'success' : null),
+    intent: ({ notebook }) => (notebook.activeGroup.align.left ? 'info' : null),
     hotkeys: ['l'],
     when: ({ notebook }) => notebook.activeGroup !== null,
     run({ notebook }) {
-      const value = isAligned(notebook, 'left') ? 0 : -1
-      notebook.activeGroup.setAxisAlignment('x', value)
+      const value = notebook.activeGroup.align.left ? 0 : -1
+      notebook.activeGroup.align.set('x', value)
     },
   },
 

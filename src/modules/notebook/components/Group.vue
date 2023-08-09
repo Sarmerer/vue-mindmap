@@ -2,7 +2,14 @@
   <div
     :id="group.id"
     class="group"
-    :class="{ active: group.isActive, shadow: group.isShadow }"
+    :class="{
+      active: group.isActive,
+      shadow: group.isShadow,
+      'align--left': group.align.left,
+      'align--right': group.align.right,
+      'align--up': group.align.top,
+      'align--bottom': group.align.bottom,
+    }"
     :style="{ transform: `translate(${group.x}px, ${group.y}px)` }"
     @mousedown.stop.prevent="group.notebook.reorder.maybeStart(group)">
     <div class="group__handle">
@@ -64,6 +71,22 @@ export default {
 .group.shadow {
   border: 1px dashed #ccc;
   background-color: rgba(255, 255, 255, 0.15);
+}
+
+.group.align--up {
+  border-top: 1px solid var(--color-info-background);
+}
+
+.group.align--right {
+  border-right: 1px solid var(--color-info-background);
+}
+
+.group.align--bottom {
+  border-bottom: 1px solid var(--color-info-background);
+}
+
+.group.align--left {
+  border-left: 1px solid var(--color-info-background);
 }
 
 .group__handle {
