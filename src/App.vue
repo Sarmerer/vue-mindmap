@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Mindmap from './modules/mindmap'
+import Mindmap from './modules/mindmap/index.vue'
 
 export default {
   name: 'App',

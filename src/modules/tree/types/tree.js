@@ -1,5 +1,3 @@
-import { EmojiManager } from '../../../core/types/emoji-manager'
-
 import { Navigator } from './navigator'
 import { Reorder } from './reorder'
 import { Renderer } from './renderer'
@@ -18,7 +16,6 @@ export class Tree {
     this.links = []
 
     this.navigator = new Navigator(this)
-    this.emojiManager = new EmojiManager(this)
     this.reorder = new Reorder(this)
     this.rootsStack = []
 

@@ -9,7 +9,7 @@
         <EmojiList
           label="Favorites"
           :emojis="favorites"
-          @toggle="toggleNodeEmoji"
+          @toggle="toggleEmoji"
           @favorite="toggleFavorite" />
         <hr />
       </template>
@@ -18,28 +18,28 @@
         <EmojiList
           label="Used"
           :emojis="usedEmojis"
-          @toggle="toggleNodeEmoji"
+          @toggle="toggleEmoji"
           @favorite="toggleFavorite" />
         <hr />
       </template>
 
       <EmojiList
         v-bind="{ emojis }"
-        @toggle="toggleNodeEmoji"
+        @toggle="toggleEmoji"
         @favorite="toggleFavorite" />
     </aside>
   </transition>
 </template>
 
 <script>
-import { Tree } from '../../tree'
+import { Mindmap } from '../mindmap'
 
-import EmojiList from './EmojiList.vue'
+import EmojiList from './components/EmojiList.vue'
 
 export default {
   props: {
-    tree: {
-      type: Tree,
+    mindmap: {
+      type: Mindmap,
       required: true,
     },
   },
@@ -57,6 +57,15 @@ export default {
         }
       },
     },
+
+    'mindmap.activeElement': {
+      immediate: true,
+      handler(element) {
+        if (!this.isShown) return
+
+        this.isShown = element?.emoji != null
+      },
+    },
   },
 
   data() {
@@ -69,32 +78,32 @@ export default {
   computed: {
     emojis() {
       const emojis = this.query
-        ? this.tree.emojiManager.search(this.query)
-        : this.tree.emojiManager.getAll()
+        ? this.mindmap.emoji.search(this.query)
+        : this.mindmap.emoji.getAll()
 
       const used = new Set(this.usedEmojis.map((emoji) => emoji.key))
       return emojis.filter((emoji) => !used.has(emoji.key))
     },
 
     usedEmojis() {
-      if (!this.tree.activeNode) return []
+      if (!this.mindmap.activeElement?.emoji) return []
 
-      return this.tree.emojiManager.extractEmojis(this.tree.activeNode.label)
+      return this.mindmap.activeElement.emoji.getEmoji()
     },
 
     favorites() {
-      return this.tree.emojiManager.getFavorites()
+      return this.mindmap.emoji.getFavorites()
     },
   },
 
   created() {
-    this.tree.actions.addAction({
+    this.mindmap.actions.addAction({
       id: 'toggle-emoji-bar',
       toolbarGroupId: 'right',
       label: 'Toggle Emoji Bar',
       icon: 'smile-plus',
       hotkeys: ['m'],
-      when: ({ tree }) => tree.activeNode !== null,
+      when: ({ activeElement }) => activeElement?.emoji != null,
       run: () => {
         this.isShown = !this.isShown
       },
@@ -102,12 +111,35 @@ export default {
   },
 
   methods: {
-    toggleNodeEmoji({ emoji }) {
-      this.tree.emojiManager.toggleNodeEmoji(emoji)
+    toggleFavorite({ emoji }) {
+      this.mindmap.emoji.toggleFavorite(emoji)
     },
 
-    toggleFavorite({ emoji }) {
-      this.tree.emojiManager.toggleFavorite(emoji)
+    toggleEmoji(emoji) {
+      const applicable = this.mindmap.activeElement?.emoji
+      if (!applicable) return
+
+      const used = applicable.getEmoji()
+      const index = used.findIndex((e) => e.key === emoji.key)
+      if (index === -1) {
+        applicable.addEmoji(emoji)
+      } else {
+        applicable.removeEmoji(emoji)
+      }
+    },
+
+    addEmoji({ emoji }) {
+      const applicable = this.mindmap.activeElement?.emoji
+      if (!applicable) return
+
+      applicable.addEmoji(emoji)
+    },
+
+    removeEmoji({ emoji }) {
+      const applicable = this.mindmap.activeElement?.emoji
+      if (!applicable) return
+
+      applicable.removeEmoji(emoji)
     },
   },
 }

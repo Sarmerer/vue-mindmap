@@ -6,7 +6,7 @@
     <MigrateModal v-bind="{ tree }" />
 
     <Toolbar v-bind="{ tree }" />
-    <EmojiBar v-bind="{ tree }" />
+    <EmojiBar v-bind="{ mindmap }" />
 
     <Notebook v-bind="{ notebook }" />
 
@@ -28,7 +28,7 @@ import HotkeysModal from './components/modals/Hotkeys.vue'
 import MigrateModal from './components/modals/Migrate.vue'
 
 import Toolbar from './components/Toolbar.r.vue'
-import EmojiBar from './components/EmojiBar.r.vue'
+import EmojiBar from '../emoji'
 
 import Canvas from './components/Canvas.vue'
 import Notebook from '../../modules/notebook/index.vue'

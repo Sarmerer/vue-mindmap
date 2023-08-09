@@ -1,7 +1,9 @@
 import { Canvas } from './canvas'
 import { Tree } from '../../tree'
 import { Notebook } from '../../notebook/types/notebook'
+
 import { ActionsManager } from './actions-manager'
+import { EmojiManager } from '../../emoji/types/emoji-manager'
 import MindmapRepo from '../repo'
 
 import { uuidv4 } from '../../../utils'
@@ -16,6 +18,7 @@ export class Mindmap {
     this.tree = new Tree(this)
     this.notebook = new Notebook(this)
 
+    this.emoji = new EmojiManager(this)
     this.actions = new ActionsManager(this)
     this.repo = new MindmapRepo(this)
   }
