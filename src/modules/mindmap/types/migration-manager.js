@@ -1,5 +1,5 @@
 import { uuidv4 } from '../../../utils'
-import { get } from 'node-emoji'
+import { get as getEmojiByName } from 'node-emoji'
 
 export class MigrationManager {
   constructor(mindmap) {
@@ -28,6 +28,11 @@ export class MigrationManager {
         groups: this.migrateNoteGroups(legacyData.cardGroups),
         notes: this.migrateNotes(legacyData.cards),
       })
+    )
+
+    localStorage.setItem(
+      'favoriteEmoji',
+      JSON.stringify(this.migrateFavoriteEmoji(legacyData.favoriteEmojis))
     )
 
     if (legacyData.settings?.lastDocument) {
@@ -93,7 +98,9 @@ export class MigrationManager {
   migrateNodeLabel(legacyNode) {
     if (!Array.isArray(legacyNode.emoji)) return legacyNode.name
 
-    const emoji = legacyNode.emoji.map((emoji) => get(emoji)).join(' ')
+    const emoji = legacyNode.emoji
+      .map((emoji) => getEmojiByName(emoji))
+      .join(' ')
     return `${emoji} ${legacyNode.name}`
   }
 
@@ -150,8 +157,23 @@ export class MigrationManager {
       x: legacyNote.x,
       y: legacyNote.y,
       label: legacyNote.text,
+      icon: legacyNote.icon,
       group: legacyNote.group,
       order: legacyNote.orderInGroup,
     }
+  }
+
+  migrateFavoriteEmoji(legacyFavoriteEmoji) {
+    if (!Array.isArray(legacyFavoriteEmoji)) return []
+
+    const favoriteEmoji = []
+    for (const legacyEmoji of legacyFavoriteEmoji) {
+      const emoji = getEmojiByName(legacyEmoji)
+      if (!emoji) continue
+
+      favoriteEmoji.push(emoji)
+    }
+
+    return favoriteEmoji
   }
 }

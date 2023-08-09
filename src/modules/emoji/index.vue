@@ -18,14 +18,14 @@
         <EmojiList
           label="Used"
           :emojis="usedEmojis"
-          @toggle="toggleEmoji"
+          @toggle="removeEmoji"
           @favorite="toggleFavorite" />
         <hr />
       </template>
 
       <EmojiList
         v-bind="{ emojis }"
-        @toggle="toggleEmoji"
+        @toggle="addEmoji"
         @favorite="toggleFavorite" />
     </aside>
   </transition>
@@ -122,9 +122,9 @@ export default {
       const used = applicable.getEmoji()
       const index = used.findIndex((e) => e.key === emoji.key)
       if (index === -1) {
-        applicable.addEmoji(emoji)
+        this.addEmoji(emoji)
       } else {
-        applicable.removeEmoji(emoji)
+        this.removeEmoji(emoji)
       }
     },
 

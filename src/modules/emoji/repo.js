@@ -13,7 +13,7 @@ export default class EmojiRepo {
     if (this.#didCache && !flush) return
 
     try {
-      this.emoji.favorites = JSON.parse(localStorage.getItem('favoriteEmojis'))
+      this.emoji.favorites = JSON.parse(localStorage.getItem('favoriteEmoji'))
     } catch (error) {
       console.error('Failed to initialize emojis from localStorage', error)
     } finally {
@@ -26,6 +26,6 @@ export default class EmojiRepo {
   }
 
   flush() {
-    localStorage.setItem('favoriteEmojis', JSON.stringify(this.emoji.favorites))
+    localStorage.setItem('favoriteEmoji', JSON.stringify(this.emoji.favorites))
   }
 }
