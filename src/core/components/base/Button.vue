@@ -2,8 +2,7 @@
   <button
     :class="['base-button', `base-button--${intent}`]"
     v-bind="$attrs"
-    v-on="$listeners"
-  >
+    v-on="$listeners">
     <slot name="icon-left">
       <BaseIcon v-if="iconLeft" :icon="iconLeft" />
     </slot>
@@ -62,39 +61,27 @@ export default {
   cursor: not-allowed;
 }
 
-.base-button--primary {
-  background-color: var(--color-main-foreground);
-  color: var(--color-main-background);
+.base-button:hover:enabled {
+  opacity: 0.8;
 }
 
-.base-button--primary:hover:enabled {
-  background-color: var(--color-main-foreground-hover);
+.base-button--primary {
+  background-color: var(--color-button-background);
+  color: var(--color-button-foreground);
 }
 
 .base-button--secondary {
-  background-color: var(--color-main-background);
-  color: var(--color-main-foreground);
-}
-
-.base-button--secondary:hover:enabled {
-  background-color: var(--color-main-background-hover);
+  background-color: var(--color-button-background-secondary);
+  color: var(--color-button-foreground-secondary);
 }
 
 .base-button--danger {
-  background-color: var(--color-danger-foreground);
-  color: var(--color-danger-background);
-}
-
-.base-button--danger:hover:enabled {
-  background-color: var(--color-danger-foreground-hover);
+  background-color: var(--color-danger-background);
+  color: var(--color-danger-foreground);
 }
 
 .base-button--text {
   background-color: transparent;
-  color: var(--color-main-foreground);
-}
-
-.base-button--text:hover:enabled {
-  background-color: var(--color-main-background-hover);
+  color: var(--color-button-foreground);
 }
 </style>

@@ -7,8 +7,7 @@
     @keydown.prevent.stop.enter.exact="$emit('enter', $event)"
     @keydown.escape="$emit('focusout', $event)"
     @keydown.enter.shift.exact.prevent="value_ += '\n'"
-    @focusout="$emit('focusout', $event)"
-  ></textarea>
+    @focusout="$emit('focusout', $event)"></textarea>
 </template>
 
 <script>
@@ -57,7 +56,13 @@ export default {
 
 <style scoped>
 .base-textarea {
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-input-border);
   border-radius: 4px;
+}
+
+.base-textarea:focus {
+  outline: none;
+  border-color: var(--color-input-border-focus);
+  background-color: var(--color-input-background-focus);
 }
 </style>

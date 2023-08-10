@@ -3,8 +3,7 @@
     ref="dialog"
     class="modal"
     @close="$emit('close')"
-    @click="maybeClose"
-  >
+    @click="maybeClose">
     <div class="modal__content" @click.stop>
       <slot></slot>
     </div>
@@ -43,10 +42,11 @@ export default {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 4px;
-  background-color: var(--color-main-background);
+  background-color: var(--color-dialog-background);
   padding: 0;
   width: fit-content;
   height: fit-content;
+  color: var(--color-dialog-text);
 }
 
 .modal[open] {

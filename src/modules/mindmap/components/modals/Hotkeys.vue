@@ -85,7 +85,7 @@ export default {
 .hotkeys .row {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid var(--color-main-separator);
+  border-bottom: 1px solid var(--color-dialog-border);
   padding: 4px 12px;
   min-width: 300px;
 }
@@ -95,18 +95,18 @@ export default {
 }
 
 .hotkeys .action {
-  color: var(--color-main-text);
+  color: var(--color-dialog-text);
   font-weight: bold;
   font-size: 16px;
 }
 
 .hotkeys .hotkey {
   margin-left: 4px;
-  border: 1px solid var(--color-main-separator);
+  border: 1px solid var(--color-dialog-border);
   border-radius: 3px;
-  background-color: var(--color-main-foreground);
+  background-color: var(--color-dialog-foreground);
   padding: 2px 4px;
-  color: var(--color-main-foreground-hover);
+  color: var(--color-dialog-text);
   font-size: 0.8rem;
   font-family: monospace;
 }

@@ -167,14 +167,14 @@ export default {
 .emoji-bar hr {
   margin: 4px 0;
   border: none;
-  border-bottom: 1px solid var(--color-toolbar-separator);
+  border-bottom: 1px solid var(--color-toolbar-border);
 }
 
 .slide-enter-active {
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease;
 }
 .slide-leave-active {
-  transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: transform 0.2s cubic-bezier(1, 0.5, 0.8, 1);
 }
 .slide-enter,
 .slide-leave-to {

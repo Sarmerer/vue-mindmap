@@ -5,8 +5,7 @@
       type="checkbox"
       :checked="value"
       tabindex="-1"
-      @change.stop="$emit('input', $event.target.checked)"
-    />
+      @change.stop="$emit('input', $event.target.checked)" />
 
     <div class="base-toggle__slider"></div>
     <span class="base-toggle__label" v-text="label"></span>
@@ -66,7 +65,7 @@ export default {
 }
 
 .base-toggle__input:checked + .base-toggle__slider {
-  background-color: #2196f3;
+  background-color: var(--color-button-background);
 }
 
 .base-toggle__input:checked + .base-toggle__slider:before {

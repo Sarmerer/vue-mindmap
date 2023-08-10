@@ -18,21 +18,24 @@
         <small
           v-show="node.isCollapsed"
           title="Collapsed"
-          class="node__collapsed-indicator">
+          class="node__status__item">
           <BaseIcon icon="eye-off" />
         </small>
 
         <small
           v-show="childrenCount > 0"
           title="Overridden progress"
-          class="node__progress__text"
+          class="node__status__item node__progress__text"
           :class="{ overridden: node.isChildrenCountOverridden }">
           <BaseIcon v-if="node.isChildrenCountOverridden" icon="redo-dot" />
           <BaseIcon v-else icon="check-check" />
           {{ completedChildrenCount }}/{{ childrenCount }}
         </small>
 
-        <small v-show="node.weight > 1" title="Weight" class="node__weight">
+        <small
+          v-show="node.weight > 1"
+          title="Weight"
+          class="node__status__item">
           <BaseIcon icon="scale" />
           {{ node.weight }}
         </small>
@@ -108,7 +111,7 @@ export default {
 .node.active {
   z-index: 1;
   cursor: grab;
-  background-color: rgba(128, 128, 128, 0.3);
+  background-color: var(--color-tree-node-background-active);
   user-select: auto;
 }
 
@@ -148,7 +151,7 @@ export default {
   word-wrap: break-word;
   cursor: text;
   margin: 0;
-  color: var(--color-main-text);
+  color: var(--color-tree-node-text);
   font-weight: 500;
 
   font-size: 14px;
@@ -166,29 +169,30 @@ export default {
   display: flex;
   align-items: flex-end;
   gap: 4px;
-  color: var(--color-main-text);
-  font-size: 10px;
-  user-select: none;
 }
 
 .node__status:empty {
   display: none;
 }
 
-.node__status > * {
+.node__status__item {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 2px;
+  opacity: 0.7;
+  color: var(--color-tree-node-text);
+  font-size: 10px;
+  user-select: none;
 }
 
-.node__status .icon {
+.node__status__item .icon {
   width: 10px;
   height: 10px;
 }
 
 .node__progress__text.overridden {
-  fill: #4287f5;
-  color: #4287f5;
+  fill: var(--color-info-background);
+  color: var(--color-info-background);
 }
 
 .node__progress__bar {
@@ -204,7 +208,7 @@ export default {
 
 .node__progress__fill {
   transition: width 1s ease;
-  background-color: #2cbd2c;
+  background-color: var(--color-success-background);
   height: 100%;
 }
 

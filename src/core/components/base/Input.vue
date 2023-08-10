@@ -7,8 +7,7 @@
     @input="$emit('input', $event.target.value)"
     @keydown.prevent.stop.enter="$emit('enter', $event)"
     @keydown.escape="$emit('escape', $event)"
-    @focusout="$emit('focusout', $event)"
-  />
+    @focusout="$emit('focusout', $event)" />
 </template>
 
 <script>
@@ -56,17 +55,18 @@ export default {
 
 <style scoped>
 .base-input {
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-input-border);
   border-radius: 4px;
 
-  background-color: var(--color-main-background);
+  background-color: var(--color-input-background);
   width: 100%;
-  color: var(--color-main-text);
+  color: var(--color-input-text);
   font-size: 16px;
 }
 
 .base-input:focus {
   outline: none;
-  border-color: var(--color-main-foreground);
+  border-color: var(--color-input-border-focus);
+  background-color: var(--color-input-background-focus);
 }
 </style>

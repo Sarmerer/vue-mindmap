@@ -66,14 +66,12 @@ export default {
 
 .migrate p:first-of-type {
   margin-bottom: 10px;
-  color: var(--color-main-text);
   font-weight: bold;
   font-size: 18px;
 }
 
 .migrate p:last-of-type {
   margin-bottom: 20px;
-  color: var(--color-main-text);
   font-size: 16px;
 }
 

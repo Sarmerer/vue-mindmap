@@ -67,29 +67,31 @@ export default {
   flex-direction: column;
   z-index: var(--layer-overlay);
 
-  transition: box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
+  transition: background-color 0.1s ease-in-out;
   cursor: pointer;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-notebook-note-border);
   border-radius: 4px;
-  background-color: var(--color-main-foreground);
+  background-color: var(--color-notebook-note-background);
   width: 90px;
   height: 130px;
 }
 
 .note:hover {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
-  background-color: var(--color-main-foreground-hover);
+  background-color: var(--color-notebook-note-background-active);
+}
+
+.note:hover .note__icon-wrapper:empty {
+  background-color: var(--color-notebook-note-background);
 }
 
 .note.active {
   z-index: var(--layer-modal);
-
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
-  background-color: var(--color-main-foreground-active);
+  border-color: var(--color-notebook-note-border-active);
+  background-color: var(--color-notebook-note-background-active);
 }
 
 .note.shadow {
-  border: 1px dashed var(--color-main-foreground);
+  border: 1px dashed var(--color-notebook-shadow-border);
   background-color: transparent;
 }
 
@@ -123,6 +125,7 @@ export default {
   border: none;
   background-color: transparent;
   padding: 0;
+  color: var(--color-notebook-note-text);
   font-size: 14px;
   font-family: inherit;
   user-select: none;
@@ -133,7 +136,7 @@ export default {
   align-self: flex-end;
 
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 50%;
   width: 24px;
   height: 24px;
 }
@@ -157,12 +160,10 @@ export default {
 
 .note__editor__input {
   outline: none;
-  border: none;
-  border-radius: 4px;
-  background-color: var(--color-main-background);
+  background-color: var(--color-notebook-note-background);
   height: 100%;
   resize: none;
-  color: var(--color-main-text);
+  color: var(--color-notebook-note-text);
   font-size: 14px;
   line-height: 1.5;
 }

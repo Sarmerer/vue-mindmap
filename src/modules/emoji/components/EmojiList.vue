@@ -8,8 +8,7 @@
           :title="emoji.key"
           v-text="emoji.emoji"
           @click="$emit('toggle', emoji)"
-          @contextmenu.prevent="$emit('favorite', emoji)"
-        ></div>
+          @contextmenu.prevent="$emit('favorite', emoji)"></div>
       </div>
     </div>
   </div>
@@ -54,7 +53,6 @@ export default {
   justify-content: center;
   align-items: center;
 
-  transition: all 0.2s ease;
   cursor: pointer;
   border-radius: 4px;
   width: 26px;

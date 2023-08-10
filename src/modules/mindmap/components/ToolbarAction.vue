@@ -37,7 +37,7 @@ export default {
   transition: background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border: none;
-  border: 2px solid var(--color-toolbar-foreground-active);
+  border: 2px solid var(--color-toolbar-border);
   border-radius: 4px;
   background-color: var(--color-toolbar-foreground);
   padding: 0;
@@ -49,7 +49,8 @@ export default {
 }
 
 .action-button:hover {
-  background-color: var(--color-toolbar-foreground-hover);
+  background-color: var(--color-toolbar-foreground-active);
+  color: var(--color-toolbar-text-active);
 }
 
 .action-button:focus,
@@ -57,5 +58,6 @@ export default {
   outline: none;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
   background-color: var(--color-toolbar-foreground-active);
+  color: var(--color-toolbar-text-active);
 }
 </style>

@@ -131,7 +131,7 @@ export default {
 
 .statusbar__item:hover {
   cursor: pointer;
-  background-color: var(--color-statusbar-foreground-hover);
+  background-color: var(--color-statusbar-hover);
 }
 
 .statusbar__item__values {

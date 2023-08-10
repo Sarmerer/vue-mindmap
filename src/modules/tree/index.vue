@@ -68,7 +68,7 @@ export default {
 
 .link {
   stroke-width: 0.5px;
-  stroke: black;
+  stroke: var(--color-tree-line-background);
   fill: transparent;
 }
 

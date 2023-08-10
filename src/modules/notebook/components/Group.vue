@@ -52,24 +52,29 @@ export default {
   z-index: var(--layer-overlay);
 
   transition: border-color 0.1s ease-in-out, background-color 0.1s ease-in-out;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-notebook-group-border);
   border-radius: 6px;
+  background-color: var(--color-notebook-group-background);
   width: fit-content;
 }
 
 .group:hover:not(:has(*:hover)) {
   cursor: grab;
-  border-color: #999;
-  background-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--color-notebook-group-border-active);
+  background-color: var(--color-notebook-group-background-active);
 }
 
 .group.active {
-  border-color: #999;
-  background-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--color-notebook-group-border-active);
+  background-color: var(--color-notebook-group-background-active);
+}
+
+.group.active .group__handle {
+  color: var(--color-notebook-group-handle-active);
 }
 
 .group.shadow {
-  border: 1px dashed #ccc;
+  border: 1px dashed var(--color-notebook-shadow-border);
   background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -98,7 +103,7 @@ export default {
   width: 24px;
   height: 24px;
 
-  color: #999;
+  color: var(--color-notebook-group-handle);
 }
 
 .group__notes {

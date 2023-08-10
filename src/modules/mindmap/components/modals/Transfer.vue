@@ -147,7 +147,6 @@ export default {
   flex-direction: column;
   gap: 10px;
   min-width: 300px;
-  color: var(--color-main-text);
 }
 .transfer button {
   align-self: flex-end;

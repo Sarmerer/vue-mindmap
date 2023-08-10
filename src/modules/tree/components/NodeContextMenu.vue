@@ -51,8 +51,9 @@ export default {
 
 <style scoped>
 .node-context-menu {
+  border: 1px solid var(--color-contextmenu-border);
   border-radius: 4px;
-  background-color: var(--color-main-foreground);
+  background-color: var(--color-contextmenu-background);
   padding: 8px 0;
 }
 
@@ -63,15 +64,15 @@ export default {
 
   cursor: pointer;
   padding: 4px 16px;
-  color: var(--color-main-background);
+  color: var(--color-contextmenu-text);
   font-weight: 500;
   font-size: 14px;
   line-height: 1.5;
 }
 
 .node-context-menu__item:hover {
-  background-color: var(--color-main-foreground-hover);
-  color: var(--color-main-text);
+  background-color: var(--color-contextmenu-foreground-active);
+  color: var(--color-contextmenu-text-active);
 }
 
 .node-context-menu__item--danger {

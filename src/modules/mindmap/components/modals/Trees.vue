@@ -24,17 +24,15 @@
 
         <div class="tree__actions">
           <BaseButton
-            class="tree__actions--edit"
+            class="tree__action"
             @click.stop="
               setEditedTree(editedTree === treeItem ? null : treeItem)
             ">
             <BaseIcon :icon="editedTree === treeItem ? 'check' : 'pencil'" />
           </BaseButton>
 
-          <BaseButton
-            class="tree__actions--delete"
-            @click.stop="deleteTree(treeItem)">
-            <BaseIcon icon="trash" />
+          <BaseButton class="tree__action" @click.stop="deleteTree(treeItem)">
+            <BaseIcon icon="trash" intent="danger" />
           </BaseButton>
         </div>
       </div>
@@ -45,6 +43,7 @@
       :class="{
         alone: trees.length === 0,
       }"
+      intent="secondary"
       @click="createTree">
       <BaseIcon icon="plus" />
       Create new tree
@@ -119,6 +118,8 @@ export default {
     setTree(tree) {
       if (tree.id === this.tree.id) return
 
+      this.editedTree = null
+
       this.tree.repo.update(this.tree.id, this.tree.serialize())
 
       this.tree.repo.setLastId(tree.id)
@@ -176,28 +177,33 @@ export default {
 
   cursor: pointer;
   border-radius: 4px;
-  background-color: var(--color-main-foreground);
+  background-color: var(--color-dialog-foreground);
   padding: 8px;
   min-width: 300px;
   min-height: 32px;
 }
 
 .trees__list__item:hover {
-  background-color: var(--color-main-foreground-hover);
+  background-color: var(--color-dialog-foreground-active);
 }
 
 .trees__list__item.active {
   cursor: default;
-  background-color: var(--color-main-foreground-active);
+  background-color: var(--color-dialog-foreground-active);
+}
+
+.trees__list__item.active .tree__label,
+.trees__list__item:hover .tree__label {
+  color: var(--color-dialog-text-active);
 }
 
 .trees__list__item.edited {
-  background-color: var(--color-main-foreground);
+  background-color: var(--color-dialog-foreground-active);
 }
 
 .tree__label {
   flex: 1;
-  color: var(--color-main-background);
+  color: var(--color-dialog-text);
   font-weight: bold;
 }
 
@@ -210,8 +216,15 @@ export default {
   gap: 8px;
 }
 
-.tree__actions--delete {
-  color: red;
+.tree__action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-dialog-foreground);
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  color: var(--color-dialog-text);
 }
 
 .trees__new {
@@ -220,7 +233,6 @@ export default {
 
   margin-top: 8px;
   width: 100%;
-  color: var(--color-main-background);
   text-align: left;
 }
 
@@ -228,13 +240,8 @@ export default {
   justify-content: center;
   margin-top: 0;
   border-radius: 4px;
-  background-color: var(--color-main-foreground);
   width: 300px;
   height: 32px;
   font-weight: bold;
-}
-
-.trees__new.alone:hover {
-  background-color: var(--color-main-foreground-hover);
 }
 </style>
