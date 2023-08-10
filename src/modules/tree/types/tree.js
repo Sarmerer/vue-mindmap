@@ -4,6 +4,7 @@ import { Renderer } from './renderer'
 import { Node } from './node'
 
 import { uuidv4 } from '../../../utils'
+import { Clipboard } from './clipboard'
 
 export class Tree {
   constructor(mindmap) {
@@ -12,13 +13,13 @@ export class Tree {
     this.id = uuidv4()
     this.label = 'Untitled'
 
+    this.rootsStack = []
     this.nodes = []
     this.links = []
 
     this.navigator = new Navigator(this)
     this.reorder = new Reorder(this)
-    this.rootsStack = []
-
+    this.clipboard = new Clipboard(this)
     this.renderer = new Renderer(this)
   }
 
@@ -95,36 +96,50 @@ export class Tree {
   deserialize(data) {
     if (!data) return this
 
-    const index = new Map()
-    const dataNodes = data.nodes ?? []
-
-    const nodes = dataNodes.map((nodeData) => {
-      const node = new Node(this).deserialize(nodeData)
-      index.set(node.id, node)
-      return node
-    })
-
-    for (const node of dataNodes) {
-      if (!node.parent) continue
-
-      const parent = index.get(node.parent)
-      if (!parent) {
-        nodes.splice(nodes.indexOf(node), 1)
-        index.delete(node.id)
-        continue
-      }
-
-      const self = index.get(node.id)
-      self.parent = parent
-      parent.children.push(self)
-    }
-
     this.id = data.id
     this.label = data.label
 
-    this.nodes = nodes
-    this.setActiveNode(index.get(data.activeNode ?? null))
+    this.nodes = this.#deserializeNodes(data.nodes)
+
+    const activeNode = this.nodes.find((node) => node.id === data.activeNode)
+    if (activeNode) {
+      this.setActiveNode(activeNode)
+    }
 
     return this
+  }
+
+  #deserializeNodes(dataNodes) {
+    if (!Array.isArray(dataNodes)) return []
+
+    let root = null
+    const dirtyIndex = new Map()
+    const cleanIndex = new Map()
+
+    for (const dataNode of dataNodes) {
+      const node = new Node(this).deserialize(dataNode)
+      dirtyIndex.set(node.id, node)
+    }
+
+    for (const dataNode of dataNodes) {
+      const node = dirtyIndex.get(dataNode.id)
+      if (!node) continue
+      if (!dataNode.parent && root !== null) continue
+
+      if (!dataNode.parent) {
+        cleanIndex.set(node.id, node)
+        root = node
+        continue
+      }
+
+      const parent = dirtyIndex.get(dataNode.parent)
+      if (!parent) continue
+
+      node.parent = parent
+      parent.children.push(node)
+      cleanIndex.set(node.id, node)
+    }
+
+    return Array.from(cleanIndex.values())
   }
 }

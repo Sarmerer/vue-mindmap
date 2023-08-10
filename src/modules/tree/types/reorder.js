@@ -114,7 +114,7 @@ export class Reorder {
 
     switch (this.potentialRelativeSide) {
       case 'right':
-        this.activeNode.setParent(this.potentialRelative)
+        this.makeChild(this.potentialRelative)
         break
       case 'top':
         this.makeSibling(this.potentialRelative, 0)
@@ -132,6 +132,7 @@ export class Reorder {
       node.isCollapsed = false
     }
 
+    this.activeNode.parent = null
     this.activeNode.setParent(node)
   }
 

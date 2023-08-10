@@ -28,8 +28,16 @@ export default defineActions(
     hotkeys: ['tab'],
     when: ({ tree }) => tree.activeNode?.isActionable,
     run({ tree }) {
-      const node = tree.activeNode.addChild()
+      const parent = tree.activeNode
+      if (!parent) return
+
+      parent.isCollapsed = false
+      parent.isEditing = false
+
+      const node = new Node(tree)
       node.isEditing = true
+      node.setParent(parent)
+      tree.addNode(node)
       tree.setActiveNode(node)
     },
   },
@@ -42,8 +50,13 @@ export default defineActions(
     hotkeys: ['enter'],
     when: ({ tree }) => tree.activeNode?.isActionable && tree.activeNode.parent,
     run({ tree }) {
-      const node = tree.activeNode.addSibling()
+      const parent = tree.activeNode.parent
+      if (!parent) return
+
+      const node = new Node(tree)
       node.isEditing = true
+      node.setParent(parent)
+      tree.addNode(node)
       tree.setActiveNode(node)
     },
   },

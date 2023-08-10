@@ -67,7 +67,6 @@ export default class Align {
     const { width, height } = el.getBoundingClientRect()
 
     if (this.y === -1) {
-      console.log(boundaries.top)
       this.sticky.y = boundaries.top
     } else if (this.y === 1) {
       this.sticky.y = boundaries.bottom - height

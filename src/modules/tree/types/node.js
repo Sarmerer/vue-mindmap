@@ -87,25 +87,10 @@ export class Node {
     }
   }
 
-  addSibling() {
-    const node = new Node(this.tree)
+  addChild(node) {
+    if (!node || this.children.includes(node)) return
 
-    if (this.parent) {
-      node.setParent(this.parent)
-    }
-
-    this.tree.addNode(node)
-    return node
-  }
-
-  addChild() {
-    this.isCollapsed = false
-    this.isEditing = false
-
-    const node = new Node(this.tree)
-    node.setParent(this)
-    this.tree.addNode(node)
-    return node
+    this.children.push(node)
   }
 
   removeChild(child) {
@@ -116,13 +101,9 @@ export class Node {
   }
 
   setParent(parent) {
-    if (parent && parent.children.indexOf(this) === -1) {
-      parent.children.push(this)
-    } else if (!parent && this.parent) {
-      this.parent.removeChild(this)
-    }
-
+    this.parent?.removeChild(this)
     this.parent = parent
+    this.parent?.addChild(this)
     this.tree.renderer.render()
   }
 
@@ -184,6 +165,25 @@ export class Node {
 
     this.width = el.offsetWidth
     this.height = el.offsetHeight
+  }
+
+  clone(deep = false, factory = null) {
+    const node = new Node(this.tree)
+    node.deserialize(this.serialize())
+
+    if (deep) {
+      for (const child of this.children) {
+        const childClone = child.clone(true, factory)
+        childClone.parent = node
+        node.children.push(childClone)
+      }
+    }
+
+    if (typeof factory === 'function') {
+      factory(node)
+    }
+
+    return node
   }
 
   serialize() {

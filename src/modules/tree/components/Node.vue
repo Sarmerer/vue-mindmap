@@ -16,14 +16,14 @@
 
       <span class="node__status">
         <small
-          v-show="node.isCollapsed"
+          v-if="node.isCollapsed"
           title="Collapsed"
           class="node__status__item">
           <BaseIcon icon="eye-off" />
         </small>
 
         <small
-          v-show="childrenCount > 0"
+          v-if="childrenCount > 0"
           title="Overridden progress"
           class="node__status__item node__progress__text"
           :class="{ overridden: node.isChildrenCountOverridden }">
@@ -33,14 +33,14 @@
         </small>
 
         <small
-          v-show="node.weight > 1"
+          v-if="node.weight > 1"
           title="Weight"
           class="node__status__item">
           <BaseIcon icon="scale" />
           {{ node.weight }}
         </small>
 
-        <div v-show="childrenCount > 0" class="node__progress__bar">
+        <div v-if="childrenCount > 0" class="node__progress__bar">
           <div
             class="node__progress__fill"
             :style="{ width: `${progress}%` }"></div>
@@ -73,15 +73,15 @@ export default {
 
   computed: {
     childrenCount() {
-      return this.node.stats.getChildrenCount()
+      return this.node.stats.getChildrenCount(true)
     },
 
     completedChildrenCount() {
-      return this.node.stats.getCompletedChildrenCount()
+      return this.node.stats.getCompletedChildrenCount(true)
     },
 
     progress() {
-      return this.node.stats.getChildrenProgress()
+      return this.node.stats.getChildrenProgress(true)
     },
   },
 

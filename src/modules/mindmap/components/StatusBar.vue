@@ -26,6 +26,13 @@
           {{ activeNodeLabel }}
         </span>
       </span>
+
+      <span class="statusbar__item">
+        <span class="statusbar__item__value">
+          <BaseIcon icon="clipboard" />
+          {{ clipboardContents }}
+        </span>
+      </span>
     </div>
     <div class="statusbar__right">
       <span class="statusbar__item" @click="tree.actions.run('reset-canvas')">
@@ -81,6 +88,15 @@ export default {
     activeNodeLabel() {
       const activeNode = this.tree.activeNode
       return activeNode ? activeNode.label : 'None'
+    },
+
+    clipboardContents() {
+      const buffer = this.tree?.clipboard?.buffer
+      if (!buffer) return 'Empty'
+
+      const { type, node } = buffer
+      const prefix = type === 'cut' ? 'Cut' : 'Copied'
+      return `${prefix} ${node.label}`
     },
 
     canvasPosition() {
