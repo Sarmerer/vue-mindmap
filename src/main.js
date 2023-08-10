@@ -1,25 +1,19 @@
-import Vue from "vue";
-import App from "./App.vue";
-import { store } from "@/store/index";
+import Vue from 'vue'
+import App from './App.vue'
 
-import { Init } from "@/hotkeys";
-Init();
+Vue.config.productionTip = false
 
-import {
-  ModalPlugin,
-  FormTextareaPlugin,
-  BootstrapVueIcons,
-} from "bootstrap-vue";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
+function loadBaseComponents() {
+  const components = import.meta.globEager('./core/components/base/*.vue')
 
-Vue.use(BootstrapVueIcons);
-Vue.use(ModalPlugin);
-Vue.use(FormTextareaPlugin);
+  for (const [path, module] of Object.entries(components)) {
+    const name = 'Base' + path.replace(/^.+\/([^/]+)\.vue/, '$1')
+    Vue.component(name, module.default)
+  }
+}
 
-Vue.config.productionTip = false;
+loadBaseComponents()
 
 new Vue({
   render: (h) => h(App),
-  store,
-}).$mount("#app");
+}).$mount('#app')
