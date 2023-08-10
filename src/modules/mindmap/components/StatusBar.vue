@@ -99,15 +99,11 @@ export default {
 <style scoped>
 .statusbar {
   display: flex;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  flex: 0 0 24px;
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid var(--color-statusbar-separator);
   background-color: var(--color-statusbar-background);
-  height: 24px;
 }
 
 .statusbar__left,

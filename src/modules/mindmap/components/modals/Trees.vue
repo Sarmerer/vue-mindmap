@@ -36,18 +36,15 @@
           </BaseButton>
         </div>
       </div>
-    </div>
 
-    <BaseButton
-      class="trees__new"
-      :class="{
-        alone: trees.length === 0,
-      }"
-      intent="secondary"
-      @click="createTree">
-      <BaseIcon icon="plus" />
-      Create new tree
-    </BaseButton>
+      <BaseButton
+        class="trees__new"
+        :intent="trees.length === 0 ? 'primary' : 'secondary'"
+        @click="createTree">
+        <BaseIcon icon="plus" />
+        Create new tree
+      </BaseButton>
+    </div>
   </BaseModal>
 </template>
 
@@ -227,19 +224,7 @@ export default {
   color: var(--color-dialog-text);
 }
 
-.trees__new {
-  display: flex;
-  align-items: center;
-
-  margin-top: 8px;
-  width: 100%;
-  text-align: left;
-}
-
-.trees__new.alone {
-  justify-content: center;
-  margin-top: 0;
-  border-radius: 4px;
+.trees__new:only-child {
   width: 300px;
   height: 32px;
   font-weight: bold;

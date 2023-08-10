@@ -25,6 +25,8 @@ export class Note extends Sticky {
   }
 
   detach() {
+    if (!this.group) return
+
     this.moveToScreenSpace()
     this.setGroup(null)
   }

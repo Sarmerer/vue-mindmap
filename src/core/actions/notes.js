@@ -93,7 +93,7 @@ export default defineActions(
     label: 'Delete note',
     icon: 'trash',
     intent: 'danger',
-    hotkeys: ['delete', 'backspace', 'd'],
+    hotkeys: ['delete', 'backspace'],
     when: isActionable,
     run({ notebook }) {
       notebook.activeNote?.dispose()

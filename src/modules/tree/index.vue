@@ -53,7 +53,7 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .links-container {
@@ -76,5 +76,6 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 </style>

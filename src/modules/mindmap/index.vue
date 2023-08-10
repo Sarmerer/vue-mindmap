@@ -6,13 +6,16 @@
     <MigrateModal v-bind="{ tree }" />
 
     <Toolbar v-bind="{ tree }" />
-    <EmojiBar v-bind="{ mindmap }" />
 
-    <Notebook v-bind="{ notebook }" />
+    <div class="mindmap__content">
+      <EmojiBar v-bind="{ mindmap }" />
 
-    <Canvas :canvas="canvas" @mousedown.native="clearActiveElement">
-      <TreeR v-bind="{ tree }" />
-    </Canvas>
+      <Notebook v-bind="{ notebook }" />
+
+      <Canvas :canvas="canvas" @mousedown.native="clearActiveElement">
+        <TreeR v-bind="{ tree }" />
+      </Canvas>
+    </div>
 
     <StatusBar v-bind="{ mindmap }" />
   </div>
@@ -89,10 +92,18 @@ export default {
 
 <style scoped>
 .mindmap {
+  display: flex;
   position: relative;
+  flex-direction: column;
 
   background-color: var(--color-main-background);
   width: 100%;
   height: 100%;
+}
+
+.mindmap__content {
+  position: relative;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 </style>

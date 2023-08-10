@@ -148,7 +148,7 @@ export default {
 <style scoped>
 .emoji-bar {
   position: absolute;
-  top: 48px;
+  top: 0;
   right: 0;
   bottom: 0;
 

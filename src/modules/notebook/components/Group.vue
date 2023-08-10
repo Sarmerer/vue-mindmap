@@ -10,7 +10,7 @@
       'align--up': group.align.up,
       'align--bottom': group.align.bottom,
     }"
-    :style="{ transform: `translate(${group.x}px, ${group.y}px)` }"
+    :style="{ translate: `${group.x}px ${group.y}px` }"
     @mousedown.stop.prevent="group.notebook.reorder.maybeStart(group)">
     <div class="group__handle">
       <BaseIcon icon="grip" :size="14" />
@@ -65,6 +65,7 @@ export default {
 }
 
 .group.active {
+  z-index: var(--layer-modal);
   border-color: var(--color-notebook-group-border-active);
   background-color: var(--color-notebook-group-background-active);
 }

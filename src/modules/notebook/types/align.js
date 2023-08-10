@@ -63,23 +63,44 @@ export default class Align {
     const el = document.getElementById(this.sticky.id)
     if (!el) return
 
-    const boundaries = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    }
+    const boundaries = this.getBoundaries()
     const { width, height } = el.getBoundingClientRect()
-    const margin = 10
 
     if (this.y === -1) {
-      this.sticky.y = 0 + 48 + margin
+      console.log(boundaries.top)
+      this.sticky.y = boundaries.top
     } else if (this.y === 1) {
-      this.sticky.y = boundaries.height - height - 25 - margin
+      this.sticky.y = boundaries.bottom - height
     }
 
     if (this.x === -1) {
-      this.sticky.x = 0 + margin
+      this.sticky.x = boundaries.left
     } else if (this.x === 1) {
-      this.sticky.x = boundaries.width - width - margin
+      this.sticky.x = boundaries.right - width
+    }
+  }
+
+  getBoundaries() {
+    const margin = 10
+    const fallback = {
+      top: margin,
+      right: window.innerWidth - margin,
+      bottom: window.innerHeight - margin,
+      left: margin,
+    }
+
+    const canvas = this.sticky?.notebook?.mindmap?.canvas
+    if (!canvas) return fallback
+
+    const el = document.getElementById(canvas.id)
+    if (!el) return fallback
+
+    const { width, height } = el.getBoundingClientRect()
+    return {
+      top: margin,
+      right: width - margin,
+      bottom: height - margin,
+      left: margin,
     }
   }
 
