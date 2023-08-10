@@ -23,6 +23,10 @@ export default class NotebookRepo {
       this.notebookCache = JSON.parse(localStorage.getItem('notebook'))
     } catch (error) {
       console.error('Failed to initialize notebook from localStorage', error)
+    } finally {
+      if (!this.notebookCache || typeof this.notebookCache !== 'object') {
+        this.notebookCache = {}
+      }
     }
 
     this.#didCache = true

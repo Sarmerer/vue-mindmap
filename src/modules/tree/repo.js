@@ -25,6 +25,10 @@ export default class TreeRepo {
       this.trees = JSON.parse(localStorage.getItem('trees'))
     } catch (error) {
       console.error('Failed to initialize trees from localStorage', error)
+    } finally {
+      if (!this.trees || typeof this.trees !== 'object') {
+        this.trees = {}
+      }
     }
 
     this.lastTreeId = localStorage.getItem('lastTree') ?? null
