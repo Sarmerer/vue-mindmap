@@ -3,13 +3,14 @@
     <table class="hotkeys">
       <tr v-for="(action, index) in actions" :key="index" class="row">
         <td class="action" v-text="action.label"></td>
-        <kbd
-          v-for="(hotkey, index) in action.hotkeys"
-          :key="index"
-          class="hotkey"
-          v-text="formatHotkey(hotkey)"
-        >
-        </kbd>
+        <div class="action-hotkeys">
+          <kbd
+            v-for="(hotkey, index) in action.hotkeys"
+            :key="index"
+            class="hotkey"
+            v-text="formatHotkey(hotkey)">
+          </kbd>
+        </div>
       </tr>
     </table>
   </BaseModal>

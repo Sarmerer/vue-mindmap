@@ -7,7 +7,7 @@
       shadow: group.isShadow,
       'align--left': group.align.left,
       'align--right': group.align.right,
-      'align--up': group.align.top,
+      'align--up': group.align.up,
       'align--bottom': group.align.bottom,
     }"
     :style="{ transform: `translate(${group.x}px, ${group.y}px)` }"

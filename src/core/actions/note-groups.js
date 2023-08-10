@@ -79,10 +79,10 @@ export default defineActions(
   {
     id: 'delete-group',
     toolbarGroupId: 'left',
-    label: 'Delete group with notes',
+    label: 'Delete group',
     icon: 'trash',
     intent: 'danger',
-    hotkeys: ['del', 'backspace'],
+    hotkeys: ['delete', 'backspace'],
     when: ({ notebook }) => notebook.activeGroup !== null,
     run({ notebook }) {
       notebook.activeGroup?.dispose()

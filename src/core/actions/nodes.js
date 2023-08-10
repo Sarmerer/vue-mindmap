@@ -174,7 +174,7 @@ export default defineActions(
     id: 'delete',
     toolbarGroupId: 'left',
     contextMenuGroupId: 'node',
-    label: 'Delete',
+    label: 'Delete node',
     icon: 'trash',
     intent: 'danger',
     hotkeys: ['delete', 'backspace'],

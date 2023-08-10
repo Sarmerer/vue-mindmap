@@ -33,6 +33,10 @@ export class EmojiManager {
     }
   }
 
+  search(query) {
+    return library.search(query)
+  }
+
   serialize() {
     return {
       favorites: this.favorites,

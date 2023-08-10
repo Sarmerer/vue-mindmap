@@ -5,7 +5,7 @@
       :key="action.id"
       class="node-context-menu__item"
       :class="[`node-context-menu__item--${action.intent}`]"
-      @click="hide(), action.run()">
+      @mousedown.stop="hide(), action.run()">
       <BaseIcon v-if="action.icon" :icon="action.icon" :size="14" />
       {{ action.label }}
     </li>
