@@ -32,10 +32,7 @@
           {{ completedChildrenCount }}/{{ childrenCount }}
         </small>
 
-        <small
-          v-if="node.weight > 1"
-          title="Weight"
-          class="node__status__item">
+        <small v-if="node.weight > 1" title="Weight" class="node__status__item">
           <BaseIcon icon="scale" />
           {{ node.weight }}
         </small>
@@ -52,6 +49,7 @@
       <BaseInput
         class="node__editor__input"
         autofocus
+        autoselect
         :value="node.label"
         placeholder="Name your task..."
         @focusout="node.setEditing(false)"
@@ -106,6 +104,8 @@ export default {
   border: 1px solid transparent;
   border-radius: 4px;
   background-color: transparent;
+  min-width: 18px;
+  min-height: 18px;
 }
 
 .node.active {
@@ -121,6 +121,11 @@ export default {
 
 .node.reordering * {
   cursor: grabbing;
+}
+
+.node:not(.active):has(.node__label:empty) {
+  opacity: 0.3;
+  background-color: var(--color-tree-node-background-active);
 }
 
 .node:has(.node__progress__bar) {

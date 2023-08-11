@@ -15,7 +15,7 @@ export class Node {
     this.width = 100
     this.height = 100
 
-    this.label = 'Awesome task'
+    this.label = ''
     this.weight = 1
     this.childrenCountOverride = 0
     this.completedChildrenCountOverride = 0

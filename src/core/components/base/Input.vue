@@ -31,10 +31,16 @@ export default {
       type: [Boolean, Number],
       default: false,
     },
+
+    autoselect: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   mounted() {
     this.maybeFocus()
+    this.maybeSelect()
   },
 
   methods: {
@@ -42,11 +48,21 @@ export default {
       this.$el.focus()
     },
 
+    select() {
+      this.$el.select()
+    },
+
     maybeFocus() {
       if (typeof this.autofocus === 'number') {
         setTimeout(() => this.focus(), this.autofocus)
       } else if (this.autofocus) {
         this.focus()
+      }
+    },
+
+    maybeSelect() {
+      if (this.autoselect) {
+        this.$el.select()
       }
     },
   },
