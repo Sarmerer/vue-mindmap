@@ -8,6 +8,7 @@ export class Reorder {
     this.oldParent = null
     this.oldIndex = null
     this.wasCollapsed = false
+    this.wasActive = false
 
     this.potentialRelative = null
     this.potentialRelativeSide = null
@@ -26,6 +27,8 @@ export class Reorder {
   }
 
   maybeStart(node) {
+    this.wasActive = node.isActive
+    this.wasCollapsed = node.isCollapsed
     node.setActive()
 
     let initialX = this.canvas.cursorX
@@ -39,7 +42,13 @@ export class Reorder {
       this.start(node)
     }
 
-    const cancel = () => window.removeEventListener('mousemove', maybeStart_)
+    const cancel = () => {
+      if (this.wasActive) {
+        node.setCollapsed(!node.isCollapsed)
+      }
+
+      window.removeEventListener('mousemove', maybeStart_)
+    }
 
     window.addEventListener('mousemove', maybeStart_)
     window.addEventListener('mouseup', cancel, { once: true })
@@ -53,7 +62,6 @@ export class Reorder {
     this.oldParent = node.parent
     this.oldIndex = node.parent.children.indexOf(node)
 
-    this.wasCollapsed = this.activeNode.isCollapsed
     this.activeNode.isCollapsed = true
 
     this.tree.setActiveNode(this.activeNode)
