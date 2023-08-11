@@ -112,13 +112,27 @@ export class Node {
   }
 
   getChildren(deep = false) {
+    if (deep) {
+      const children = []
+      for (const child of this.children) {
+        children.push(child)
+        children.push(...child.getChildren(true))
+      }
+
+      return children
+    }
+
+    return this.children
+  }
+
+  getVisibleChildren(deep = false) {
     if (this.isCollapsed) return []
 
     if (deep) {
       const children = []
       for (const child of this.children) {
         children.push(child)
-        children.push(...child.getChildren(true))
+        children.push(...child.getVisibleChildren(true))
       }
 
       return children

@@ -47,7 +47,7 @@ export class Tree {
     const root = this.getRoot()
     if (!root) return []
 
-    const nodes = [root, ...root.getChildren(true)]
+    const nodes = [root, ...root.getVisibleChildren(true)]
 
     const reorderingNode = this.reorder.activeNode
     if (reorderingNode) {

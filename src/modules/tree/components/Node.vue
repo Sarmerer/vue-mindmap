@@ -9,7 +9,6 @@
       [`highlight--${node.highlightedSide}`]: node.highlightedSide,
     }"
     :style="{ translate: `${node.x}px ${node.y}px` }"
-    @dblclick.stop.prevent="node.setEditing(true)"
     @mousedown.stop.prevent="maybeReorder">
     <div v-if="!node.isEditing" class="node__content">
       <p class="node__label" v-text="node.label"></p>
@@ -154,7 +153,6 @@ export default {
 
 .node__label {
   word-wrap: break-word;
-  cursor: text;
   margin: 0;
   color: var(--color-tree-node-text);
   font-weight: 500;

@@ -59,7 +59,7 @@ export class Renderer {
   }
 
   buildHierarchy(node) {
-    return d3.hierarchy(node, (d) => d.getChildren())
+    return d3.hierarchy(node, (d) => d.getVisibleChildren())
   }
 
   generateLinkPath(source, target) {
