@@ -8,12 +8,12 @@ export class HotkeysManager {
     if (this.didInit) return
 
     document.addEventListener('keydown', (e) => {
+      const activeTag = document.activeElement.tagName
+      if (activeTag === 'INPUT' || activeTag === 'TEXTAREA') return
+
       const hotkey = this.normalizeEvent(e)
       const actions = this.hotkeys.get(hotkey)
       if (!actions?.length) return
-
-      const activeTag = document.activeElement.tagName
-      if (activeTag === 'INPUT' || activeTag === 'TEXTAREA') return
 
       e.preventDefault()
 
