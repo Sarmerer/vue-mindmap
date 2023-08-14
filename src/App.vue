@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style>
-:root {
+body.theme-light {
   --layer-base: 0;
   --layer-overlay: 1;
   --layer-modal: 2;
@@ -102,88 +102,86 @@ export default {
   --color-notebook-shadow-border: #aaa;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-accent-background: #5c6370;
-    --color-accent-foreground: #fff;
+body.theme-dark {
+  --color-accent-background: #5c6370;
+  --color-accent-foreground: #fff;
 
-    --color-danger-background: #9b2915;
-    --color-danger-foreground: #fff;
+  --color-danger-background: #9b2915;
+  --color-danger-foreground: #fff;
 
-    --color-warning-background: #c99b0b;
-    --color-warning-foreground: #fff;
+  --color-warning-background: #c99b0b;
+  --color-warning-foreground: #fff;
 
-    --color-success-background: #1e8649;
-    --color-success-foreground: #fff;
+  --color-success-background: #1e8649;
+  --color-success-foreground: #fff;
 
-    --color-info-background: #1e6d99;
-    --color-info-foreground: #fff;
+  --color-info-background: #1e6d99;
+  --color-info-foreground: #fff;
 
-    --color-text: #ddd;
+  --color-text: #ddd;
 
-    --color-toolbar-background: #262626;
-    --color-toolbar-foreground: #262626;
-    --color-toolbar-border: var(--color-accent-background);
-    --color-toolbar-text: var(--color-text);
-    --color-toolbar-text-active: #fff;
-    --color-toolbar-foreground-active: var(--color-accent-background);
+  --color-toolbar-background: #262626;
+  --color-toolbar-foreground: #262626;
+  --color-toolbar-border: var(--color-accent-background);
+  --color-toolbar-text: var(--color-text);
+  --color-toolbar-text-active: #fff;
+  --color-toolbar-foreground-active: var(--color-accent-background);
 
-    --color-main-background: #262626;
-    --color-main-foreground: #4d4d4d;
+  --color-main-background: #262626;
+  --color-main-foreground: #4d4d4d;
 
-    --color-statusbar-background: #262626;
-    --color-statusbar-foreground: #4d4d4d;
-    --color-statusbar-hover: #353535;
-    --color-statusbar-active: #4d4d4d;
-    --color-statusbar-separator: #353535;
-    --color-statusbar-text: var(--color-text);
+  --color-statusbar-background: #262626;
+  --color-statusbar-foreground: #4d4d4d;
+  --color-statusbar-hover: #353535;
+  --color-statusbar-active: #4d4d4d;
+  --color-statusbar-separator: #353535;
+  --color-statusbar-text: var(--color-text);
 
-    --color-input-background: #4d4d4d;
-    --color-input-border: #666;
-    --color-input-text: var(--color-text);
-    --color-input-background-focus: #666;
-    --color-input-border-focus: var(--color-accent-background);
+  --color-input-background: #4d4d4d;
+  --color-input-border: #666;
+  --color-input-text: var(--color-text);
+  --color-input-background-focus: #666;
+  --color-input-border-focus: var(--color-accent-background);
 
-    --color-button-background: #333;
-    --color-button-foreground: #fff;
-    --color-button-background-secondary: #262626;
-    --color-button-foreground-secondary: #ddd;
+  --color-button-background: #333;
+  --color-button-foreground: #fff;
+  --color-button-background-secondary: #262626;
+  --color-button-foreground-secondary: #ddd;
 
-    --color-dialog-background: #262626;
-    --color-dialog-foreground: #4d4d4d;
-    --color-dialog-border: #666;
-    --color-dialog-text: var(--color-text);
-    --color-dialog-foreground-active: var(--color-accent-background);
-    --color-dialog-text-active: #fff;
+  --color-dialog-background: #262626;
+  --color-dialog-foreground: #4d4d4d;
+  --color-dialog-border: #666;
+  --color-dialog-text: var(--color-text);
+  --color-dialog-foreground-active: var(--color-accent-background);
+  --color-dialog-text-active: #fff;
 
-    --color-contextmenu-background: #1f1f1f;
-    --color-contextmenu-foreground: #666;
-    --color-contextmenu-border: #666;
-    --color-contextmenu-text: var(--color-text);
-    --color-contextmenu-foreground-active: var(--color-accent-background);
-    --color-contextmenu-text-active: #fff;
+  --color-contextmenu-background: #1f1f1f;
+  --color-contextmenu-foreground: #666;
+  --color-contextmenu-border: #666;
+  --color-contextmenu-text: var(--color-text);
+  --color-contextmenu-foreground-active: var(--color-accent-background);
+  --color-contextmenu-text-active: #fff;
 
-    --color-tree-node-background: #1f1f1f;
-    --color-tree-node-text: var(--color-text);
-    --color-tree-node-background-active: rgba(128, 128, 128, 0.3);
+  --color-tree-node-background: #1f1f1f;
+  --color-tree-node-text: var(--color-text);
+  --color-tree-node-background-active: rgba(128, 128, 128, 0.3);
 
-    --color-tree-line-background: #666;
+  --color-tree-line-background: #666;
 
-    --color-notebook-note-background: #262626;
-    --color-notebook-note-border: #666;
-    --color-notebook-note-text: var(--color-text);
-    --color-notebook-note-background-active: #4d4d4d;
-    --color-notebook-note-border-active: #666;
+  --color-notebook-note-background: #262626;
+  --color-notebook-note-border: #666;
+  --color-notebook-note-text: var(--color-text);
+  --color-notebook-note-background-active: #4d4d4d;
+  --color-notebook-note-border-active: #666;
 
-    --color-notebook-group-background: transparent;
-    --color-notebook-group-border: #666;
-    --color-notebook-group-handle: #666;
-    --color-notebook-group-background-active: rgba(128, 128, 128, 0.15);
-    --color-notebook-group-border-active: rgba(128, 128, 128, 0.15);
-    --color-notebook-group-handle-active: #999;
+  --color-notebook-group-background: transparent;
+  --color-notebook-group-border: #666;
+  --color-notebook-group-handle: #666;
+  --color-notebook-group-background-active: rgba(128, 128, 128, 0.15);
+  --color-notebook-group-border-active: rgba(128, 128, 128, 0.15);
+  --color-notebook-group-handle-active: #999;
 
-    --color-notebook-shadow-border: #666;
-  }
+  --color-notebook-shadow-border: #666;
 }
 
 html,

@@ -3,6 +3,7 @@ import { Tree } from '../../tree'
 import { Notebook } from '../../notebook/types/notebook'
 
 import { ActionsManager } from './actions-manager'
+import SettingsManager from './settings-manager'
 import { EmojiManager } from '../../emoji/types/emoji-manager'
 import MindmapRepo from '../repo'
 
@@ -20,6 +21,7 @@ export class Mindmap {
 
     this.emoji = new EmojiManager(this)
     this.actions = new ActionsManager(this)
+    this.settings = new SettingsManager(this)
     this.repo = new MindmapRepo(this)
   }
 

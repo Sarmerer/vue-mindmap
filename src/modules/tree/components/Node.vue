@@ -133,15 +133,15 @@ export default {
 }
 
 .node.highlight--top {
-  box-shadow: inset 0 10px 10px -10px rgb(0, 0, 0);
+  box-shadow: inset 0 10px 10px -10px var(--color-tree-node-text);
 }
 
 .node.highlight--bottom {
-  box-shadow: inset 0 -10px 10px -10px rgb(0, 0, 0);
+  box-shadow: inset 0 -10px 10px -10px var(--color-tree-node-text);
 }
 
 .node.highlight--right {
-  box-shadow: inset -10px 0 10px -10px rgb(0, 0, 0);
+  box-shadow: inset -10px 0 10px -10px var(--color-tree-node-text);
 }
 
 .node__content {

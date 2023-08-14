@@ -38,7 +38,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .base-button {
   display: flex;
   justify-content: center;

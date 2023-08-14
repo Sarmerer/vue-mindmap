@@ -4,6 +4,7 @@
     <TransferModal v-bind="{ tree }" />
     <HotkeysModal v-bind="{ tree }" />
     <MigrateModal v-bind="{ tree }" />
+    <SettingsModal v-bind="{ tree }" />
 
     <Toolbar v-bind="{ tree }" />
 
@@ -24,11 +25,13 @@
 <script>
 import { Mindmap } from '../mindmap/types/mindmap'
 import actions from '../../core/actions'
+import settings from '../../core/settings'
 
 import TreesModal from './components/modals/Trees.vue'
 import TransferModal from './components/modals/Transfer.vue'
 import HotkeysModal from './components/modals/Hotkeys.vue'
 import MigrateModal from './components/modals/Migrate.vue'
+import SettingsModal from './components/modals/Settings/index.vue'
 
 import Toolbar from './components/Toolbar.r.vue'
 import EmojiBar from '../emoji'
@@ -45,6 +48,7 @@ export default {
     TransferModal,
     HotkeysModal,
     MigrateModal,
+    SettingsModal,
 
     Toolbar,
     EmojiBar,
@@ -78,8 +82,9 @@ export default {
 
   created() {
     this.mindmap = new Mindmap()
-    this.mindmap.repo.init()
     this.mindmap.actions.addActions(...actions)
+    this.mindmap.settings.addSettings(...settings)
+    this.mindmap.repo.init()
   },
 
   methods: {
