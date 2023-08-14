@@ -25,9 +25,8 @@
           :value="note.label"
           placeholder="Name your note..."
           @focusout="note.isEditing = false"
-          @enter="
-            ;(note.label = $event.target.value), (note.isEditing = false)
-          " />
+          @enter=";(note.label = $event.target.value), (note.isEditing = false)"
+          @escape="note.isEditing = false" />
       </div>
     </div>
   </div>

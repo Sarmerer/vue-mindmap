@@ -52,7 +52,8 @@
         :value="node.label"
         placeholder="Name your task..."
         @focusout="node.setEditing(false)"
-        @enter="setLabel($event.target.value)" />
+        @enter="setLabel($event.target.value)"
+        @escape="node.setEditing(false)" />
     </div>
   </div>
 </template>
