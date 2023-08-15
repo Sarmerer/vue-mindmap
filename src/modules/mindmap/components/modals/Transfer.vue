@@ -3,10 +3,6 @@
     <div class="transfer">
       <BaseToggle v-model="isImport" :label="title" />
       <BaseToggle v-model="useClipboard" :label="destination" />
-      <BaseToggle
-        v-if="isImport"
-        v-model="useActiveNode"
-        :label="useActiveNode ? 'Append To Active Node' : 'Rewrite Tree'" />
 
       <div v-if="isImport && !useClipboard" class="transfer__import__input">
         <input type="file" />
@@ -40,7 +36,6 @@ export default {
     return {
       isImport: false,
       useClipboard: false,
-      useActiveNode: false,
 
       importFile: null,
       exportFileName: 'mindmap',
