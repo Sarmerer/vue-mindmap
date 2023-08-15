@@ -90,28 +90,44 @@ export default {
       }
     },
 
-    import() {
-      if (this.useClipboard) {
-        this.importFromClipboard()
-      } else {
-        this.importFromFile()
+    async import() {
+      const data = this.useClipboard
+        ? await this.parseClipboard()
+        : await this.parseFile()
+      if (!data) return
+
+      data.id = this.tree.id
+      data.label = this.tree.label
+      this.tree.deserialize(data)
+      this.tree.renderer.render()
+      this.$refs.modal.close()
+    },
+
+    async parseClipboard() {
+      const data = await navigator.clipboard.readText()
+
+      try {
+        return JSON.parse(data)
+      } catch (error) {
+        console.error('clipboard content is not a valid JSON')
+        return null
       }
     },
 
-    importFromClipboard() {
-      navigator.clipboard.readText().then((data) => {
-        this.tree.deserialize(JSON.parse(data))
-        this.$refs.modal.close()
+    parseFile() {
+      return new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          try {
+            const data = JSON.parse(reader.result)
+            resolve(data)
+          } catch (error) {
+            console.error('file content is not a valid JSON')
+            resolve(null)
+          }
+        }
+        reader.readAsText(this.importFile)
       })
-    },
-
-    importFromFile() {
-      const fileReader = new FileReader()
-      fileReader.onload = () => {
-        this.tree.deserialize(JSON.parse(fileReader.result))
-        this.$refs.modal.close()
-      }
-      fileReader.readAsText(this.importFile)
     },
 
     export() {
