@@ -204,6 +204,7 @@ export class Node {
     return {
       id: this.id,
       parent: this.parent?.id ?? null,
+      order: this.parent?.children.indexOf(this) ?? 0,
 
       label: this.label,
       weight: this.weight,
@@ -218,6 +219,7 @@ export class Node {
 
   deserialize(data) {
     this.id = data.id ?? uuidv4()
+    this.order = data.order ?? 0
 
     this.label = data.label ?? 'A task'
     this.weight = data.weight ?? 1

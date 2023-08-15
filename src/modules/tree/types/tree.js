@@ -140,6 +140,13 @@ export class Tree {
       cleanIndex.set(node.id, node)
     }
 
+    for (const dataNode of dataNodes) {
+      const node = cleanIndex.get(dataNode.id)
+      if (!node || !node.children.length) continue
+
+      node.children.sort((a, b) => a.order - b.order)
+    }
+
     return Array.from(cleanIndex.values())
   }
 }
