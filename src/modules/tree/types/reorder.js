@@ -136,10 +136,6 @@ export class Reorder {
   }
 
   makeChild(node) {
-    if (node.isCollapsed) {
-      node.isCollapsed = false
-    }
-
     this.activeNode.parent = null
     this.activeNode.setParent(node)
   }
