@@ -1,3 +1,4 @@
+import cascade from '../../modules/effects/cascade'
 import { defineActions } from '../../modules/mindmap/types/actions-manager'
 import { Node } from '../../modules/tree'
 
@@ -113,8 +114,15 @@ export default defineActions(
     hotkeys: ['d'],
     when: ({ tree }) =>
       tree.activeNode?.isActionable && !tree.activeNode.isCompleted,
-    run({ tree }) {
+    run({ tree, settings }) {
       tree.activeNode.isCompleted = true
+
+      if (settings.get('app.funnyMode') === false) return
+
+      const el = document.getElementById(tree.activeNode.id)
+      if (!el) return
+
+      cascade(el, 20, ['⭐', '🎉', '🎊', '🍾', '🌟'])
     },
   },
   {
