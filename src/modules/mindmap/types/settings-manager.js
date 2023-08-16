@@ -26,19 +26,24 @@ export default class SettingsManager {
 
     const setting = new Setting(this.mindmap, settingsLike)
     this.settings[setting.id] = setting
-    setting.changed()
   }
 
   get(key) {
     const setting = this.settings[key]
-    if (!setting) return
+    if (!setting) {
+      console.warn('trying to get unknown setting', key)
+      return null
+    }
 
     return setting.value
   }
 
   set(key, value) {
     const setting = this.settings[key]
-    if (!setting) return
+    if (!setting) {
+      console.warn('trying to set unknown setting', key)
+      return
+    }
 
     setting.value = value
     setting.changed()

@@ -1,11 +1,6 @@
 <template>
   <div class="setting">
-    <BaseSelect
-      :value="setting.value"
-      :options="setting.options"
-      :reduce="(s) => s.value"
-      :label="(s) => s.label"
-      @input="change" />
+    <component :is="component" :setting="setting" @change="change" />
 
     <label class="setting__label" v-text="setting.label"></label>
   </div>
@@ -14,11 +9,33 @@
 <script>
 import { Mindmap } from '../../../types/mindmap'
 
+import Toggle from './Types/Toggle.vue'
+import Select from './Types/Select.vue'
+
 export default {
   props: {
     setting: {
       type: Mindmap,
       required: true,
+    },
+  },
+
+  components: {
+    Toggle,
+    Select,
+  },
+
+  computed: {
+    component() {
+      if (typeof this.setting.value === 'boolean') {
+        return Toggle
+      }
+
+      if (Array.isArray(this.setting.options)) {
+        return Select
+      }
+
+      return null
     },
   },
 
@@ -36,7 +53,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  width: 100%;
 }
 
 .setting__label {

@@ -49,13 +49,13 @@ export default {
 .settings {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  justify-content: stretch;
+  gap: 16px;
   min-width: 250px;
 }
 
 .settings__title {
-  margin: 0 0 15px 0;
+  margin: 0 0 16px 0;
   font-weight: bold;
   font-size: 20px;
 }

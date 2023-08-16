@@ -10,7 +10,7 @@ import { Mindmap } from './mindmap'
  * @property {string} label
  * @property {any} value
  * @property {string[]} [options]
- * @property {SettingRunner} changed
+ * @property {SettingRunner} [changed]
  */
 
 export default class Setting {
@@ -19,9 +19,9 @@ export default class Setting {
   constructor(mindmap, settingLike) {
     this.mindmap = mindmap
 
-    this.id = settingLike.id || ''
-    this.label = settingLike.label || ''
-    this.value = settingLike.value || null
+    this.id = settingLike.id
+    this.label = settingLike.label
+    this.value = settingLike.value
     this.options = settingLike.options || []
 
     this.#change = settingLike.changed || null
